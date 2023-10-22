@@ -1,4 +1,4 @@
-package Network.Client;
+package Network;
 
 public class ClientConnection {
 }

@@ -1,4 +1,4 @@
-package Network.DataBase;
+package RudimentaryDataBase;
 
 public class InMemoryRepository {
 }
