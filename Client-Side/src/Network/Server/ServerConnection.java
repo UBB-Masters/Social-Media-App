@@ -1,4 +1,4 @@
-package Network;
+package Network.Server;
 
 public class ServerConnection {
     
