@@ -1,6 +1,6 @@
 package Entities.Message;
 
-import Entities.Exceptions.InvalidMessageException;
+import Entities.Exceptions.MessageException;
 import Entities.Message.MessageTypes.AudioMessage;
 import Entities.Message.MessageTypes.ImageMessage;
 import Entities.Message.MessageTypes.TextMessage;
@@ -18,18 +18,18 @@ public abstract class MessageTemplate {
         this.receiver = receiver;
     }
 
-    public enum MessageType{
+    public enum MessageType {
         TEXT, IMAGE, AUDIO, VIDEO
     }
 
     // Factory Method to create specific message types based on the MessageType enum
-    public static MessageTemplate createMessage(MessageType messageType, String content, User sender, User receiver) throws InvalidMessageException {
+    public static MessageTemplate createMessage(MessageType messageType, String content, User sender, User receiver) throws MessageException {
         return switch (messageType) {
             case TEXT -> new TextMessage(content, sender, receiver);
             case IMAGE -> new ImageMessage(content, sender, receiver);
             case AUDIO -> new AudioMessage(content, sender, receiver);
             case VIDEO -> new VideoMessage(content, sender, receiver);
-            default -> throw new InvalidMessageException(); // Return null for unknown message types
+            default -> throw new MessageException("Invalid Message Type provided");
         };
     }
 
