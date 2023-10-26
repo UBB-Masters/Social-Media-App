@@ -1,4 +1,4 @@
-package main.test;
+package main.test.testRepo;
 
 import Entities.Exceptions.DataBaseException;
 import Entities.User.User;
@@ -26,7 +26,7 @@ public class InMemoryRepoUserTest {
     @Test
     @Name("Test find user by id")
     public void testSaveUsers() throws DataBaseException {
-        User user = new User("bob", "dob", new Date(), null);
+        User user = new User("bob", "dob", new Date(), "dob.bob@gmail.com");
 
         userRepository.add(user);
 

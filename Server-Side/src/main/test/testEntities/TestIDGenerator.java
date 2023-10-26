@@ -1,4 +1,4 @@
-package Test;
+package main.test.testEntities;
 
 import Entities.Misc.IDGenerator;
 import org.junit.Test;

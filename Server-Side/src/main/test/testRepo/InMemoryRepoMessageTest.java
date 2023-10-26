@@ -1,4 +1,4 @@
-package main.test;
+package main.test.testRepo;
 
 import Entities.Message.MessageFactory;
 import Entities.User.User;
