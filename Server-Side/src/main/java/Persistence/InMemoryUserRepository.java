@@ -14,7 +14,11 @@ public class InMemoryUserRepository extends InMemoryRepositoryTemplate<User> {
 
     public User findById(int id) {
         return getEntities().stream()
+<<<<<<< HEAD
                 .filter(user -> user.get() == id)
+=======
+                .filter(user -> user.getId() == id)
+>>>>>>> main
                 .findFirst()
                 .orElse(null);
     }
