@@ -9,7 +9,7 @@ public class TestEmail {
     public void testValidEmail() {
         try {
             Email validEmail = new Email("user@example.com");
-            Assert.assertEquals("user@example.com", validEmail.getEmail());
+            Assert.assertEquals("user@example.com", validEmail.getAddress());
         } catch (IllegalArgumentException e) {
             Assert.fail("Valid email should not throw an exception");
         }

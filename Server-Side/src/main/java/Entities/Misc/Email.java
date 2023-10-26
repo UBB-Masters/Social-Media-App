@@ -13,6 +13,13 @@ public class Email {
             throw new IllegalArgumentException("Invalid email address");
     }
 
+    @Override
+    public String toString() {
+        return "Email{" +
+                "address='" + address + '\'' +
+                '}';
+    }
+
     private boolean isValidEmail(String address) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
         Pattern pattern = Pattern.compile(emailRegex);
@@ -20,11 +27,11 @@ public class Email {
         return matcher.matches();
     }
 
-    public String getEmail() {
+    public String getAddress() {
         return address;
     }
 
-    public void setEmail(String address) {
+    public void setAddress(String address) {
         if (isValidEmail(address)) {
             this.address = address;
         } else {
