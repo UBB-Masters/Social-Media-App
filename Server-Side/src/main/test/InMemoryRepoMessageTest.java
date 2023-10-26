@@ -6,6 +6,7 @@ import Persistence.InMemoryMessageRepository;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -21,8 +22,8 @@ public class InMemoryRepoMessageTest {
 
     @Test
     public void testSaveMessage() {
-        User sender = new User("sender", "password", null, null);
-        User receiver = new User("receiver", "password", null, null);
+        User sender = new User("sender", "password", new Date(), "dob.bob@gmail.com");
+        User receiver = new User("receiver", "password", new Date(), "dob.bob@gmail.com");
 
         MessageFactory message = new MessageFactory("Hello, world!", sender, receiver) {
             public String convertContentToText() {

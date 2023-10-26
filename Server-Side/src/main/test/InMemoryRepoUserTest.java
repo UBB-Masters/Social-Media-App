@@ -39,7 +39,7 @@ public class InMemoryRepoUserTest {
     @Test
     @Name("Test find user by id")
     public void testFindUserById() throws DataBaseException {
-        User user = new User("bob", "dob", new Date(), null);
+        User user = new User("bob", "dob", new Date(), "dob.bob@gmail.com");
         userRepository.add(user);
 
         User found = userRepository.findById((int) user.getID());
@@ -50,7 +50,7 @@ public class InMemoryRepoUserTest {
     @Test
     @Name("Test find user by username")
     public void testFindUserByUsername() throws DataBaseException {
-        User user = new User("bob", "dob", new Date(), null);
+        User user = new User("bob", "dob", new Date(), "dob.bob@gmail.com");
         userRepository.add(user);
 
         User found = userRepository.findByUsername(user.getUsername());
@@ -67,7 +67,7 @@ public class InMemoryRepoUserTest {
 
     @Test
     public void testDeleteUser() throws DataBaseException {
-        User user = new User("bob", "dob", new Date(), null);
+        User user = new User("bob", "dob", new Date(), "bob.dob@gmail.com");
         userRepository.add(user);
 
         userRepository.remove(user);
@@ -77,13 +77,13 @@ public class InMemoryRepoUserTest {
 
     @Test
     public void testUpdateUser() throws DataBaseException {
-        User oldUser = new User("bob", "dob", new Date(), null);
-        User newUser = new User("dob", "zob", new Date(), null);
+        User oldUser = new User("bob", "dob", new Date(), "dob.dob@gmail.com");
+        User newUser = new User("dob", "zob", new Date(), "dob.zob@gmail.com");
 
         userRepository.add(oldUser);
         userRepository.update(oldUser, newUser);
 
-        User updatedUser = userRepository.findById((int) oldUser.getID());
+        User updatedUser = userRepository.findById((int) newUser.getID());
 
         assertEquals(newUser, updatedUser);
     }
