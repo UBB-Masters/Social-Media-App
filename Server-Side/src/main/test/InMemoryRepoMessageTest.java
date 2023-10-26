@@ -1,4 +1,6 @@
-import Entities.Message.MessageTemplate;
+package main.test;
+
+import Entities.Message.MessageFactory;
 import Entities.User.User;
 import Persistence.InMemoryMessageRepository;
 import org.junit.Before;
@@ -10,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 
 public class InMemoryRepoMessageTest {
 
-
     private InMemoryMessageRepository messageRepository;
 
     @Before
@@ -20,11 +21,10 @@ public class InMemoryRepoMessageTest {
 
     @Test
     public void testSaveMessage() {
-        User sender = new User(1, "sender", "password", null, null);
-        User receiver = new User(1, "receiver", "password", null, null);
+        User sender = new User("sender", "password", null, null);
+        User receiver = new User("receiver", "password", null, null);
 
-        MessageTemplate message = new MessageTemplate("Hello, world!", sender, receiver) {
-            @Override
+        MessageFactory message = new MessageFactory("Hello, world!", sender, receiver) {
             public String convertContentToText() {
                 return content;
             }
@@ -32,12 +32,8 @@ public class InMemoryRepoMessageTest {
 
         messageRepository.getMessages().add(message);
 
-        Set<MessageTemplate> savedMessages = messageRepository.getMessages();
+        Set<MessageFactory> savedMessages = messageRepository.getMessages();
         assertEquals(1, savedMessages.size());
         assertEquals(message, savedMessages.iterator().next());
     }
-
 }
-
-
-

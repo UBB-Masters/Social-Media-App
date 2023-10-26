@@ -61,6 +61,10 @@ public class MessageFactory {
         this.receiver = receiver;
     }
 
+    public long getID() {
+        return this.ID;
+    }
+
     @Override
     public String toString() {
         return "MessageFactory{" +

@@ -1,23 +1,18 @@
 package Persistence;
 
-import Entities.Message.MessageTemplate;
+import Entities.Message.MessageFactory;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class InMemoryMessageRepository {
-    private Set<MessageTemplate> messages;
+    private final Set<MessageFactory> messages;
 
     public InMemoryMessageRepository() {
         messages = new HashSet<>();
     }
 
-    public Set<MessageTemplate> getMessages() {
+    public Set<MessageFactory> getMessages() {
         return messages;
     }
 }
-<<<<<<< HEAD
-=======
-
-
->>>>>>> main

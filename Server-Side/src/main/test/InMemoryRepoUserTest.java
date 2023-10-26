@@ -1,15 +1,13 @@
 package main.test;
 
 import Entities.Exceptions.DataBaseException;
-
-
 import Entities.User.User;
 import Persistence.InMemoryUserRepository;
-
 import jdk.jfr.Name;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,18 +16,17 @@ import static org.junit.Assert.assertNull;
 public class InMemoryRepoUserTest {
 
     private InMemoryUserRepository userRepository;
-    private Set<User> users;
 
     @Before
     public void setUp() {
-        users = new HashSet<>();
+        Set<User> users = new HashSet<>();
         userRepository = new InMemoryUserRepository(users);
     }
 
     @Test
     @Name("Test find user by id")
     public void testSaveUsers() throws DataBaseException {
-        User user = new User(1, "bob", "dob", null, null);
+        User user = new User("bob", "dob", new Date(), null);
 
         userRepository.add(user);
 
@@ -42,10 +39,10 @@ public class InMemoryRepoUserTest {
     @Test
     @Name("Test find user by id")
     public void testFindUserById() throws DataBaseException {
-        User user = new User(1, "bob", "dob", null, null);
+        User user = new User("bob", "dob", new Date(), null);
         userRepository.add(user);
 
-        User found = userRepository.findById(user.getId());
+        User found = userRepository.findById((int) user.getID());
 
         assertEquals(user, found);
     }
@@ -53,7 +50,7 @@ public class InMemoryRepoUserTest {
     @Test
     @Name("Test find user by username")
     public void testFindUserByUsername() throws DataBaseException {
-        User user = new User(1, "bob", "dob", null, null);
+        User user = new User("bob", "dob", new Date(), null);
         userRepository.add(user);
 
         User found = userRepository.findByUsername(user.getUsername());
@@ -70,7 +67,7 @@ public class InMemoryRepoUserTest {
 
     @Test
     public void testDeleteUser() throws DataBaseException {
-        User user = new User(1, "bob", null, null, null);
+        User user = new User("bob", "dob", new Date(), null);
         userRepository.add(user);
 
         userRepository.remove(user);
@@ -80,13 +77,13 @@ public class InMemoryRepoUserTest {
 
     @Test
     public void testUpdateUser() throws DataBaseException {
-        User oldUser = new User(1, "bob", null, null, null);
-        User newUser = new User(1, "dob", null, null, null);
+        User oldUser = new User("bob", "dob", new Date(), null);
+        User newUser = new User("dob", "zob", new Date(), null);
 
         userRepository.add(oldUser);
         userRepository.update(oldUser, newUser);
 
-        User updatedUser = userRepository.findById(oldUser.getId());
+        User updatedUser = userRepository.findById((int) oldUser.getID());
 
         assertEquals(newUser, updatedUser);
     }

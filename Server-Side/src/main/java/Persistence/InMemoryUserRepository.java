@@ -3,7 +3,6 @@ package Persistence;
 import Entities.Exceptions.DataBaseException;
 import Entities.User.User;
 
-import javax.xml.crypto.Data;
 import java.util.Set;
 
 public class InMemoryUserRepository extends InMemoryRepositoryTemplate<User> {
@@ -14,11 +13,7 @@ public class InMemoryUserRepository extends InMemoryRepositoryTemplate<User> {
 
     public User findById(int id) {
         return getEntities().stream()
-<<<<<<< HEAD
-                .filter(user -> user.get() == id)
-=======
-                .filter(user -> user.getId() == id)
->>>>>>> main
+                .filter(user -> user.getID() == id)
                 .findFirst()
                 .orElse(null);
     }

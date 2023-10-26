@@ -7,9 +7,4 @@ public class ImageMessage extends MessageFactory {
     public ImageMessage(String content, User sender, User receiver) {
         super(content, sender, receiver);
     }
-
-    @Override
-    public String convertContentToText() {
-        return null;
-    }
 }
