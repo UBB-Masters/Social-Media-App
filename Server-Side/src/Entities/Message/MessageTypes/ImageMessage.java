@@ -1,7 +1,7 @@
 package Entities.Message.MessageTypes;
 
 import Entities.Message.MessageTemplate;
-import Entities.User;
+import Entities.User.User;
 
 public class ImageMessage extends MessageTemplate {
     public ImageMessage(String content, User sender, User receiver) {

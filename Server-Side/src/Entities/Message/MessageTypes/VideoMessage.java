@@ -1,7 +1,7 @@
 package Entities.Message.MessageTypes;
 
 import Entities.Message.MessageTemplate;
-import Entities.User;
+import Entities.User.User;
 
 public class VideoMessage extends MessageTemplate {
     public VideoMessage(String content, User sender, User receiver) {

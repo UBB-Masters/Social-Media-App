@@ -5,7 +5,7 @@ import Entities.Message.MessageTypes.AudioMessage;
 import Entities.Message.MessageTypes.ImageMessage;
 import Entities.Message.MessageTypes.TextMessage;
 import Entities.Message.MessageTypes.VideoMessage;
-import Entities.User;
+import Entities.User.User;
 
 public abstract class MessageTemplate {
     public String content;

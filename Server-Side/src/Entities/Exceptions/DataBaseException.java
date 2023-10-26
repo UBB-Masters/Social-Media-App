@@ -1,6 +1,6 @@
 package Entities.Exceptions;
 
-public class DataBaseException extends Exception {
+public class DataBaseException extends RuntimeException {
     public DataBaseException() {
         super("A database-related exception occurred.");
     }
