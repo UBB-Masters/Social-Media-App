@@ -10,7 +10,18 @@ public class User {
     private Date birthdate;
     private Email email;
 
-    public User(String username, String password, Date birthdate, Email email) {
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public User(int id, String username, String password, Date birthdate, Email email) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.birthdate = birthdate;
