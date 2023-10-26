@@ -5,14 +5,18 @@ import Entities.Message.MessageTypes.AudioMessage;
 import Entities.Message.MessageTypes.ImageMessage;
 import Entities.Message.MessageTypes.TextMessage;
 import Entities.Message.MessageTypes.VideoMessage;
+import Entities.Misc.IDGenerator;
 import Entities.User.User;
 
-public abstract class MessageTemplate {
-    public String content;
-    public User sender;
-    public User receiver;
+public class MessageFactory {
 
-    public MessageTemplate(String content, User sender, User receiver) {
+    protected final long ID;
+    protected String content;
+    protected User sender;
+    protected User receiver;
+
+    public MessageFactory(String content, User sender, User receiver) {
+        this.ID = IDGenerator.generateID(MessageFactory.class);
         this.content = content;
         this.sender = sender;
         this.receiver = receiver;
@@ -23,7 +27,7 @@ public abstract class MessageTemplate {
     }
 
     // Factory Method to create specific message types based on the MessageType enum
-    public static MessageTemplate createMessage(MessageType messageType, String content, User sender, User receiver) throws MessageException {
+    public static MessageFactory createMessage(MessageType messageType, String content, User sender, User receiver) throws MessageException {
         return switch (messageType) {
             case TEXT -> new TextMessage(content, sender, receiver);
             case IMAGE -> new ImageMessage(content, sender, receiver);
@@ -57,5 +61,13 @@ public abstract class MessageTemplate {
         this.receiver = receiver;
     }
 
-    public abstract String convertContentToText();
+    @Override
+    public String toString() {
+        return "MessageFactory{" +
+                "ID=" + ID +
+                ", content='" + content + '\'' +
+                ", sender=" + sender.toString() +
+                ", receiver=" + receiver.toString() +
+                '}';
+    }
 }
