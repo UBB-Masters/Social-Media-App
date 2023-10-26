@@ -1,37 +1,38 @@
-package RudimentaryDataBase;
+package Persistence;
 
 import Entities.Exceptions.DataBaseException;
 
 import java.util.Set;
 
-abstract class InMemoryRepositoryTemplate {
-    private Set<Object> entities;
+abstract class InMemoryRepositoryTemplate<T> {
+    private Set<T> entities;
 
-    public InMemoryRepositoryTemplate(Set<Object> entities) {
+    public InMemoryRepositoryTemplate(Set<T> entities) {
+
         this.entities = entities;
     }
 
-    public Set<Object> getEntities() {
+    public Set<T> getEntities() {
         return entities;
     }
 
-    public void setEntities(Set<Object> entities) {
+    public void setEntities(Set<T> entities) {
         this.entities = entities;
     }
 
-    private void addEntity(Object object) throws DataBaseException {
+    protected void addEntity(T object) throws DataBaseException {
         if (!entities.add(object)) {
             throw new DataBaseException("Object already exist in the repository");
         }
     }
 
-    private void removeEntity(Object object) throws DataBaseException {
+    protected void removeEntity(T object) throws DataBaseException {
         if (!entities.remove(object)) {
             throw new DataBaseException("Object does not exist in the repository");
         }
     }
 
-    private void updateEntity(Object oldObject, Object newObject) throws DataBaseException {
+    protected void updateEntity(T oldObject, T newObject) throws DataBaseException {
         try {
             entities.remove(oldObject);
             entities.add(newObject);
