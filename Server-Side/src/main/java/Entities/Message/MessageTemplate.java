@@ -5,14 +5,18 @@ import Entities.Message.MessageTypes.AudioMessage;
 import Entities.Message.MessageTypes.ImageMessage;
 import Entities.Message.MessageTypes.TextMessage;
 import Entities.Message.MessageTypes.VideoMessage;
+import Entities.Misc.IDGenerator;
 import Entities.User.User;
 
 public abstract class MessageTemplate {
-    public String content;
-    public User sender;
-    public User receiver;
+
+    protected final long ID;
+    protected String content;
+    protected User sender;
+    protected User receiver;
 
     public MessageTemplate(String content, User sender, User receiver) {
+        this.ID = IDGenerator.generateID(MessageTemplate.class);
         this.content = content;
         this.sender = sender;
         this.receiver = receiver;
