@@ -12,7 +12,17 @@ public class User {
     private Date birthdate;
     private Email email;
 
-    public User(String username, String password, Date birthdate, String email) {
+    private Visibility defaultVisibility;
+
+    public enum Visibility {
+        PRIVATE, FRIENDS, PUBLIC
+    }
+
+    public void setEmail(Email email) {
+        this.email = email;
+    }
+
+    public User(String username, String password, Date birthdate, String email, Visibility defaultVisibility) {
         this.ID = IDGenerator.generateID(User.class);
         this.username = username;
         this.password = password;
@@ -22,6 +32,7 @@ public class User {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
+        this.defaultVisibility = defaultVisibility;
     }
 
     @Override
@@ -33,6 +44,14 @@ public class User {
                 ", birthdate=" + birthdate +
                 ", email=" + email.getAddress() +
                 '}';
+    }
+
+    public Visibility getDefaultVisibility() {
+        return defaultVisibility;
+    }
+
+    public void setDefaultVisibility(Visibility defaultVisibility) {
+        this.defaultVisibility = defaultVisibility;
     }
 
     public long getID() {
