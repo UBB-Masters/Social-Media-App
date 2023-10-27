@@ -1,6 +1,7 @@
-package Entities.User;
+package Entities.UserActions;
 
 import Entities.Misc.IDGenerator;
+import Entities.User.User;
 
 public class Story {
     private final long ID;
