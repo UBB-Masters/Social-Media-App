@@ -46,6 +46,11 @@ public class User {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object other) {
+        return other.getClass() == this.getClass() && this.getID() == ((User) other).getID();
+    }
+
     public Visibility getDefaultVisibility() {
         return defaultVisibility;
     }

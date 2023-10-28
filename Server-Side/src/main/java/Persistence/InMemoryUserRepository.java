@@ -3,12 +3,13 @@ package Persistence;
 import Entities.Exceptions.DataBaseException;
 import Entities.User.User;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class InMemoryUserRepository extends InMemoryRepositoryTemplate<User> {
 
-    public InMemoryUserRepository(Set<User> entities) {
-        super(entities);
+    public InMemoryUserRepository() {
+        super(new HashSet<>());
     }
 
     public User findById(int id) {

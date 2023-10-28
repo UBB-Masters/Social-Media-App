@@ -15,4 +15,13 @@ public class InMemoryMessageRepository {
     public Set<MessageFactory> getMessages() {
         return messages;
     }
+
+    //method to add a message to the repository
+    public void addMessage(MessageFactory message) {
+        messages.add(message);
+    }
+
+    public void removeMessage(MessageFactory message) {
+        messages.remove(message);
+    }
 }
