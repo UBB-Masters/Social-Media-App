@@ -6,6 +6,7 @@ import Persistence.InMemoryMessageRepository;
 import Persistence.InMemoryUserRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ServerController {
     private final InMemoryUserRepository userRepository;
@@ -20,11 +21,11 @@ public class ServerController {
         userRepository.add(user);
     }
 
-    void removeUser(User user) {
+    public void removeUser(User user) {
         userRepository.remove(user);
     }
 
-    void updateUser(User oldUser, User newUser) {
+    public void updateUser(User oldUser, User newUser) {
         userRepository.update(oldUser, newUser);
     }
 
@@ -54,7 +55,12 @@ public class ServerController {
 
     //method that returns all users from the repo
 
-    public ArrayList<User> getAllUsers() {
+    public List<User> getAllUsers() {
         return new ArrayList<>(userRepository.getEntities());
+    }
+
+    public User removeUserByID(Integer id) {
+
+        return userRepository.removeUserById(id);
     }
 }

@@ -5,6 +5,9 @@ import Entities.User.User;
 import Persistence.InMemoryMessageRepository;
 import Persistence.InMemoryUserRepository;
 import Entities.Misc.Email;
+import io.vavr.API;
+import io.vavr.control.Option;
+import io.vavr.control.Try;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,7 +27,8 @@ public class ServerUI {
         int choice;
         do {
             displayMenu();
-            choice = scanner.nextInt();
+            Option<Integer> inputOption = readInput(scanner);
+            choice = inputOption.getOrElse(-1);
             scanner.nextLine(); // Consume new line
 
             switch (choice) {
@@ -32,11 +36,10 @@ public class ServerUI {
                     addUser(serverController, scanner);
                     break;
                 case 2:
-                    // Add more functionalities here based on your menu
-                    System.out.println("TODO");
+                    removeUser(serverController, scanner);
                     break;
                 case 3:
-                    // Add more functionalities here based on your menu
+                    updateUser(serverController, scanner);
                     break;
                 case 4:
                     displayAllUsers(serverController);
@@ -47,14 +50,20 @@ public class ServerUI {
                 default:
                     System.out.println("Invalid choice");
             }
+
         } while (choice != 5);
+    }
+
+    private static Option<Integer> readInput(Scanner scanner) {
+        System.out.println("Enter your choice:");
+        return Try.of(scanner::nextInt).toOption();
+
     }
 
     private static void displayAllUsers(ServerController serverController) {
         System.out.println("Printing all users:");
-        for (User user : serverController.getAllUsers()) {
-            System.out.println(user); // Assuming toString() in User class provides necessary information
-        }
+        serverController.getAllUsers()
+                .forEach(System.out::println); // Assuming toString() in User class provides necessary information
     }
 
     private static void addUser(ServerController serverController, Scanner scanner) {
@@ -65,38 +74,46 @@ public class ServerUI {
         String password = scanner.nextLine().trim();
 
         System.out.println("Enter birthdate (YYYY-MM-DD):");
-        String birthDateString = scanner.nextLine().trim();
-        Date birthDate = null;
-        try {
-            birthDate = new SimpleDateFormat("yyyy-MM-dd").parse(birthDateString);
-        } catch (ParseException e) {
-            System.out.println("Invalid date format!");
-            return;
-        }
+        Date birthDate = Try.of(() -> new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine().trim()))
+                .getOrElseThrow(() -> new RuntimeException("Invalid date format"));
 
         System.out.println("Enter email:");
         String email = scanner.nextLine().trim();
 
-        // Default visibility can be added similarly if needed
+        System.out.println("Enter visibility (PRIVATE, FRIENDS, PUBLIC):");
+        User.Visibility visibility = Try.of(() -> User.Visibility.valueOf(scanner.nextLine().trim().toUpperCase()))
+                .getOrElseThrow(() -> new RuntimeException("Invalid visibility"));
 
-        // Create a new user
-        User newUser = new User(username, password, birthDate, email, User.Visibility.PUBLIC);
+        User newUser = new User(username, password, birthDate, email, visibility);
 
-        // Add the user via the controller
-        serverController.addUser(newUser);
-        System.out.println("User added successfully!");
+        Try<Void> addUserAttempt = Try.run(() -> serverController.addUser(newUser));
+        addUserAttempt.onSuccess(ignore -> System.out.println("User added successfully!"))
+                .onFailure(error -> System.out.println("Failed to add user: " + error.getMessage()));
     }
+
+    private static void removeUser(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter ID of the user to remove:");
+        Option<Integer> idOption = readInput(scanner);
+        idOption.peek(id -> {
+            Try.of(() -> serverController.removeUserByID(id))
+                    .onSuccess(ignored -> System.out.println("User removed successfully!"))
+                    .onFailure(error -> System.out.println("Failed to remove user: " + error.getMessage()));
+        }).onEmpty(() -> System.out.println("Invalid ID"));
+    }
+
+    private static void updateUser(ServerController serverController, Scanner scanner) {
+        //TODO: Implement
+    }
+
+
+
 
     private static void displayMenu() {
         System.out.println("Choose an option:");
         System.out.println("1. Add User");
-        System.out.println("2. [To be implemented]");
+        System.out.println("2. Remove User");
         System.out.println("3. [To be implemented]");
         System.out.println("4. Retrieve all users");
         System.out.println("5. Exit");
     }
-
-
-
-
 }

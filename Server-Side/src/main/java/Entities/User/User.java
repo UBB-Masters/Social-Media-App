@@ -14,6 +14,7 @@ public class User {
 
     private Visibility defaultVisibility;
 
+
     public enum Visibility {
         PRIVATE, FRIENDS, PUBLIC
     }

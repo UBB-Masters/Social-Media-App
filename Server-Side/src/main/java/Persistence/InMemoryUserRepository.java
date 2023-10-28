@@ -4,7 +4,6 @@ import Entities.Exceptions.DataBaseException;
 import Entities.User.User;
 
 import java.util.HashSet;
-import java.util.Set;
 
 public class InMemoryUserRepository extends InMemoryRepositoryTemplate<User> {
 
@@ -37,4 +36,19 @@ public class InMemoryUserRepository extends InMemoryRepositoryTemplate<User> {
     public void update(User oldUser, User newUser) throws DataBaseException {
         updateEntity(oldUser, newUser);
     }
+
+    public User removeUserById(int id) throws DataBaseException {
+        User userToRemove = findById(id);
+        if (userToRemove != null) {
+            try {
+                removeEntity(userToRemove);
+            } catch (DataBaseException e) {
+                throw e;
+            }
+        } else {
+            throw new DataBaseException("User not found");
+        }
+        return userToRemove;
+    }
+
 }
