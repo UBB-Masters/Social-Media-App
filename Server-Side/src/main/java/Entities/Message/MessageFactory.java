@@ -27,13 +27,12 @@ public class MessageFactory {
     }
 
     // Factory Method to create specific message types based on the MessageType enum
-    public static MessageFactory createMessage(MessageType messageType, String content, User sender, User receiver) throws MessageException {
+    public static MessageFactory createMessage(MessageType messageType, String content, User sender, User receiver) {
         return switch (messageType) {
             case TEXT -> new TextMessage(content, sender, receiver);
             case IMAGE -> new ImageMessage(content, sender, receiver);
             case AUDIO -> new AudioMessage(content, sender, receiver);
             case VIDEO -> new VideoMessage(content, sender, receiver);
-            default -> throw new MessageException("Invalid Message Type provided");
         };
     }
 
