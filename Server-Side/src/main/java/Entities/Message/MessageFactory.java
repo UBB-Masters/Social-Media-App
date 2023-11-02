@@ -1,6 +1,5 @@
 package Entities.Message;
 
-import Entities.Exceptions.MessageException;
 import Entities.Message.MessageTypes.AudioMessage;
 import Entities.Message.MessageTypes.ImageMessage;
 import Entities.Message.MessageTypes.TextMessage;
