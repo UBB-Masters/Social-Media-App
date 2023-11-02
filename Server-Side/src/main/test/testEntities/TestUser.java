@@ -4,7 +4,10 @@
 //import Entities.User.User;
 //import org.junit.Before;
 //import org.junit.Test;
+//import org.junit.jupiter.api.BeforeEach;
 //
+//import java.text.ParseException;
+//import java.text.SimpleDateFormat;
 //import java.util.Date;
 //
 //import static org.junit.Assert.*;
@@ -12,70 +15,89 @@
 //public class TestUser {
 //    private User user;
 //
-//    @Before
+//    @BeforeEach
 //    public void setUp() {
-//        IDGenerator.resetCounters();
-//        user = new User("john_doe", "password123", new Date(), "john@example.com");
+//        String username = "testuser";
+//        String password = "testpassword";
+//        Date birthdate = new Date();
+//        String email = "test@example.com";
+//        User.Visibility defaultVisibility = User.Visibility.PUBLIC;
+//        user = new User(username, password, birthdate, email, defaultVisibility);
 //    }
 //
 //    @Test
 //    public void testGetID() {
-//        System.out.println(user.getID());
-//        assertEquals(1, user.getID());
+//        assertEquals(1, user.getID()); // Assuming ID generation starts at 1
 //    }
 //
 //    @Test
 //    public void testGetUsername() {
-//        assertEquals("john_doe", user.getUsername());
+//        assertEquals("testuser", user.getUsername());
 //    }
 //
 //    @Test
 //    public void testSetUsername() {
-//        user.setUsername("jane_doe");
-//        assertEquals("jane_doe", user.getUsername());
+//        user.setUsername("newusername");
+//        assertEquals("newusername", user.getUsername());
 //    }
 //
 //    @Test
 //    public void testGetPassword() {
-//        assertEquals("password123", user.getPassword());
+//        assertEquals("testpassword", user.getPassword());
 //    }
 //
 //    @Test
 //    public void testSetPassword() {
-//        user.setPassword("new_password");
-//        assertEquals("new_password", user.getPassword());
+//        user.setPassword("newpassword");
+//        assertEquals("newpassword", user.getPassword());
 //    }
 //
 //    @Test
-//    public void testGetBirthdate() {
-//        assertNotNull(user.getBirthdate());
+//    public void testGetBirthdate() throws ParseException {
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        Date expectedDate = dateFormat.parse(dateFormat.format(new Date()));
+//        assertEquals(expectedDate, user.getBirthdate());
 //    }
 //
 //    @Test
-//    public void testSetBirthdate() {
-//        Date newBirthdate = new Date();
-//        user.setBirthdate(newBirthdate);
-//        assertEquals(newBirthdate, user.getBirthdate());
+//    public void testSetBirthdate() throws ParseException {
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        Date newDate = dateFormat.parse("2000-01-01");
+//        user.setBirthdate(newDate);
+//        assertEquals(newDate, user.getBirthdate());
 //    }
 //
 //    @Test
 //    public void testGetEmail() {
-//        assertEquals("john@example.com", user.getEmail());
+//        assertEquals("test@example.com", user.getEmail());
 //    }
 //
 //    @Test
 //    public void testSetEmail() {
-//        user.setEmail("jane@example.com");
-//        assertEquals("jane@example.com", user.getEmail());
+//        user.setEmail("new@example.com");
+//        assertEquals("new@example.com", user.getEmail());
 //    }
 //
 //    @Test
-//    public void testInvalidEmail() {
-//        try {
-//            user.setEmail("invalid_email"); // Should throw an IllegalArgumentException
-//            fail("Setting an invalid email should throw an exception");
-//        } catch (IllegalArgumentException e) {
-//            assert true;
-//        }
+//    public void testGetDefaultVisibility() {
+//        assertEquals(User.Visibility.PUBLIC, user.getDefaultVisibility());
+//    }
+//
+//    @Test
+//    public void testSetDefaultVisibility() {
+//        user.setDefaultVisibility(User.Visibility.PRIVATE);
+//        assertEquals(User.Visibility.PRIVATE, user.getDefaultVisibility());
+//    }
+//
+//    @Test
+//    public void testEquals() {
+//        User otherUser = new User("testuser", "testpassword", new Date(), "test@example.com", User.Visibility.PUBLIC);
+//        assertEquals(user, otherUser);
+//    }
+//
+//    @Test
+//    public void testNotEquals() {
+//        User otherUser = new User("anotheruser", "testpassword", new Date(), "test@example.com", User.Visibility.PUBLIC);
+//        assertEquals(false, user.equals(otherUser));
 //    }
 //}

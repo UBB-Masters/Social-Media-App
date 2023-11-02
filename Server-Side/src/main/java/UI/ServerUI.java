@@ -102,8 +102,46 @@ public class ServerUI {
     }
 
     private static void updateUser(ServerController serverController, Scanner scanner) {
-        //TODO: Implement
+        System.out.println("Enter ID of the user to update:");
+        Option<Integer> idOption = readInput(scanner);
+
+        idOption.peek(id -> {
+            User user = serverController.getUserById(id);
+            if (user == null) {
+                System.out.println("User not found");
+                return;
+            }
+
+            // Clear the input buffer
+            scanner.nextLine();
+
+            System.out.println("Enter new username:");
+            String username = scanner.nextLine().trim();
+
+            System.out.println("Enter new password:");
+            String password = scanner.nextLine().trim();
+
+            System.out.println("Enter new birthdate (YYYY-MM-DD):");
+            Date birthDate = Try.of(() -> new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine().trim()))
+                    .getOrElseThrow(() -> new RuntimeException("Invalid date format"));
+
+            System.out.println("Enter new email:");
+            String email = scanner.nextLine().trim();
+
+            System.out.println("Enter new visibility (PRIVATE, FRIENDS, PUBLIC):");
+            User.Visibility visibility = Try.of(() -> User.Visibility.valueOf(scanner.nextLine().trim().toUpperCase()))
+                    .getOrElseThrow(() -> new RuntimeException("Invalid visibility"));
+
+            User newUser = new User(username, password, birthDate, email, visibility);
+
+            Try<Void> updateUserAttempt = Try.run(() -> serverController.updateUser(user, newUser));
+            updateUserAttempt.onSuccess(ignore -> System.out.println("User updated successfully!"))
+                    .onFailure(error -> System.out.println("Failed to update user: " + error.getMessage()));
+        }).onEmpty(() -> System.out.println("Invalid ID"));
     }
+
+
+
 
 
 
@@ -112,7 +150,7 @@ public class ServerUI {
         System.out.println("Choose an option:");
         System.out.println("1. Add User");
         System.out.println("2. Remove User");
-        System.out.println("3. [To be implemented]");
+        System.out.println("3. Update User");
         System.out.println("4. Retrieve all users");
         System.out.println("5. Exit");
     }
