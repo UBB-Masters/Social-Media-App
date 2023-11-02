@@ -1,22 +1,34 @@
 package Controller;
 
+import Entities.Exceptions.DataBaseException;
 import Entities.Message.MessageFactory;
 import Entities.User.User;
 import Persistence.InMemoryMessageRepository;
 import Persistence.InMemoryUserRepository;
+import Persistence.InMemoryEventRepository;
+import Events.Events;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServerController {
     private final InMemoryUserRepository userRepository;
     private final InMemoryMessageRepository memoryMessageRepository;
 
-    public ServerController(InMemoryUserRepository userRepository, InMemoryMessageRepository memoryMessageRepository) {
+    private final InMemoryEventRepository eventRepository;
+
+    private final static Logger LOGGER = Logger.getLogger(ServerController.class.getName());
+
+
+    public ServerController(
+            InMemoryUserRepository userRepository,
+            InMemoryMessageRepository memoryMessageRepository,
+            InMemoryEventRepository eventRepository
+    ) {
         this.userRepository = userRepository;
         this.memoryMessageRepository = memoryMessageRepository;
+        this.eventRepository = eventRepository;
     }
 
     public void addUser(User user) {
@@ -108,6 +120,91 @@ public class ServerController {
 
     public User removeUserByID(Long id) {
         return userRepository.removeUserById(id);
+    }
+
+
+    public void addEvent(Events event) {
+        try {
+            eventRepository.addEvent(event);
+        } catch (DataBaseException e) {
+            LOGGER.log(Level.SEVERE, "Exception while adding an event: " + e.getMessage(), e);
+        }
+    }
+
+    public void removeEvent(Events event) {
+        try {
+            eventRepository.removeEvent(event);
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Exception while removing an event: " + ex.getMessage(), ex);
+        }
+    }
+
+
+    public Set<User> getEventParticipants(Events event) {
+        return event.getParticipants();
+    }
+
+
+    public Set<Events> getAllEvents() {
+        return eventRepository.getAllEvents();
+    }
+
+    public Events getEventById(long id) {
+        return eventRepository.findEventByID(id);
+    }
+
+    public void addParticipantToEvent(Events event, User user) {
+        eventRepository.addParticipantToEvent(event, user);
+    }
+
+    public void addParticipantToEventById(long id, User user) {
+        eventRepository.addParticipantToEventById(id, user);
+    }
+
+    public void removeParticipantFromEvent(Events event, User user) {
+        eventRepository.removeParticipantFromEvent(event, user);
+    }
+
+    public void removeParticipantFromEventById(long id, User user) {
+        eventRepository.removeParticipantFromEventById(id, user);
+    }
+
+    public void addInterestedUserToEvent(Events event, User user) {
+        eventRepository.addInterestedUserToEvent(event, user);
+    }
+
+    public void addInterestedUserToEventById(long id, User user) {
+        eventRepository.addInterestedUserToEventById(id, user);
+    }
+
+    public void removeInterestedUserFromEvent(Events event, User user) {
+        eventRepository.removeInterestedUserFromEvent(event, user);
+    }
+
+    public void removeInterestedUserFromEventById(long id, User user) {
+        eventRepository.removeInterestedUserFromEventById(id, user);
+    }
+
+    public Events removeEventByID(Integer id) {
+        try {
+            eventRepository.removeEventById(id);
+        } catch (DataBaseException e) {
+            LOGGER.log(Level.SEVERE, "Exception while removing an event: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    public void updateEvent(Events oldEvent, Events newEvent) {
+        try {
+            eventRepository.updateEvent(oldEvent, newEvent);
+        } catch (DataBaseException e) {
+            LOGGER.log(Level.SEVERE, "Exception while updating an event: " + e.getMessage(), e);
+        }
+    }
+
+    public Events getEventByID(int eventId) {
+        // Logic to retrieve the event by ID
+        return eventRepository.findEventByID(eventId); // Example method call to retrieve the event from the repository
     }
 
 
