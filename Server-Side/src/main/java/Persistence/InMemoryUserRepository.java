@@ -18,6 +18,13 @@ public class InMemoryUserRepository extends InMemoryRepositoryTemplate<User> {
                 .orElse(null);
     }
 
+    public User findById(long id) {
+        return getEntities().stream()
+                .filter(user -> user.getID() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
     public User findByUsername(String username) {
         return getEntities().stream()
                 .filter(user -> user.getUsername().equals(username))
@@ -40,15 +47,20 @@ public class InMemoryUserRepository extends InMemoryRepositoryTemplate<User> {
     public User removeUserById(int id) throws DataBaseException {
         User userToRemove = findById(id);
         if (userToRemove != null) {
-            try {
-                removeEntity(userToRemove);
-            } catch (DataBaseException e) {
-                throw e;
-            }
+            removeEntity(userToRemove);
         } else {
             throw new DataBaseException("User not found");
         }
         return userToRemove;
     }
 
+    public User removeUserById(long id) throws DataBaseException {
+        User userToRemove = findById(id);
+        if (userToRemove != null) {
+            removeEntity(userToRemove);
+        } else {
+            throw new DataBaseException("User not found");
+        }
+        return userToRemove;
+    }
 }

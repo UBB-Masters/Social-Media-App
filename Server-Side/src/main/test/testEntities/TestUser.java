@@ -27,6 +27,16 @@ public class TestUser {
     }
 
     @Test
+    public void testConstructor() {
+        User userCopy = new User(user);
+        assertEquals(userCopy, user);
+        assertEquals(userCopy.getUsername(), user.getUsername());
+        assertEquals(userCopy.getPassword(), user.getPassword());
+        assertEquals(userCopy.getBirthdate(), user.getBirthdate());
+        assertEquals(userCopy.getDefaultVisibility(), user.getDefaultVisibility());
+    }
+
+    @Test
     public void testGetID() {
         assertEquals(1, user.getID());
     }

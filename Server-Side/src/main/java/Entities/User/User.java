@@ -14,6 +14,15 @@ public class User {
 
     private Visibility defaultVisibility;
 
+    public User(User user) {
+        this.ID = user.ID;
+        this.username = user.username;
+        this.password = user.password;
+        this.birthdate = user.birthdate;
+        this.email = user.email;
+        this.defaultVisibility = user.defaultVisibility;
+    }
+
 
     public enum Visibility {
         PRIVATE, FRIENDS, PUBLIC

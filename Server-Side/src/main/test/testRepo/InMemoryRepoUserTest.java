@@ -1,92 +1,77 @@
-//package main.test.testRepo;
-//
-//import Entities.Exceptions.DataBaseException;
-//import Entities.User.User;
-//import Persistence.InMemoryUserRepository;
-//import jdk.jfr.Name;
-//import org.junit.Before;
-//import org.junit.Test;
-//
-//import java.util.Date;
-//import java.util.HashSet;
-//import java.util.Set;
-//
-//import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertNull;
-//public class InMemoryRepoUserTest {
-//
-//    private InMemoryUserRepository userRepository;
-//
-//    @Before
-//    public void setUp() {
-//        Set<User> users = new HashSet<>();
-//        userRepository = new InMemoryUserRepository(users);
-//    }
-//
-//    @Test
-//    @Name("Test find user by id")
-//    public void testSaveUsers() throws DataBaseException {
-//        User user = new User("bob", "dob", new Date(), "dob.bob@gmail.com");
-//
-//        userRepository.add(user);
-//
-//        assertEquals(1, userRepository.getEntities().size());
-//        User savedUser = userRepository.getEntities().iterator().next();
-//        assertEquals(user, savedUser);
-//
-//    }
-//
-//    @Test
-//    @Name("Test find user by id")
-//    public void testFindUserById() throws DataBaseException {
-//        User user = new User("bob", "dob", new Date(), "dob.bob@gmail.com");
-//        userRepository.add(user);
-//
-//        User found = userRepository.findById((int) user.getID());
-//
-//        assertEquals(user, found);
-//    }
-//
-//    @Test
-//    @Name("Test find user by username")
-//    public void testFindUserByUsername() throws DataBaseException {
-//        User user = new User("bob", "dob", new Date(), "dob.bob@gmail.com");
-//        userRepository.add(user);
-//
-//        User found = userRepository.findByUsername(user.getUsername());
-//
-//        assertEquals(user, found);
-//    }
-//
-//    @Test
-//    public void testFindUserByUsernameNotFound() {
-//        User foundUser = userRepository.findByUsername("non_existent_user");
-//
-//        assertNull(foundUser);
-//    }
-//
-//    @Test
-//    public void testDeleteUser() throws DataBaseException {
-//        User user = new User("bob", "dob", new Date(), "bob.dob@gmail.com");
-//        userRepository.add(user);
-//
-//        userRepository.remove(user);
-//
-//        assertEquals(0, userRepository.getEntities().size());
-//    }
-//
-//    @Test
-//    public void testUpdateUser() throws DataBaseException {
-//        User oldUser = new User("bob", "dob", new Date(), "dob.dob@gmail.com");
-//        User newUser = new User("dob", "zob", new Date(), "dob.zob@gmail.com");
-//
-//        userRepository.add(oldUser);
-//        userRepository.update(oldUser, newUser);
-//
-//        User updatedUser = userRepository.findById((int) newUser.getID());
-//
-//        assertEquals(newUser, updatedUser);
-//    }
-//
-//
-//}
+package main.test.testRepo;
+
+import Entities.Exceptions.DataBaseException;
+import Entities.User.User;
+import Persistence.InMemoryUserRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class InMemoryRepoUserTest {
+    private InMemoryUserRepository userRepository;
+    private User testUser1;
+    private User testUser2;
+
+    @BeforeEach
+    public void setUp() {
+        userRepository = new InMemoryUserRepository();
+
+        // Create some test users
+        testUser1 = new User("user1", "password1", null, "user1@example.com", User.Visibility.PUBLIC);
+        testUser2 = new User("user2", "password2", null, "user2@example.com", User.Visibility.PUBLIC);
+
+        userRepository.add(testUser1);
+        userRepository.add(testUser2);
+    }
+
+    @Test
+    public void testFindById() {
+        User foundUser = userRepository.findById(testUser1.getID());
+        assertEquals(testUser1, foundUser);
+    }
+
+    @Test
+    public void testFindByUsername() {
+        User foundUser = userRepository.findByUsername("user2");
+        assertEquals(testUser2, foundUser);
+    }
+
+    @Test
+    public void testAddUser() throws DataBaseException {
+        User newUser = new User("user3", "password3", null, "user3@example.com", User.Visibility.PUBLIC);
+        userRepository.add(newUser);
+
+        User foundUser = userRepository.findById(newUser.getID());
+        assertEquals(newUser, foundUser);
+    }
+
+    @Test
+    public void testRemoveUser() throws DataBaseException {
+        userRepository.remove(testUser1);
+
+        User foundUser = userRepository.findById(testUser1.getID());
+        assertNull(foundUser);
+    }
+
+    @Test
+    public void testUpdateUser() throws DataBaseException {
+        User updatedUser1 = new User(testUser1);
+        updatedUser1.setUsername("newUsername");
+
+        userRepository.update(testUser1, updatedUser1);
+
+        User foundUser = userRepository.findById(testUser1.getID());
+        assertEquals(updatedUser1, foundUser);
+    }
+
+    @Test
+    public void testRemoveUserById() throws DataBaseException {
+        long userId = testUser1.getID();
+        User removedUser = userRepository.removeUserById(userId);
+
+        assertEquals(testUser1, removedUser);
+        assertNull(userRepository.findById(userId));
+    }
+}
