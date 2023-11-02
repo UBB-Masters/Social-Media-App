@@ -1,4 +1,4 @@
-package main.test.testEntities;
+package main.test.testEntities.Messages;
 
 import Entities.Exceptions.MessageException;
 import Entities.Message.MessageFactory;
@@ -15,7 +15,7 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestMessage {
+public class TestMessageTemplate {
     private User sender;
     private User receiver;
 
@@ -28,7 +28,7 @@ public class TestMessage {
     @Test
     public void testCreateTextMessage() throws MessageException {
         MessageFactory message = MessageFactory.createMessage(MessageFactory.MessageType.TEXT, "Hello, World!", sender, receiver);
-        assertEquals("Hello, World!", message.getContent());
+        assertEquals("Hello, World!", message.getDescription());
         assertEquals(sender, message.getSender());
         assertEquals(receiver, message.getReceiver());
         assertTrue(message instanceof TextMessage);
@@ -37,7 +37,7 @@ public class TestMessage {
     @Test
     public void testCreateImageMessage() throws MessageException {
         MessageFactory message = MessageFactory.createMessage(MessageFactory.MessageType.IMAGE, "image.jpg", sender, receiver);
-        assertEquals("image.jpg", message.getContent());
+        assertEquals("image.jpg", message.getDescription());
         assertEquals(sender, message.getSender());
         assertEquals(receiver, message.getReceiver());
         assertTrue(message instanceof ImageMessage);
@@ -46,7 +46,7 @@ public class TestMessage {
     @Test
     public void testCreateAudioMessage() throws MessageException {
         MessageFactory message = MessageFactory.createMessage(MessageFactory.MessageType.AUDIO, "audio.mp3", sender, receiver);
-        assertEquals("audio.mp3", message.getContent());
+        assertEquals("audio.mp3", message.getDescription());
         assertEquals(sender, message.getSender());
         assertEquals(receiver, message.getReceiver());
         assertTrue(message instanceof AudioMessage);
@@ -55,7 +55,7 @@ public class TestMessage {
     @Test
     public void testCreateVideoMessage() throws MessageException {
         MessageFactory message = MessageFactory.createMessage(MessageFactory.MessageType.VIDEO, "video.mp4", sender, receiver);
-        assertEquals("video.mp4", message.getContent());
+        assertEquals("video.mp4", message.getDescription());
         assertEquals(sender, message.getSender());
         assertEquals(receiver, message.getReceiver());
         assertTrue(message instanceof VideoMessage);
@@ -65,8 +65,8 @@ public class TestMessage {
     public void testGettersAndSetters() throws MessageException {
         MessageFactory message = MessageFactory.createMessage(MessageFactory.MessageType.TEXT, "Hello, World!", sender, receiver);
 
-        message.setContent("New content");
-        assertEquals("New content", message.getContent());
+        message.setDescription("New content");
+        assertEquals("New content", message.getDescription());
 
         User newSender = new User("newSender", "newSenderPassword", new Date(), "newSender@example.com", User.Visibility.PUBLIC);
         message.setSender(newSender);
