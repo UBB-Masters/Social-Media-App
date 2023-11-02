@@ -1,6 +1,7 @@
 package UI;
 
 import Controller.ServerController;
+import Entities.Message.MessageFactory;
 import Entities.User.User;
 import Persistence.InMemoryMessageRepository;
 import Persistence.InMemoryUserRepository;
@@ -11,6 +12,7 @@ import io.vavr.control.Try;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -45,13 +47,19 @@ public class ServerUI {
                     displayAllUsers(serverController);
                     break;
                 case 5:
-                    System.out.println("Exiting");
+                    sendMessage(serverController, scanner); // Option to send a message
+                    break;
+                case 6:
+                    displaySentMessages(serverController, scanner); // Option to see all sent messages
+                    break;
+                case 7:
+                    System.out.println("Exiting...");
                     break;
                 default:
                     System.out.println("Invalid choice");
             }
 
-        } while (choice != 5);
+        } while (choice != 7);
     }
 
     private static Option<Integer> readInput(Scanner scanner) {
@@ -140,7 +148,67 @@ public class ServerUI {
         }).onEmpty(() -> System.out.println("Invalid ID"));
     }
 
+    private static void sendMessage(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter sender ID:");
+        Option<Integer> senderIdOption = readInput(scanner);
+        System.out.println("Enter receiver ID:");
+        Option<Integer> receiverIdOption = readInput(scanner);
 
+        String message = null;
+        User sender;
+        User receiver;
+
+        if (senderIdOption.isDefined() && receiverIdOption.isDefined()) {
+            sender = serverController.getUserById(senderIdOption.get());
+            receiver = serverController.getUserById(receiverIdOption.get());
+
+            if (sender != null && receiver != null) {
+                scanner.nextLine();
+                System.out.println("Enter the message:");
+                Option<String> messageOption = readMessageInput(scanner);
+                if (messageOption.isDefined()) {
+                    message = messageOption.get();
+                    serverController.sendMessage(sender, receiver, message);
+                    System.out.println("Message sent successfully!");
+                } else {
+                    System.out.println("Invalid message");
+                }
+            } else {
+                System.out.println("Invalid sender or receiver ID");
+            }
+        } else {
+            System.out.println("Invalid input for sender or receiver ID");
+        }
+    }
+
+    private static Option<String> readMessageInput(Scanner scanner) {
+        String message = scanner.nextLine().trim();
+        return Option.of(message);
+    }
+
+
+    private static void displaySentMessages(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter sender ID:");
+        Option<Integer> senderIdOption = readInput(scanner);
+
+        if (senderIdOption.isDefined()) {
+            User sender = serverController.getUserById(senderIdOption.get());
+
+            if (sender != null) {
+                ArrayList<MessageFactory> sentMessages = serverController.getSentMessages(sender);
+                if (!sentMessages.isEmpty()) {
+                    System.out.println("Messages sent by " + sender.getUsername() + ":");
+                    sentMessages.forEach(System.out::println);
+                } else {
+                    System.out.println("No messages found for " + sender.getUsername());
+                }
+            } else {
+                System.out.println("Invalid sender ID");
+            }
+        } else {
+            System.out.println("Invalid input for sender ID");
+        }
+    }
 
 
 
@@ -152,6 +220,8 @@ public class ServerUI {
         System.out.println("2. Remove User");
         System.out.println("3. Update User");
         System.out.println("4. Retrieve all users");
-        System.out.println("5. Exit");
+        System.out.println("5. Send a message");
+        System.out.println("6. See all your sent messages");
+        System.out.println("7. Exit");
     }
 }

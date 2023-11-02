@@ -75,6 +75,20 @@ public class ServerController {
         return userMessages;
     }
 
+
+    public ArrayList<MessageFactory> getSentMessages(User sender) {
+        ArrayList<MessageFactory> sentMessages = new ArrayList<>();
+
+        for (MessageFactory message : memoryMessageRepository.getMessages()) {
+            if (message.getSender().equals(sender)) {
+                sentMessages.add(message);
+            }
+        }
+
+        return sentMessages;
+    }
+
+
     public User getUserById(int userId) {
         return userRepository.findById(userId);
     }
@@ -95,4 +109,6 @@ public class ServerController {
     public User removeUserByID(Long id) {
         return userRepository.removeUserById(id);
     }
+
+
 }
