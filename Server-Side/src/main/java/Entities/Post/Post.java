@@ -14,7 +14,7 @@ public class Post {
     private final ArrayList<Comment> comments;
     private final ArrayList<Reaction> reactions;
 
-    public Post(long postId, long userId, String content, Date timestamp) {
+    public Post(long userId, String content, Date timestamp) {
         this.postId = IDGenerator.generateID(Entities.Post.Post.class);
         this.userId = userId;
         this.content = content;
