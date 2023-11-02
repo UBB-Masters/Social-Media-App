@@ -11,8 +11,8 @@ public class User {
     private String password;
     private Date birthdate;
     private Email email;
-
     private Visibility defaultVisibility;
+    private ProfilePicture profilePicture;
 
     public User(User user) {
         this.ID = user.ID;
@@ -21,15 +21,11 @@ public class User {
         this.birthdate = user.birthdate;
         this.email = user.email;
         this.defaultVisibility = user.defaultVisibility;
+        this.profilePicture = new ProfilePicture();
     }
-
 
     public enum Visibility {
         PRIVATE, FRIENDS, PUBLIC
-    }
-
-    public void setEmail(Email email) {
-        this.email = email;
     }
 
     public User(String username, String password, Date birthdate, String email, Visibility defaultVisibility) {
@@ -43,6 +39,7 @@ public class User {
             throw new IllegalArgumentException(e.getMessage());
         }
         this.defaultVisibility = defaultVisibility;
+        this.profilePicture = new ProfilePicture();
     }
 
     @Override
@@ -52,7 +49,9 @@ public class User {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", birthdate=" + birthdate +
-                ", email=" + email.getAddress() +
+                ", email=" + email +
+                ", defaultVisibility=" + defaultVisibility +
+                ", profilePicture=" + profilePicture +
                 '}';
     }
 
@@ -107,5 +106,17 @@ public class User {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
+    }
+
+    public void setEmail(Email email) {
+        this.email = email;
+    }
+
+    public ProfilePicture getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(ProfilePicture profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

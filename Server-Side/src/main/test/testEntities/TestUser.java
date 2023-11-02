@@ -1,6 +1,7 @@
 package main.test.testEntities;
 
 import Entities.Misc.IDGenerator;
+import Entities.User.ProfilePicture;
 import Entities.User.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -128,4 +129,45 @@ public class TestUser {
         User otherUser = new User("anotheruser", "testpassword", new Date(), "test@example.com", User.Visibility.PUBLIC);
         assertNotEquals(user, otherUser);
     }
+
+    @Test
+    public void testProfilePictureNotNull() {
+        assertNotNull(user.getProfilePicture());
+    }
+
+    @Test
+    public void testProfilePictureFileName() {
+        ProfilePicture profilePicture = user.getProfilePicture();
+        assertEquals("default", profilePicture.getPictureFileName());
+    }
+
+    @Test
+    public void testSetProfilePicture() {
+        ProfilePicture newProfilePicture = new ProfilePicture("new_picture.jpg");
+        user.setProfilePicture(newProfilePicture);
+        assertEquals(newProfilePicture, user.getProfilePicture());
+    }
+
+    @Test
+    public void testSetProfilePictureFailure() {
+        ProfilePicture originalProfilePicture = user.getProfilePicture();
+        ProfilePicture newProfilePicture = new ProfilePicture("new_picture.jpg");
+        user.setProfilePicture(newProfilePicture);
+        assertNotEquals(originalProfilePicture, user.getProfilePicture());
+    }
+
+    @Test
+    public void testSetProfilePictureNull() {
+        ProfilePicture originalProfilePicture = user.getProfilePicture();
+        user.setProfilePicture(null);
+        assertNotEquals(originalProfilePicture, user.getProfilePicture());
+    }
+
+    @Test
+    public void testSetProfilePictureNullFailure() {
+        ProfilePicture originalProfilePicture = user.getProfilePicture();
+        user.setProfilePicture(null);
+        assertNotEquals(originalProfilePicture, user.getProfilePicture());
+    }
+
 }
