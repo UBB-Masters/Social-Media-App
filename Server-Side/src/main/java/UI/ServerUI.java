@@ -2,9 +2,14 @@ package UI;
 
 import Controller.ServerController;
 import Entities.Message.MessageFactory;
+import Entities.Post.Comment;
+import Entities.Post.Hashtag;
+import Entities.Post.Post;
+import Entities.Post.Reaction;
 import Entities.User.User;
 import Persistence.InMemoryEventRepository;
 import Persistence.InMemoryMessageRepository;
+import Persistence.InMemoryPostRepository;
 import Persistence.InMemoryUserRepository;
 import Events.Events;
 import Entities.Misc.Email;
@@ -14,10 +19,7 @@ import io.vavr.control.Try;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class ServerUI {
 
@@ -26,10 +28,17 @@ public class ServerUI {
         ServerController serverController = new ServerController(
                 new InMemoryUserRepository(),
                 new InMemoryMessageRepository(),
-                new InMemoryEventRepository()
+                new InMemoryEventRepository(),
+                new InMemoryPostRepository()
         );
 
         Scanner scanner = new Scanner(System.in);
+
+        User user1 = new User("user1", "password1", new Date(), "user1@gmail.com", User.Visibility.PUBLIC);
+        User user2 = new User("user2", "password2", new Date(), "user2@gmail.com", User.Visibility.PUBLIC);
+
+        serverController.addUser(user1);
+        serverController.addUser(user2);
 
         int choice;
         do {
@@ -54,7 +63,6 @@ public class ServerUI {
 
         } while (choice != 3);
     }
-
 
 
     private static void userOperations(ServerController serverController, Scanner scanner) {
@@ -88,6 +96,9 @@ public class ServerUI {
                     participateInEvent(serverController, scanner);
                     break;
                 case 8:
+                    postOperations(serverController, scanner);
+                    break;
+                case 9:
                     System.out.println("Going back to the main menu...");
                     return; // Exit the method to go back
                 default:
@@ -134,6 +145,52 @@ public class ServerUI {
         } while (choice != 7);
     }
 
+
+    private static void postOperations(ServerController serverController, Scanner scanner) {
+        int choice;
+        do {
+            displayPostMenu();
+            Option<Integer> inputOption = readInput(scanner);
+            choice = inputOption.getOrElse(-1);
+            scanner.nextLine(); // Consume new line
+
+            switch (choice) {
+                case 1:
+                    createPost(serverController, scanner);
+                    break;
+                case 2:
+                    addCommentToPost(serverController, scanner);
+                    break;
+                case 3:
+                    reactToPost(serverController, scanner);
+                    break;
+                case 4:
+                    addHashtagToPost(serverController, scanner);
+                    break;
+                case 5:
+                    removeHashtagFromPost(serverController, scanner);
+                    break;
+                case 6:
+                    displayAllPosts(serverController);
+                    break;
+                case 7:
+                    displayUserPosts(serverController, scanner);
+                    break;
+                case 8:
+                    addCommentToAnotherUserPost(serverController, scanner);
+                    break;
+                case 9:
+                    reactToAnotherUserPost(serverController, scanner);
+                    break;
+                case 10:
+                    System.out.println("Going back to the main menu...");
+                    return; // Exit the method to go back
+                default:
+                    System.out.println("Invalid choice");
+            }
+        } while (choice != 8);
+    }
+
     private static void displayMainMenu() {
         System.out.println("Choose an option:");
         System.out.println("1. User Operations");
@@ -150,7 +207,8 @@ public class ServerUI {
         System.out.println("5. Send a message");
         System.out.println("6. See all your sent messages");
         System.out.println("7. Participate in events");
-        System.out.println("8. Go back to main menu");
+        System.out.println("8. Manage your posts");
+        System.out.println("9. Go back to main menu");
     }
 
     private static void displayEventMenu() {
@@ -163,6 +221,22 @@ public class ServerUI {
         System.out.println("6. See interested users that are not participating in the event");
         System.out.println("7. Go back to main menu");
     }
+
+
+    private static void displayPostMenu() {
+        System.out.println("Post Operations:");
+        System.out.println("1. Create a Post");
+        System.out.println("2. Add a Comment to a Post");
+        System.out.println("3. React to a Post");
+        System.out.println("4. Add Hashtag to a Post");
+        System.out.println("5. Remove Hashtag from a Post");
+        System.out.println("6. Display All Posts");
+        System.out.println("7. Display User's Posts");
+        System.out.println("8. Comment to another post");
+        System.out.println("9. React to another post");
+        System.out.println("10. Go back to User Operations");
+    }
+
 
     private static Option<Integer> readInput(Scanner scanner) {
         System.out.println("Enter your choice:");
@@ -480,4 +554,216 @@ public class ServerUI {
         }
     }
 
+
+    private static void createPost(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter your ID:");
+        Option<Integer> userIdOption = readInput(scanner);
+
+        if (userIdOption.isDefined()) {
+            User user = serverController.getUserById(userIdOption.get());
+
+            if (user != null) {
+                System.out.println("Enter post content:");
+                // Clear the input buffer
+                scanner.nextLine();
+                String content = scanner.nextLine().trim();
+
+                serverController.createPost(user, content);
+                System.out.println("Post created successfully!");
+            } else {
+                System.out.println("Invalid user ID");
+            }
+        } else {
+            System.out.println("Invalid input for user ID");
+        }
+    }
+
+    // UI method to add a comment to a post
+    private static void addCommentToPost(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter Post ID:");
+        Option<Integer> postIdOption = readInput(scanner);
+
+        if (postIdOption.isDefined()) {
+            long postId = postIdOption.get();
+            Post post = serverController.getPostById(postId);
+
+            if (post != null) {
+                System.out.println("Enter your comment:");
+                scanner.nextLine();
+                String commentText = scanner.nextLine().trim();
+
+                Comment comment = new Comment(postId, commentText, new Date(), 123); // replace 123 with actual user ID
+                serverController.addCommentToPost(post, comment);
+                System.out.println("Comment added to the post!");
+            } else {
+                System.out.println("Post not found.");
+            }
+        } else {
+            System.out.println("Invalid Post ID");
+        }
+    }
+
+    // UI method to react to a post
+    private static void reactToPost(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter Post ID:");
+        Option<Integer> postIdOption = readInput(scanner);
+
+        if (postIdOption.isDefined()) {
+            long postId = postIdOption.get();
+            Post post = serverController.getPostById(postId);
+
+            if (post != null) {
+                System.out.println("Enter reaction (Like, Love, Haha, Wow, Sad, Angry):");
+                scanner.nextLine();
+                String reactionType = scanner.nextLine().trim();
+
+                Reaction reaction = new Reaction(123, reactionType); // replace 123 with actual user ID
+                serverController.reactToPost(post, reaction);
+                System.out.println("Reacted to the post!");
+            } else {
+                System.out.println("Post not found.");
+            }
+        } else {
+            System.out.println("Invalid Post ID");
+        }
+    }
+
+    // UI method to add a hashtag to a post
+    private static void addHashtagToPost(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter Post ID:");
+        Option<Integer> postIdOption = readInput(scanner);
+
+        if (postIdOption.isDefined()) {
+            long postId = postIdOption.get();
+            Post post = serverController.getPostById(postId);
+
+            if (post != null) {
+                System.out.println("Enter hashtag:");
+                scanner.nextLine();
+                String hashtagText = scanner.nextLine().trim();
+
+                Hashtag hashtag = new Hashtag(hashtagText);
+                serverController.addHashtagToPost(post, hashtag);
+                System.out.println("Hashtag added to the post!");
+            } else {
+                System.out.println("Post not found.");
+            }
+        } else {
+            System.out.println("Invalid Post ID");
+        }
+    }
+
+    // UI method to remove a hashtag from a post
+    private static void removeHashtagFromPost(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter Post ID:");
+        Option<Integer> postIdOption = readInput(scanner);
+
+        if (postIdOption.isDefined()) {
+            long postId = postIdOption.get();
+            Post post = serverController.getPostById(postId);
+
+            if (post != null) {
+                System.out.println("Enter hashtag to remove:");
+                scanner.nextLine();
+                String hashtagText = scanner.nextLine().trim();
+
+                Hashtag hashtagToRemove = new Hashtag(hashtagText);
+                serverController.removeHashtagFromPost(post, hashtagToRemove);
+                System.out.println("Hashtag removed from the post!");
+            } else {
+                System.out.println("Post not found.");
+            }
+        } else {
+            System.out.println("Invalid Post ID");
+        }
+    }
+
+    // UI method to display all posts
+    private static void displayAllPosts(ServerController serverController) {
+        List<Post> allPosts = serverController.getAllPosts();
+
+        if (!allPosts.isEmpty()) {
+            System.out.println("All Posts:");
+            allPosts.forEach(System.out::println);
+        } else {
+            System.out.println("No posts found.");
+        }
+    }
+
+    // UI method to display posts by a specific user
+    private static void displayUserPosts(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter User ID:");
+        Option<Integer> userIdOption = readInput(scanner);
+
+        if (userIdOption.isDefined()) {
+            long userId = userIdOption.get();
+            User user = serverController.getUserById(userId);
+
+            if (user != null) {
+                List<Post> userPosts = serverController.getPostsByUser(user);
+
+                if (!userPosts.isEmpty()) {
+                    System.out.println("Posts by " + user.getUsername() + ":");
+                    userPosts.forEach(System.out::println);
+                } else {
+                    System.out.println("No posts found for " + user.getUsername());
+                }
+            } else {
+                System.out.println("User not found.");
+            }
+        } else {
+            System.out.println("Invalid User ID");
+        }
+    }
+
+
+    // UI method to add a comment to another user's post
+    private static void addCommentToAnotherUserPost(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter the Post ID of the user's post you want to comment on:");
+        Option<Integer> postIdOption = readInput(scanner);
+
+        if (postIdOption.isDefined()) {
+            long postId = postIdOption.get();
+            Post post = serverController.getPostById(postId);
+
+            if (post != null) {
+                System.out.println("Enter your comment:");
+                scanner.nextLine();
+                String commentText = scanner.nextLine().trim();
+
+                Comment comment = new Comment(postId, commentText, new Date(), 123); // Replace 123 with the actual user ID
+                serverController.addCommentToPost(post, comment);
+                System.out.println("Comment added to the post!");
+            } else {
+                System.out.println("Post not found.");
+            }
+        } else {
+            System.out.println("Invalid Post ID");
+        }
+    }
+
+    // UI method to react to another user's post
+    private static void reactToAnotherUserPost(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter the Post ID of the user's post you want to react to:");
+        Option<Integer> postIdOption = readInput(scanner);
+
+        if (postIdOption.isDefined()) {
+            long postId = postIdOption.get();
+            Post post = serverController.getPostById(postId);
+
+            if (post != null) {
+                System.out.println("Enter reaction (Like, Love, Haha, Wow, Sad, Angry):");
+                scanner.nextLine();
+                String reactionType = scanner.nextLine().trim();
+
+                Reaction reaction = new Reaction(123, reactionType); // Replace 123 with the actual user ID
+                serverController.reactToPost(post, reaction);
+                System.out.println("Reacted to the post!");
+            } else {
+                System.out.println("Post not found.");
+            }
+        } else {
+            System.out.println("Invalid Post ID");
+        }
+    }
 }

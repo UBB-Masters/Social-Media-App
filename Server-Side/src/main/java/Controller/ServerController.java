@@ -2,8 +2,13 @@ package Controller;
 
 import Entities.Exceptions.DataBaseException;
 import Entities.Message.MessageFactory;
+import Entities.Post.Comment;
+import Entities.Post.Hashtag;
+import Entities.Post.Post;
+import Entities.Post.Reaction;
 import Entities.User.User;
 import Persistence.InMemoryMessageRepository;
+import Persistence.InMemoryPostRepository;
 import Persistence.InMemoryUserRepository;
 import Persistence.InMemoryEventRepository;
 import Events.Events;
@@ -18,17 +23,21 @@ public class ServerController {
 
     private final InMemoryEventRepository eventRepository;
 
+    private final InMemoryPostRepository postRepository;
+
     private final static Logger LOGGER = Logger.getLogger(ServerController.class.getName());
 
 
     public ServerController(
             InMemoryUserRepository userRepository,
             InMemoryMessageRepository memoryMessageRepository,
-            InMemoryEventRepository eventRepository
+            InMemoryEventRepository eventRepository,
+            InMemoryPostRepository postRepository
     ) {
         this.userRepository = userRepository;
         this.memoryMessageRepository = memoryMessageRepository;
         this.eventRepository = eventRepository;
+        this.postRepository = postRepository;
     }
 
     public void addUser(User user) {
@@ -226,6 +235,45 @@ public class ServerController {
         return interestedButNotParticipating;
     }
 
+
+    public void createPost(User user, String content) {
+        Post newPost = new Post(user.getID(), content, new Date());
+        postRepository.addPost(newPost);
+    }
+
+    public void addCommentToPost(Post post, Comment comment) {
+        post.addComment(comment);
+        postRepository.updatePost(post);
+    }
+
+    public void reactToPost(Post post, Reaction reaction) {
+        post.addReaction(reaction);
+        postRepository.updatePost(post);
+    }
+
+    public void addHashtagToPost(Post post, Hashtag hashtag) {
+        post.addHashtag(hashtag);
+        postRepository.updatePost(post);
+    }
+
+    public void removeHashtagFromPost(Post post, Hashtag hashtag) {
+        post.removeHashtag(hashtag);
+        postRepository.updatePost(post);
+    }
+
+    public List<Post> getAllPosts() {
+        return postRepository.getAllPosts();
+    }
+
+    public List<Post> getPostsByUser(User user) {
+        return postRepository.getPostsByUserId(user.getID());
+    }
+
+    public Post getPostById(long postId) {
+        return postRepository.getPostById(postId);
+    }
+
+   //get hashtag by id
 
 
 }
