@@ -13,6 +13,7 @@ public class Post {
     private Date timestamp;
     private final ArrayList<Comment> comments;
     private final ArrayList<Reaction> reactions;
+    private final List<Hashtag> hashtags;
 
     public Post(long userId, String content, Date timestamp) {
         this.postId = IDGenerator.generateID(Entities.Post.Post.class);
@@ -21,6 +22,7 @@ public class Post {
         this.timestamp = timestamp;
         this.comments = new ArrayList<>();
         this.reactions = new ArrayList<>();
+        this.hashtags = new ArrayList<>();
     }
 
     public long getPostId() {
@@ -67,6 +69,23 @@ public class Post {
         reactions.add(reaction);
     }
 
+    // Add a hashtag to the list of hashtags associated with this post
+    public void addHashtag(Hashtag hashtag) {
+        hashtags.add(hashtag);
+        hashtag.addPost(this);
+    }
+
+    // Remove a hashtag from the list of hashtags associated with this post
+    public void removeHashtag(Hashtag hashtag) {
+        hashtags.remove(hashtag);
+        hashtag.removePost(this);
+    }
+
+    // Get the list of hashtags associated with this post
+    public List<Hashtag> getHashtags() {
+        return hashtags;
+    }
+
     @Override
     public String toString() {
         return "Post{" +
@@ -76,6 +95,7 @@ public class Post {
                 ", timestamp=" + timestamp +
                 ", comments=" + comments.size() +
                 ", reactions=" + reactions.size() +
+                ", hashtags=" + hashtags.size() +
                 '}';
     }
 }
