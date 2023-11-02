@@ -7,9 +7,19 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ImageMessage extends MessageFactory {
     private String pictureFileName;
+
+    public ImageMessage(String description, User sender, ArrayList<User> receiver) {
+        super(description, sender, receiver);
+    }
+
+    public ImageMessage(String description, User sender, ArrayList<User> receiver, String pictureFileName) {
+        super(description, sender, receiver);
+        this.pictureFileName = pictureFileName;
+    }
 
     public ImageMessage(String description, User sender, User receiver) {
         super(description, sender, receiver);

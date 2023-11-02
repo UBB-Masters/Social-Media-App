@@ -7,14 +7,24 @@ import Entities.Message.MessageTypes.VideoMessage;
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
 
+import java.util.ArrayList;
+
 public class MessageFactory {
 
     protected final long ID;
     protected String description;
     protected User sender;
-    protected User receiver;
+    protected ArrayList<User> receiver;
 
     public MessageFactory(String description, User sender, User receiver) {
+        this.ID = IDGenerator.generateID(MessageFactory.class);
+        this.description = description;
+        this.sender = sender;
+        this.receiver = new ArrayList<>();
+        this.receiver.add(receiver);
+    }
+
+    public MessageFactory(String description, User sender, ArrayList<User> receiver) {
         this.ID = IDGenerator.generateID(MessageFactory.class);
         this.description = description;
         this.sender = sender;
@@ -25,14 +35,26 @@ public class MessageFactory {
         TEXT, IMAGE, AUDIO, VIDEO
     }
 
-    // Factory Method to create specific message types based on the MessageType enum
-    public static MessageFactory createMessage(MessageType messageType, String description, User sender, User receiver) {
+    private static MessageFactory useMessageFactory(MessageType messageType, String description, User sender, ArrayList<User> receiver) {
         return switch (messageType) {
             case TEXT -> new TextMessage(description, sender, receiver);
             case IMAGE -> new ImageMessage(description, sender, receiver);
             case AUDIO -> new AudioMessage(description, sender, receiver);
             case VIDEO -> new VideoMessage(description, sender, receiver);
         };
+    }
+
+    // Factory Method to create specific message types based on the MessageType enum
+    public static MessageFactory createMessage(
+            MessageType messageType, String description, User sender, User receiver) {
+        ArrayList<User> temporaryUserArray = new ArrayList<>();
+        temporaryUserArray.add(receiver);
+        return useMessageFactory(messageType, description, sender, temporaryUserArray);
+    }
+
+    public static MessageFactory createMessage(
+            MessageType messageType, String description, User sender, ArrayList<User> receiver) {
+        return useMessageFactory(messageType, description, sender, receiver);
     }
 
     public String getDescription() {
@@ -52,11 +74,20 @@ public class MessageFactory {
     }
 
     public User getReceiver() {
-        return receiver;
+        return this.receiver.getFirst();
+    }
+
+    public ArrayList<User> getReceiverList() {
+        return this.receiver;
     }
 
     public void setReceiver(User receiver) {
-        this.receiver = receiver;
+        this.receiver = new ArrayList<>();
+        this.receiver.add(receiver);
+    }
+
+    public void setReceiver(ArrayList<User> receivers) {
+        this.receiver = receivers;
     }
 
     public long getID() {
