@@ -85,13 +85,16 @@ public class ServerUI {
                     displaySentMessages(serverController, scanner);
                     break;
                 case 7:
+                    participateInEvent(serverController, scanner);
+                    break;
+                case 8:
                     System.out.println("Going back to the main menu...");
                     return; // Exit the method to go back
                 default:
                     System.out.println("Invalid choice");
             }
 
-        } while (choice != 7);
+        } while (choice != 8);
     }
 
     private static void eventOperations(ServerController serverController, Scanner scanner) {
@@ -119,13 +122,16 @@ public class ServerUI {
                     displayEventParticipants(serverController, scanner);
                     break;
                 case 6:
+                    displayUsersInterestedNotParticipating(serverController, scanner);
+                    break;
+                case 7:
                     System.out.println("Going back to the main menu...");
                     return; // Exit the method to go back
                 default:
                     System.out.println("Invalid choice");
             }
 
-        } while (choice != 6);
+        } while (choice != 7);
     }
 
     private static void displayMainMenu() {
@@ -143,7 +149,8 @@ public class ServerUI {
         System.out.println("4. Retrieve all users");
         System.out.println("5. Send a message");
         System.out.println("6. See all your sent messages");
-        System.out.println("7. Go back to main menu");
+        System.out.println("7. Participate in events");
+        System.out.println("8. Go back to main menu");
     }
 
     private static void displayEventMenu() {
@@ -153,7 +160,8 @@ public class ServerUI {
         System.out.println("3. Update Event");
         System.out.println("4. Retrieve all events");
         System.out.println("5. See event participants");
-        System.out.println("6. Go back to main menu");
+        System.out.println("6. See interested users that are not participating in the event");
+        System.out.println("7. Go back to main menu");
     }
 
     private static Option<Integer> readInput(Scanner scanner) {
@@ -411,17 +419,65 @@ public class ServerUI {
     }
 
 
+    private static void participateInEvent(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter event ID:");
+        Option<Integer> eventIdOption = readInput(scanner);
 
+        System.out.println("Enter your ID:");
+        Option<Integer> userIdOption = readInput(scanner);
 
+        if (eventIdOption.isDefined() && userIdOption.isDefined()) {
+            Events event = serverController.getEventById(eventIdOption.get());
+            User user = serverController.getUserById(userIdOption.get());
 
-    private static void displayMenu() {
-        System.out.println("Choose an option:");
-        System.out.println("1. Add User");
-        System.out.println("2. Remove User");
-        System.out.println("3. Update User");
-        System.out.println("4. Retrieve all users");
-        System.out.println("5. Send a message");
-        System.out.println("6. See all your sent messages");
-        System.out.println("7. Exit");
+            if (event != null && user != null) {
+                System.out.println("Do you want to:\n1. Participate in the event\n2. Show interest in the event");
+                Option<Integer> interestChoiceOption = readInput(scanner);
+
+                if (interestChoiceOption.isDefined()) {
+                    int choice = interestChoiceOption.get();
+
+                    if (choice == 1) {
+                        serverController.addParticipantToEvent(event, user);
+                        System.out.println("You have successfully participated in the event: " + event.getEventName());
+                    } else if (choice == 2) {
+                        serverController.addInterestedUserToEvent(event, user);
+                        System.out.println("You have shown interest in the event: " + event.getEventName());
+                    } else {
+                        System.out.println("Invalid choice");
+                    }
+                } else {
+                    System.out.println("Invalid choice");
+                }
+            } else {
+                System.out.println("Invalid event or user ID");
+            }
+        } else {
+            System.out.println("Invalid input for event or user ID");
+        }
     }
+
+
+    private static void displayUsersInterestedNotParticipating(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter the ID of the event to display interested users not participating:");
+        Option<Integer> eventIdOption = readInput(scanner);
+
+        if (eventIdOption.isDefined()) {
+            Events event = serverController.getEventByID(eventIdOption.get());
+            if (event != null) {
+                Set<User> interestedButNotParticipating = serverController.getUsersInterestedInEvent(event);
+                if (!interestedButNotParticipating.isEmpty()) {
+                    System.out.println("Users interested but not participating in the event:");
+                    interestedButNotParticipating.forEach(System.out::println);
+                } else {
+                    System.out.println("No users interested in the event but not participating");
+                }
+            } else {
+                System.out.println("Invalid event ID");
+            }
+        } else {
+            System.out.println("Invalid input for event ID");
+        }
+    }
+
 }

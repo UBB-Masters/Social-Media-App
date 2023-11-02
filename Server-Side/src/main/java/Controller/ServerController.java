@@ -208,4 +208,24 @@ public class ServerController {
     }
 
 
+    public void joinEvent(User user, Events event) {
+        event.addParticipant(user);
+    }
+
+    public void showInterest(User user, Events event) {
+        event.addInterestedUser(user);
+    }
+
+    public Set<User> getUsersInterestedInEvent(Events event) {
+        Set<User> allInterestedUsers = event.getInterestedUsers();
+        Set<User> allParticipants = event.getParticipants();
+
+        Set<User> interestedButNotParticipating = new HashSet<>(allInterestedUsers);
+        interestedButNotParticipating.removeAll(allParticipants);
+
+        return interestedButNotParticipating;
+    }
+
+
+
 }
