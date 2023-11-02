@@ -1,4 +1,4 @@
-package main.test.testEntities;
+package main.test.testEntities.TestUsers;
 
 import Entities.Misc.IDGenerator;
 import Entities.User.ProfilePicture;

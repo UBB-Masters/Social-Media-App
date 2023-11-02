@@ -1,11 +1,12 @@
 package main.test.testRepo;
 
 import Entities.Message.MessageFactory;
+import Entities.User.User;
 import Persistence.InMemoryMessageRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,8 +24,10 @@ public class InMemoryRepoMessageTest {
         messageRepository = new InMemoryMessageRepository();
 
         // Create some test messages
-        testMessage1 = new MessageFactory("Test message 1", null, null);
-        testMessage2 = new MessageFactory("Test message 2", null, null);
+        testMessage1 = MessageFactory.createMessage(MessageFactory.MessageType.TEXT,
+                "Test message 1", null, new ArrayList<User>());
+        testMessage2 = MessageFactory.createMessage(MessageFactory.MessageType.TEXT,
+                "Test message 2", null, new ArrayList<User>());
     }
 
     @Test

@@ -6,13 +6,16 @@ import Entities.Misc.IDGenerator;
 import java.util.Date;
 
 public class User {
-    private final long ID;
-    private String username;
-    private String password;
-    private Date birthdate;
-    private Email email;
-    private Visibility defaultVisibility;
-    private ProfilePicture profilePicture;
+    protected final long ID;
+    protected String username;
+    protected String password;
+    protected Date birthdate;
+    protected Email email;
+    protected Visibility defaultVisibility;
+    protected ProfilePicture profilePicture;
+    protected Permission permission;
+    protected UserStatus userStatus;
+
 
     public User(User user) {
         this.ID = user.ID;
@@ -22,10 +25,8 @@ public class User {
         this.email = user.email;
         this.defaultVisibility = user.defaultVisibility;
         this.profilePicture = new ProfilePicture();
-    }
-
-    public enum Visibility {
-        PRIVATE, FRIENDS, PUBLIC
+        this.permission = Permission.USER;
+        this.userStatus = UserStatus.ACTIVE;
     }
 
     public User(String username, String password, Date birthdate, String email, Visibility defaultVisibility) {
@@ -40,6 +41,20 @@ public class User {
         }
         this.defaultVisibility = defaultVisibility;
         this.profilePicture = new ProfilePicture();
+        this.permission = Permission.USER;
+        this.userStatus = UserStatus.ACTIVE;
+    }
+
+    public enum Visibility {
+        PRIVATE, FRIENDS, PUBLIC
+    }
+
+    public enum Permission {
+        USER, ADMIN
+    }
+
+    public enum UserStatus {
+        ACTIVE, BANNED
     }
 
     @Override
@@ -118,5 +133,21 @@ public class User {
 
     public void setProfilePicture(ProfilePicture profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public Permission getPermission() {
+        return permission;
+    }
+
+    public void setPermission(Permission permission) {
+        this.permission = permission;
+    }
+
+    public UserStatus getUserStatus() {
+        return userStatus;
+    }
+
+    public void setUserStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
     }
 }

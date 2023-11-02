@@ -1,4 +1,4 @@
-package main.test.testEntities;
+package main.test.testEntities.TestUsers;
 
 import Entities.Misc.Email;
 import org.junit.Assert;
