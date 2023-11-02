@@ -5,6 +5,7 @@ import Entities.Message.MessageFactory;
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
 import Persistence.InMemoryEventRepository;
+import Persistence.InMemoryPostRepository;
 import Persistence.InMemoryUserRepository;
 import Persistence.InMemoryMessageRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,8 @@ public class testController {
     private InMemoryMessageRepository messageRepository;
 
     private InMemoryEventRepository eventsRepository;
+
+    private InMemoryPostRepository postRepository;
     private User testUser1;
     private User testUser2;
 
@@ -32,7 +35,9 @@ public class testController {
         userRepository = new InMemoryUserRepository();
         messageRepository = new InMemoryMessageRepository();
         eventsRepository = new InMemoryEventRepository();
-        serverController = new ServerController(userRepository, messageRepository, eventsRepository);
+        postRepository = new InMemoryPostRepository();
+
+        serverController = new ServerController(userRepository, messageRepository, eventsRepository, postRepository);
 
         // Create some test users
         testUser1 = new User("user1", "password1", new Date(), "user1@example.com", User.Visibility.PUBLIC);
