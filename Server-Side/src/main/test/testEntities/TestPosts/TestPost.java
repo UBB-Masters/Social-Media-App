@@ -81,6 +81,7 @@ public class TestPost {
                 ", timestamp=" + post.getTimestamp() +
                 ", comments=0" +
                 ", reactions=0" +
+                ", hashtags=0"+
                 '}';
         assertEquals(expectedString, post.toString());
     }
