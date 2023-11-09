@@ -1,11 +1,14 @@
 package Controller;
 
 import Entities.Exceptions.DataBaseException;
+import Entities.Message.MessageDecorator.BasicMessageDecorator;
+import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
 import Entities.Post.Comment;
 import Entities.Post.Hashtag;
 import Entities.Post.Post;
-import Entities.Post.Reaction;
+import Proxy.PostProxy;
+import Reaction.Reaction;
 import Entities.User.User;
 import Persistence.InMemoryMessageRepository;
 import Persistence.InMemoryPostRepository;
@@ -24,6 +27,8 @@ public class ServerController {
     private final InMemoryEventRepository eventRepository;
 
     private final InMemoryPostRepository postRepository;
+    private boolean newPostNotification;
+
 
     private final static Logger LOGGER = Logger.getLogger(ServerController.class.getName());
 
@@ -77,37 +82,110 @@ public class ServerController {
     }
 
 
+//    public void sendMessage(User sender, User receiver, String message) {
+//        memoryMessageRepository.addMessage(MessageFactory.createMessage(MessageFactory.MessageType.TEXT, message, sender, receiver));
+//    }
+
     public void sendMessage(User sender, User receiver, String message) {
-        memoryMessageRepository.addMessage(MessageFactory.createMessage(MessageFactory.MessageType.TEXT, message, sender, receiver));
+        MessageFactory baseMessage = MessageFactory.createMessage(
+                MessageFactory.MessageType.TEXT, message, sender, receiver);
+
+        // Decorate the message
+        MessageDecorator decoratedMessage = new BasicMessageDecorator(baseMessage);
+
+        // Add the decorated message to the repository
+        memoryMessageRepository.addMessage(decoratedMessage);
     }
 
-    public void removeMessage(MessageFactory message) {
+
+
+
+    public void removeMessage(MessageDecorator message) {
         memoryMessageRepository.removeMessage(message);
     }
 
-    public ArrayList<MessageFactory> getUserMessages(User user){
+    public void removeMessageFactory(MessageFactory message) {
+        MessageDecorator messageDecorator = message.getDecoratedMessage();
+        memoryMessageRepository.removeMessage(messageDecorator);
+    }
+
+
+
+
+//    public ArrayList<MessageFactory> getUserMessages(User user){
+//        ArrayList<MessageFactory> userMessages = new ArrayList<>();
+//
+//        for(MessageFactory message : memoryMessageRepository.getMessages()){
+//            if(message.getReceiver().equals(user))
+//                userMessages.add(message);
+//        }
+//
+//        return userMessages;
+//    }
+
+
+//    public ArrayList<MessageFactory> getSentMessages(User sender) {
+//        ArrayList<MessageFactory> sentMessages = new ArrayList<>();
+//
+//        for (MessageFactory message : memoryMessageRepository.getMessages()) {
+//            if (message.getSender().equals(sender)) {
+//                sentMessages.add(message);
+//            }
+//        }
+//
+//        return sentMessages;
+//    }
+
+
+    // Update method signature to return MessageDecorator type
+//    public ArrayList<MessageFactory> getUserMessages(User user) {
+//        ArrayList<MessageFactory> userMessages = new ArrayList<>();
+//
+//        for (MessageDecorator message : memoryMessageRepository.getMessages()) {
+//            if (message.getReceiver().equals(user)) {
+//                if (message instanceof BasicMessageDecorator) {
+//                    MessageFactory messageFactory = ((BasicMessageDecorator) message).getDecoratedMessage();
+//                    userMessages.add(messageFactory);
+//                }
+//            }
+//        }
+//
+//        return userMessages;
+//    }
+
+    public ArrayList<MessageFactory> getUserMessages(User user) {
         ArrayList<MessageFactory> userMessages = new ArrayList<>();
 
-        for(MessageFactory message : memoryMessageRepository.getMessages()){
-            if(message.getReceiver().equals(user))
-                userMessages.add(message);
+        for (MessageDecorator message : memoryMessageRepository.getMessages()) {
+            if (message.getReceiver().equals(user) && message instanceof BasicMessageDecorator decorator) {
+                userMessages.add(decorator.getDecoratedMessage());
+            }
         }
 
         return userMessages;
     }
 
 
+
     public ArrayList<MessageFactory> getSentMessages(User sender) {
         ArrayList<MessageFactory> sentMessages = new ArrayList<>();
 
-        for (MessageFactory message : memoryMessageRepository.getMessages()) {
+        for (MessageDecorator message : memoryMessageRepository.getMessages()) {
             if (message.getSender().equals(sender)) {
-                sentMessages.add(message);
+                if (message instanceof MessageDecorator) {
+                    MessageDecorator decorator = (MessageDecorator) message;
+                    sentMessages.add(((BasicMessageDecorator) decorator).getDecoratedMessage());
+                } else {
+                    sentMessages.add((MessageFactory) message);
+                }
             }
         }
 
         return sentMessages;
     }
+
+
+
 
 
     public User getUserById(int userId) {
@@ -135,6 +213,7 @@ public class ServerController {
     public void addEvent(Events event) {
         try {
             eventRepository.addEvent(event);
+            event.notifyObservers();
         } catch (DataBaseException e) {
             LOGGER.log(Level.SEVERE, "Exception while adding an event: " + e.getMessage(), e);
         }
@@ -239,7 +318,35 @@ public class ServerController {
     public void createPost(User user, String content) {
         Post newPost = new Post(user.getID(), content, new Date());
         postRepository.addPost(newPost);
+        List<User> users = getAllUsers();
+        for (User u : users) {
+            newPost.addObserver(u);
+        }
+
+        newPost.notifyObservers(); // Notify all observers (users) about the new post
+
+        this.newPostNotification = true;
+
+
     }
+
+    public void createPostProxy(User user, PostProxy postProxy) {
+        // Loading content if necessary
+        String content = postProxy.getContent();
+
+        Post newPost = new Post(user.getID(), content, new Date());
+        postRepository.addPost(newPost);
+
+        List<User> users = getAllUsers();
+        for (User u : users) {
+            newPost.addObserver(u);
+        }
+
+        newPost.notifyObservers(); // Notify all observers (users) about the new post
+
+        this.newPostNotification = true;
+    }
+
 
     public void addCommentToPost(Post post, Comment comment) {
         post.addComment(comment);
@@ -273,7 +380,19 @@ public class ServerController {
         return postRepository.getPostById(postId);
     }
 
-   //get hashtag by id
+    public boolean hasNewPostNotification() {
+        return newPostNotification;
+    }
+
+    public void clearNewPostNotification() {
+        this.newPostNotification = false;
+    }
+
+
+
+
+    //get hashtag by id
+
 
 
 }

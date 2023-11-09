@@ -1,4 +1,4 @@
-package Entities.Post;
+package Reaction;
 
 import Entities.Misc.IDGenerator;
 

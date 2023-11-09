@@ -1,6 +1,7 @@
 package main.test;
 
 import Controller.ServerController;
+import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
@@ -11,9 +12,9 @@ import Persistence.InMemoryMessageRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,16 +33,21 @@ public class testController {
     @BeforeEach
     public void setUp() {
         IDGenerator.resetCounters();
-        userRepository = new InMemoryUserRepository();
-        messageRepository = new InMemoryMessageRepository();
-        eventsRepository = new InMemoryEventRepository();
-        postRepository = new InMemoryPostRepository();
+        userRepository = InMemoryUserRepository.getInstance();
+        messageRepository = InMemoryMessageRepository.getInstance();
+        eventsRepository = InMemoryEventRepository.getInstance();
+        postRepository = InMemoryPostRepository.getInstance();
 
         serverController = new ServerController(userRepository, messageRepository, eventsRepository, postRepository);
 
-        // Create some test users
         testUser1 = new User("user1", "password1", new Date(), "user1@example.com", User.Visibility.PUBLIC);
         testUser2 = new User("user2", "password2", new Date(), "user2@example.com", User.Visibility.PUBLIC);
+
+        // Clear repositories for each test
+        userRepository.getEntities().clear(); // Add this method to your repository implementations
+        messageRepository.getMessages().clear();
+        eventsRepository.getAllEvents().clear();
+        postRepository.getAllPosts().clear();
     }
 
     @Test
@@ -72,7 +78,7 @@ public class testController {
 
         serverController.sendMessage(testUser1, testUser2, "Hello, testUser2!");
 
-        List<MessageFactory> user2Messages = serverController.getUserMessages(testUser2);
+        ArrayList<MessageFactory> user2Messages = serverController.getUserMessages(testUser2);
         assertEquals(1, user2Messages.size());
     }
 
@@ -82,16 +88,23 @@ public class testController {
         serverController.addUser(testUser2);
 
         serverController.sendMessage(testUser1, testUser2, "Hello, testUser2!");
-        List<MessageFactory> user2Messages = serverController.getUserMessages(testUser2);
+        ArrayList<MessageFactory> user2Messages = serverController.getUserMessages(testUser2);
         MessageFactory messageToRemove = user2Messages.get(0);
 
-        serverController.removeMessage(messageToRemove);
+        System.out.println(messageToRemove);
+
+        serverController.removeMessageFactory(messageToRemove);
+
+
 
         // Check if the message is removed from the repository
-        Set<MessageFactory> remainingMessages = messageRepository.getMessages();
+        Set<MessageDecorator> remainingMessages = messageRepository.getMessages();
+
+        System.out.println(remainingMessages);
         assertFalse(remainingMessages.contains(messageToRemove));
         assertEquals(0, remainingMessages.size());
     }
+
 
     @Test
     public void testGetAllUsers() {

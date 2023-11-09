@@ -1,12 +1,17 @@
 package Entities.Post;
 
 import Entities.Misc.IDGenerator;
+import Entities.User.User;
+import Observer.Observable;
+import Observer.Observer;
+import Reaction.Reaction;
+import Strategy.ReactionStrategy;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Post {
+public class Post implements Observable {
     private final long postId;
     private long userId;
     private String content;
@@ -14,6 +19,11 @@ public class Post {
     private final ArrayList<Comment> comments;
     private final ArrayList<Reaction> reactions;
     private final List<Hashtag> hashtags;
+
+    private final List<Observer> observers = new ArrayList<>();
+
+    private ReactionStrategy reactionStrategy; // Add a reference to the strategy
+
 
     public Post(long userId, String content, Date timestamp) {
         this.postId = IDGenerator.generateID(Entities.Post.Post.class);
@@ -98,4 +108,30 @@ public class Post {
                 ", hashtags=" + hashtags.size() +
                 '}';
     }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for(Observer observer : observers){
+            observer.update(this);
+        }
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    public void setReactionStrategy(ReactionStrategy strategy) {
+        this.reactionStrategy = strategy;
+    }
+
+    public void reactToPost(User user) {
+        reactionStrategy.react(this, user.getID());
+    }
+
 }

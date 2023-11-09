@@ -1,5 +1,7 @@
 package Entities.Message;
 
+import Entities.Message.MessageDecorator.BasicMessageDecorator;
+import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageTypes.AudioMessage;
 import Entities.Message.MessageTypes.ImageMessage;
 import Entities.Message.MessageTypes.TextMessage;
@@ -31,6 +33,37 @@ public class MessageFactory {
         this.receiver = receiver;
     }
 
+
+
+
+
+    public static MessageDecorator createDecoratedMessage(
+            MessageFactory.MessageType messageType, String description, User sender, User receiver) {
+        ArrayList<User> temporaryUserArray = new ArrayList<>();
+        temporaryUserArray.add(receiver);
+        MessageFactory message = useMessageFactory(messageType, description, sender, temporaryUserArray);
+        return new BasicMessageDecorator(message);  // Returning the basic message wrapped in the decorator
+    }
+
+
+    public static MessageDecorator createDecoratedMessage(
+            MessageFactory.MessageType messageType, String description, User sender, ArrayList<User> receiver) {
+        MessageFactory message = useMessageFactory(messageType, description, sender, receiver);
+        return new BasicMessageDecorator(message);  // Returning the basic message wrapped in the decorator
+    }
+
+
+    public MessageType getType() {
+
+        return switch (this) {
+            case TextMessage textMessage -> MessageType.TEXT;
+            case ImageMessage imageMessage -> MessageType.IMAGE;
+            case AudioMessage audioMessage -> MessageType.AUDIO;
+            case VideoMessage videoMessage -> MessageType.VIDEO;
+            default -> null;
+        };
+    }
+
     public enum MessageType {
         TEXT, IMAGE, AUDIO, VIDEO
     }
@@ -45,6 +78,26 @@ public class MessageFactory {
     }
 
     // Factory Method to create specific message types based on the MessageType enum
+//    public static MessageFactory createMessage(
+//            MessageType messageType, String description, User sender, User receiver) {
+//        ArrayList<User> temporaryUserArray = new ArrayList<>();
+//        temporaryUserArray.add(receiver);
+//        return useMessageFactory(messageType, description, sender, temporaryUserArray);
+//    }
+//
+//    public static MessageFactory createMessage(
+//            MessageType messageType, String description, User sender, ArrayList<User> receiver) {
+//        return useMessageFactory(messageType, description, sender, receiver);
+//    }
+
+
+
+    public static MessageDecorator createDecoratedMessageWithList(
+            MessageType messageType, String description, User sender, ArrayList<User> receiver) {
+        MessageFactory message = useMessageFactory(messageType, description, sender, receiver);
+        return new BasicMessageDecorator(message);
+    }
+
     public static MessageFactory createMessage(
             MessageType messageType, String description, User sender, User receiver) {
         ArrayList<User> temporaryUserArray = new ArrayList<>();
@@ -52,7 +105,7 @@ public class MessageFactory {
         return useMessageFactory(messageType, description, sender, temporaryUserArray);
     }
 
-    public static MessageFactory createMessage(
+    public static MessageFactory createMessageWithList(
             MessageType messageType, String description, User sender, ArrayList<User> receiver) {
         return useMessageFactory(messageType, description, sender, receiver);
     }
@@ -93,4 +146,10 @@ public class MessageFactory {
     public long getID() {
         return this.ID;
     }
+
+    public MessageDecorator getDecoratedMessage() {
+        return new BasicMessageDecorator(this);
+    }
+
+
 }
