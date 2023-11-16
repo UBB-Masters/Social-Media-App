@@ -19,12 +19,12 @@ public class TestVideoMessage {
 
     @Test
     public void testGetVideoFilePath() {
-        assertEquals("videoFile.mp4", videoMessage.getVideoFilePath());
+        assertEquals("videoFile.mp4", videoMessage.getMessageData());
     }
 
     @Test
     public void testSetVideoFilePath() {
-        videoMessage.setVideoFilePath("newVideoFile.mp4");
-        assertEquals("newVideoFile.mp4", videoMessage.getVideoFilePath());
+        videoMessage.setMessageData("newVideoFile.mp4");
+        assertEquals("newVideoFile.mp4", videoMessage.getMessageData());
     }
 }

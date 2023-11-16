@@ -4,7 +4,6 @@ import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.User.User;
 
 public class TagDecorator implements MessageDecorator {
-
     private MessageDecorator decoratedMessage;
     private String tag;
 

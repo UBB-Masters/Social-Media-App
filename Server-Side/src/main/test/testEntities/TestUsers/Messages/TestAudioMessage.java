@@ -21,12 +21,12 @@ public class TestAudioMessage {
 
     @Test
     public void testGetAudioFilePath() {
-        assertEquals("audio-file.mp3", audioMessage.getAudioFilePath());
+        assertEquals("audio-file.mp3", audioMessage.getMessageData());
     }
 
     @Test
     public void testSetAudioFilePath() {
-        audioMessage.setAudioFilePath("updated-audio-file.mp3");
-        assertEquals("updated-audio-file.mp3", audioMessage.getAudioFilePath());
+        audioMessage.setMessageData("updated-audio-file.mp3");
+        assertEquals("updated-audio-file.mp3", audioMessage.getMessageData());
     }
 }

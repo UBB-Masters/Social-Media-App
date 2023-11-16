@@ -19,12 +19,12 @@ public class TestTextMessage {
 
     @Test
     public void testGetContent() {
-        assertEquals("Hello, this is a text message.", textMessage.getContent());
+        assertEquals("Hello, this is a text message.", textMessage.getMessageData());
     }
 
     @Test
     public void testSetContent() {
-        textMessage.setContent("Updated text message content.");
-        assertEquals("Updated text message content.", textMessage.getContent());
+        textMessage.setMessageData("Updated text message content.");
+        assertEquals("Updated text message content.", textMessage.getMessageData());
     }
 }

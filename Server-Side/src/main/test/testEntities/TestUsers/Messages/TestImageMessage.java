@@ -21,12 +21,12 @@ public class TestImageMessage {
 
     @Test
     public void testGetPictureFileName() {
-        assertEquals("image-file.jpg", imageMessage.getPictureFileName());
+        assertEquals("image-file.jpg", imageMessage.getMessageData());
     }
 
     @Test
     public void testSetPictureFileName() {
-        imageMessage.setPictureFileName("updated-image-file.jpg");
-        assertEquals("updated-image-file.jpg", imageMessage.getPictureFileName());
+        imageMessage.setMessageData("updated-image-file.jpg");
+        assertEquals("updated-image-file.jpg", imageMessage.getMessageData());
     }
 }
