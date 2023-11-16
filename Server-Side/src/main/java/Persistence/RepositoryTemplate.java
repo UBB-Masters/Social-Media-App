@@ -1,10 +1,14 @@
 package Persistence;
 
 import Entities.Exceptions.DataBaseException;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.NoRepositoryBean;
 
+import java.io.Serializable;
 import java.util.Set;
 
-abstract class RepositoryTemplate<T> {
+@NoRepositoryBean
+abstract class RepositoryTemplate<T, ID extends Serializable> implements JpaRepository<T, ID> {
     private Set<T> entities;
 
     public RepositoryTemplate(Set<T> entities) {
