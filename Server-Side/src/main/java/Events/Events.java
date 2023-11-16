@@ -2,12 +2,12 @@ package Events;
 
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
+import Observer.Observable;
+import Observer.Observer;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-public class Events {
+public class Events implements Observable {
 
     private final long ID;
     private String eventName;
@@ -18,6 +18,8 @@ public class Events {
     private Date eventDate;
 
     private String eventLocation;
+
+    private final List<Observer> observers = new ArrayList<>();
 
     public Events(String eventName, String eventDescription, Date eventDate, String eventLocation) {
         this.ID = IDGenerator.generateID(Events.class);
@@ -97,4 +99,25 @@ public class Events {
     public void removeInterestedUser(User user) {
         interestedUsers.remove(user);
     }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+
+    }
+
+    @Override
+    public void notifyObservers() {
+        for(Observer observer : observers){
+            observer.update(this);
+        }
+    }
+
+
 }

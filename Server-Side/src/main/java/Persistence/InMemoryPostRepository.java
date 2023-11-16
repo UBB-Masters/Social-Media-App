@@ -8,8 +8,17 @@ import java.util.List;
 public class InMemoryPostRepository {
     private final List<Post> posts;
 
-    public InMemoryPostRepository() {
+    private static InMemoryPostRepository instance = null;
+
+    private InMemoryPostRepository() {
         this.posts = new ArrayList<>();
+    }
+
+    public static InMemoryPostRepository getInstance() {
+        if (instance == null) {
+            instance = new InMemoryPostRepository();
+        }
+        return instance;
     }
 
     public void addPost(Post post) {

@@ -1,21 +1,23 @@
 package UI;
 
 import Controller.ServerController;
+import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
 import Entities.Post.Comment;
 import Entities.Post.Hashtag;
 import Entities.Post.Post;
-import Entities.Post.Reaction;
+import Proxy.PostProxy;
+import Reaction.Reaction;
 import Entities.User.User;
 import Persistence.InMemoryEventRepository;
 import Persistence.InMemoryMessageRepository;
 import Persistence.InMemoryPostRepository;
 import Persistence.InMemoryUserRepository;
 import Events.Events;
-import Entities.Misc.Email;
-import io.vavr.API;
+import Strategy.ReactionStrategy;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
+import Reaction.ReactionFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,10 +28,10 @@ public class ServerUI {
     //hash set with users
     public static void main(String[] args) {
         ServerController serverController = new ServerController(
-                new InMemoryUserRepository(),
-                new InMemoryMessageRepository(),
-                new InMemoryEventRepository(),
-                new InMemoryPostRepository()
+                InMemoryUserRepository.getInstance(),
+                InMemoryMessageRepository.getInstance(),
+                InMemoryEventRepository.getInstance(),
+                InMemoryPostRepository.getInstance()
         );
 
         Scanner scanner = new Scanner(System.in);
@@ -39,7 +41,6 @@ public class ServerUI {
 
         serverController.addUser(user1);
         serverController.addUser(user2);
-
         int choice;
         do {
             displayMainMenu();
@@ -372,9 +373,12 @@ public class ServerUI {
 
             if (sender != null) {
                 ArrayList<MessageFactory> sentMessages = serverController.getSentMessages(sender);
+
                 if (!sentMessages.isEmpty()) {
                     System.out.println("Messages sent by " + sender.getUsername() + ":");
-                    sentMessages.forEach(System.out::println);
+
+                    // Iterate through the sentMessages and retrieve their description
+                    sentMessages.forEach(message -> System.out.println(message.getDescription()));
                 } else {
                     System.out.println("No messages found for " + sender.getUsername());
                 }
@@ -385,6 +389,8 @@ public class ServerUI {
             System.out.println("Invalid input for sender ID");
         }
     }
+
+
 
     private static void displayEvents(ServerController serverController) {
         System.out.println("Showing all events:");
@@ -555,20 +561,45 @@ public class ServerUI {
     }
 
 
+//    private static void createPost(ServerController serverController, Scanner scanner) {
+//        System.out.println("Enter your ID:");
+//        Option<Integer> userIdOption = readInput(scanner);
+//
+//        if (userIdOption.isDefined()) {
+//            User user = serverController.getUserById(userIdOption.get());
+//
+//            if (user != null) {
+//                System.out.println("Enter post content:");
+//                // Clear the input buffer
+//                scanner.nextLine();
+//                String content = scanner.nextLine().trim();
+//
+//                serverController.createPost(user, content);
+//                System.out.println("Post created successfully!");
+//            } else {
+//                System.out.println("Invalid user ID");
+//            }
+//        } else {
+//            System.out.println("Invalid input for user ID");
+//        }
+//    }
+
     private static void createPost(ServerController serverController, Scanner scanner) {
         System.out.println("Enter your ID:");
         Option<Integer> userIdOption = readInput(scanner);
 
         if (userIdOption.isDefined()) {
-            User user = serverController.getUserById(userIdOption.get());
+            long userId = userIdOption.get();
+            User user = serverController.getUserById(userId);
 
             if (user != null) {
                 System.out.println("Enter post content:");
-                // Clear the input buffer
                 scanner.nextLine();
                 String content = scanner.nextLine().trim();
 
-                serverController.createPost(user, content);
+                // Using PostProxy instead of directly creating a Post
+                PostProxy postProxy = new PostProxy(userId, content, new Date());
+                serverController.createPostProxy(user, postProxy); // Passing the PostProxy instead of a Post
                 System.out.println("Post created successfully!");
             } else {
                 System.out.println("Invalid user ID");
@@ -604,22 +635,54 @@ public class ServerUI {
     }
 
     // UI method to react to a post
+//    private static void reactToPost(ServerController serverController, Scanner scanner) {
+//        System.out.println("Enter Post ID:");
+//        Option<Integer> postIdOption = readInput(scanner);
+//
+//        if (postIdOption.isDefined()) {
+//            long postId = postIdOption.get();
+//            Post post = serverController.getPostById(postId);
+//
+//            if (post != null) {
+//                System.out.println("Enter reaction (Like, Love, Haha, Wow, Sad, Angry):");
+//                scanner.nextLine();
+//                String reactionType = scanner.nextLine().trim();
+//
+//                Reaction reaction = new Reaction(123, reactionType); // replace 123 with actual user ID
+//                serverController.reactToPost(post, reaction);
+//                System.out.println("Reacted to the post!");
+//            } else {
+//                System.out.println("Post not found.");
+//            }
+//        } else {
+//            System.out.println("Invalid Post ID");
+//        }
+//    }
+
     private static void reactToPost(ServerController serverController, Scanner scanner) {
         System.out.println("Enter Post ID:");
         Option<Integer> postIdOption = readInput(scanner);
 
-        if (postIdOption.isDefined()) {
+        if(postIdOption.isDefined()) {
             long postId = postIdOption.get();
             Post post = serverController.getPostById(postId);
 
-            if (post != null) {
+            if(post != null) {
                 System.out.println("Enter reaction (Like, Love, Haha, Wow, Sad, Angry):");
                 scanner.nextLine();
                 String reactionType = scanner.nextLine().trim();
 
-                Reaction reaction = new Reaction(123, reactionType); // replace 123 with actual user ID
-                serverController.reactToPost(post, reaction);
-                System.out.println("Reacted to the post!");
+                ReactionStrategy reactionStrategy = ReactionFactory.createReactionStrategy(reactionType);
+
+                if(reactionStrategy != null) {
+
+                    long userId = 123;
+
+                    reactionStrategy.react(post, userId);
+                    System.out.println("Reacted to the post with " + reactionType + "!");
+                } else {
+                    System.out.println("Invalid reaction type");
+                }
             } else {
                 System.out.println("Post not found.");
             }
@@ -688,7 +751,14 @@ public class ServerUI {
         } else {
             System.out.println("No posts found.");
         }
+
+        // Check for any new post notifications
+        if (serverController.hasNewPostNotification()) {
+            System.out.println("You've been notified of a new post!");
+            serverController.clearNewPostNotification(); // Clear the notification
+        }
     }
+
 
     // UI method to display posts by a specific user
     private static void displayUserPosts(ServerController serverController, Scanner scanner) {
