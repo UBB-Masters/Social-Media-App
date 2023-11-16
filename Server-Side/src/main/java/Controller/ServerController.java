@@ -9,10 +9,10 @@ import Entities.Post.Hashtag;
 import Entities.Post.Post;
 import Entities.User.User;
 import Entities.Events.Events;
-import Persistence.InMemoryEventRepository;
-import Persistence.InMemoryMessageRepository;
-import Persistence.InMemoryPostRepository;
-import Persistence.InMemoryUserRepository;
+import Persistence.EventRepository;
+import Persistence.MessageRepository;
+import Persistence.PostRepository;
+import Persistence.UserRepository;
 import Proxy.PostProxy;
 import Entities.Reaction.Reaction;
 
@@ -22,18 +22,18 @@ import java.util.logging.Logger;
 
 public class ServerController {
     private final static Logger LOGGER = Logger.getLogger(ServerController.class.getName());
-    private final InMemoryUserRepository userRepository;
-    private final InMemoryMessageRepository memoryMessageRepository;
-    private final InMemoryEventRepository eventRepository;
-    private final InMemoryPostRepository postRepository;
+    private final UserRepository userRepository;
+    private final MessageRepository memoryMessageRepository;
+    private final EventRepository eventRepository;
+    private final PostRepository postRepository;
     private boolean newPostNotification;
 
 
     public ServerController(
-            InMemoryUserRepository userRepository,
-            InMemoryMessageRepository memoryMessageRepository,
-            InMemoryEventRepository eventRepository,
-            InMemoryPostRepository postRepository
+            UserRepository userRepository,
+            MessageRepository memoryMessageRepository,
+            EventRepository eventRepository,
+            PostRepository postRepository
     ) {
         this.userRepository = userRepository;
         this.memoryMessageRepository = memoryMessageRepository;

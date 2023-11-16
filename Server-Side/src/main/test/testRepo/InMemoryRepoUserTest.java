@@ -2,7 +2,7 @@ package main.test.testRepo;
 
 import Entities.Exceptions.DataBaseException;
 import Entities.User.User;
-import Persistence.InMemoryUserRepository;
+import Persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,13 +10,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class InMemoryRepoUserTest {
-    private InMemoryUserRepository userRepository;
+    private UserRepository userRepository;
     private User testUser1;
     private User testUser2;
 
     @BeforeEach
     public void setUp() {
-        userRepository = InMemoryUserRepository.getInstance();
+        userRepository = UserRepository.getInstance();
         userRepository.getEntities().clear(); // Reset the repository before each test
 
         // Create some test users

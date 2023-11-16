@@ -41,17 +41,17 @@ import Entities.Message.MessageDecorator.MessageDecorator;
 import java.util.HashSet;
 import java.util.Set;
 
-public class InMemoryMessageRepository {
-    private static InMemoryMessageRepository instance = null;
+public class MessageRepository {
+    private static MessageRepository instance = null;
     private final Set<MessageDecorator> messages;
 
-    private InMemoryMessageRepository() {
+    private MessageRepository() {
         messages = new HashSet<>();
     }
 
-    public static InMemoryMessageRepository getInstance() {
+    public static MessageRepository getInstance() {
         if (instance == null) {
-            instance = new InMemoryMessageRepository();
+            instance = new MessageRepository();
         }
         return instance;
     }

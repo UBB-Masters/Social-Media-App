@@ -5,17 +5,17 @@ import Entities.User.User;
 
 import java.util.HashSet;
 
-public class InMemoryUserRepository extends InMemoryRepositoryTemplate<User> {
+public class UserRepository extends RepositoryTemplate<User> {
 
-    private static InMemoryUserRepository instance = null;
+    private static UserRepository instance = null;
 
-    private InMemoryUserRepository() {
+    private UserRepository() {
         super(new HashSet<>());
     }
 
-    public static InMemoryUserRepository getInstance() {
+    public static UserRepository getInstance() {
         if (instance == null) {
-            instance = new InMemoryUserRepository();
+            instance = new UserRepository();
         }
         return instance;
     }

@@ -3,7 +3,7 @@ package main.test.testRepo;
 import Entities.Message.MessageDecorator.BasicMessageDecorator;
 import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
-import Persistence.InMemoryMessageRepository;
+import Persistence.MessageRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,13 +13,13 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryRepoMessageTest {
-    private InMemoryMessageRepository messageRepository;
+    private MessageRepository messageRepository;
     private MessageFactory testMessage1;
     private MessageFactory testMessage2;
 
     @BeforeEach
     public void setUp() {
-        messageRepository = InMemoryMessageRepository.getInstance();
+        messageRepository = MessageRepository.getInstance();
 
         // Create some test messages
         testMessage1 = MessageFactory.createMessage(

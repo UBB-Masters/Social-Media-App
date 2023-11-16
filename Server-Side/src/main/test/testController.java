@@ -5,10 +5,10 @@ import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
-import Persistence.InMemoryEventRepository;
-import Persistence.InMemoryMessageRepository;
-import Persistence.InMemoryPostRepository;
-import Persistence.InMemoryUserRepository;
+import Persistence.EventRepository;
+import Persistence.MessageRepository;
+import Persistence.PostRepository;
+import Persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,22 +21,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class testController {
     private ServerController serverController;
-    private InMemoryUserRepository userRepository;
-    private InMemoryMessageRepository messageRepository;
+    private UserRepository userRepository;
+    private MessageRepository messageRepository;
 
-    private InMemoryEventRepository eventsRepository;
+    private EventRepository eventsRepository;
 
-    private InMemoryPostRepository postRepository;
+    private PostRepository postRepository;
     private User testUser1;
     private User testUser2;
 
     @BeforeEach
     public void setUp() {
         IDGenerator.resetCounters();
-        userRepository = InMemoryUserRepository.getInstance();
-        messageRepository = InMemoryMessageRepository.getInstance();
-        eventsRepository = InMemoryEventRepository.getInstance();
-        postRepository = InMemoryPostRepository.getInstance();
+        userRepository = UserRepository.getInstance();
+        messageRepository = MessageRepository.getInstance();
+        eventsRepository = EventRepository.getInstance();
+        postRepository = PostRepository.getInstance();
 
         serverController = new ServerController(userRepository, messageRepository, eventsRepository, postRepository);
 

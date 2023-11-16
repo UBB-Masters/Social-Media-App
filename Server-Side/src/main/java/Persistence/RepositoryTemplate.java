@@ -4,10 +4,10 @@ import Entities.Exceptions.DataBaseException;
 
 import java.util.Set;
 
-abstract class InMemoryRepositoryTemplate<T> {
+abstract class RepositoryTemplate<T> {
     private Set<T> entities;
 
-    public InMemoryRepositoryTemplate(Set<T> entities) {
+    public RepositoryTemplate(Set<T> entities) {
 
         this.entities = entities;
     }

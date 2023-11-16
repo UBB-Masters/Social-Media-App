@@ -5,17 +5,17 @@ import Entities.Post.Post;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InMemoryPostRepository {
-    private static InMemoryPostRepository instance = null;
+public class PostRepository {
+    private static PostRepository instance = null;
     private final List<Post> posts;
 
-    private InMemoryPostRepository() {
+    private PostRepository() {
         this.posts = new ArrayList<>();
     }
 
-    public static InMemoryPostRepository getInstance() {
+    public static PostRepository getInstance() {
         if (instance == null) {
-            instance = new InMemoryPostRepository();
+            instance = new PostRepository();
         }
         return instance;
     }

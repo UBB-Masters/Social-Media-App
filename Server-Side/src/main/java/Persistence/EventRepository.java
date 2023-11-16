@@ -7,18 +7,18 @@ import Entities.Events.Events;
 import java.util.HashSet;
 import java.util.Set;
 
-public class InMemoryEventRepository {
+public class EventRepository {
 
-    private static InMemoryEventRepository instance = null;
+    private static EventRepository instance = null;
     private Set<Events> events;
 
-    private InMemoryEventRepository() {
+    private EventRepository() {
         this.events = new HashSet<>();
     }
 
-    public static InMemoryEventRepository getInstance() {
+    public static EventRepository getInstance() {
         if (instance == null) {
-            instance = new InMemoryEventRepository();
+            instance = new EventRepository();
         }
         return instance;
     }
