@@ -63,7 +63,7 @@ public class User implements Observer {
 
 
     public enum Visibility {
-        PRIVATE, FRIENDS, PUBLIC
+        PRIVATE, PUBLIC
     }
 
     public enum Permission {
