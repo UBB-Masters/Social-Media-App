@@ -1,21 +1,26 @@
 package Entities.User;
 
-import Entities.Misc.Email;
-
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Date;
 
-public class Administrator extends User{
+@Entity
+@Table(name = "administrators") // Adjust table name as needed
+public class Administrator extends User {
+
     public Administrator(String username, String password, Date birthdate, String email, Visibility defaultVisibility) {
         super(username, password, birthdate, email, defaultVisibility);
-        this.permission = Permission.ADMIN;
+        this.setPermission(Permission.ADMIN);
     }
 
-    // Create a method to ban a user account
+    public Administrator() {
+        super();
+    }
+
     public void banUser(User user) {
         user.setUserStatus(UserStatus.BANNED);
     }
 
-    // Create a method to unban a user account
     public void unbanUser(User user) {
         user.setUserStatus(UserStatus.ACTIVE);
     }

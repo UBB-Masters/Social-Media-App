@@ -2,18 +2,29 @@ package Entities.User;
 
 import Entities.Misc.Email;
 import Entities.Misc.IDGenerator;
+
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "User")
 public class User{
-    protected final long ID;
-    protected String username;
-    protected String password;
-    protected Date birthdate;
-    protected Email email;
-    protected Visibility defaultVisibility;
-    protected ProfilePicture profilePicture;
-    protected Permission permission;
-    protected UserStatus userStatus;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long ID;
+    private String username;
+    private String password;
+    private Date birthdate;
+    private String email;
+    private Visibility defaultVisibility;
+    @Column(name = "profile_picture_id")
+    private Long profilePictureID;
+
+    @Enumerated(EnumType.STRING)
+    private Permission permission;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
 
 
     public User(User user) {
@@ -23,7 +34,7 @@ public class User{
         this.birthdate = user.birthdate;
         this.email = user.email;
         this.defaultVisibility = user.defaultVisibility;
-        this.profilePicture = new ProfilePicture();
+        this.profilePictureID = user.profilePictureID;
         this.permission = Permission.USER;
         this.userStatus = UserStatus.ACTIVE;
     }
@@ -33,15 +44,20 @@ public class User{
         this.username = username;
         this.password = password;
         this.birthdate = birthdate;
-        try {
-            this.email = new Email(email);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
+        this.email = email;
         this.defaultVisibility = defaultVisibility;
-        this.profilePicture = new ProfilePicture();
+        this.profilePictureID = 1L;
         this.permission = Permission.USER;
         this.userStatus = UserStatus.ACTIVE;
+    }
+
+    public User() {
+        this.permission = Permission.USER;
+        this.userStatus = UserStatus.ACTIVE;
+    }
+
+    public void setID(Long id) {
+        this.ID = id;
     }
 
     public enum Visibility {
@@ -65,7 +81,7 @@ public class User{
                 ", birthdate=" + birthdate +
                 ", email=" + email +
                 ", defaultVisibility=" + defaultVisibility +
-                ", profilePicture=" + profilePicture +
+                ", profilePicture=" + profilePictureID +
                 '}';
     }
 
@@ -111,27 +127,23 @@ public class User{
     }
 
     public String getEmail() {
-        return email.getAddress();
+        return email;
     }
 
     public void setEmail(String email) {
-        try {
-            this.email = new Email(email);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-    }
-
-    public void setEmail(Email email) {
         this.email = email;
     }
 
-    public ProfilePicture getProfilePicture() {
-        return profilePicture;
+    public void setEmail(Email email) {
+        this.email = email.getAddress();
+    }
+
+    public long getProfilePicture() {
+        return profilePictureID;
     }
 
     public void setProfilePicture(ProfilePicture profilePicture) {
-        this.profilePicture = profilePicture;
+        this.profilePictureID = profilePicture.getPictureID();
     }
 
     public Permission getPermission() {
