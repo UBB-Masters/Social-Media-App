@@ -7,6 +7,7 @@ public class TagDecorator implements MessageDecorator {
 
     private MessageDecorator decoratedMessage;
     private String tag;
+
     public TagDecorator(MessageDecorator decoratedMessage, String tag) {
         this.decoratedMessage = decoratedMessage;
         this.tag = tag;

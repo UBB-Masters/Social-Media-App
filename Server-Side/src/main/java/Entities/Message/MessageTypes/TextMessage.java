@@ -21,6 +21,7 @@ public class TextMessage extends MessageFactory {
         super(description, sender, receiver);
         this.content = content;
     }
+
     public TextMessage(String description, User sender, User receiver) {
         super(description, sender, receiver);
     }

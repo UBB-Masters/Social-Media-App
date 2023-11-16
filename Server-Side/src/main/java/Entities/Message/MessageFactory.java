@@ -34,9 +34,6 @@ public class MessageFactory {
     }
 
 
-
-
-
     public static MessageDecorator createDecoratedMessage(
             MessageType messageType, String description, User sender, User receiver) {
         ArrayList<User> temporaryUserArray = new ArrayList<>();
@@ -52,22 +49,6 @@ public class MessageFactory {
         return new BasicMessageDecorator(message);  // Returning the basic message wrapped in the decorator
     }
 
-
-    public MessageType getType() {
-
-        return switch (this) {
-            case TextMessage textMessage -> MessageType.TEXT;
-            case ImageMessage imageMessage -> MessageType.IMAGE;
-            case AudioMessage audioMessage -> MessageType.AUDIO;
-            case VideoMessage videoMessage -> MessageType.VIDEO;
-            default -> null;
-        };
-    }
-
-    public enum MessageType {
-        TEXT, IMAGE, AUDIO, VIDEO
-    }
-
     private static MessageFactory useMessageFactory(MessageType messageType, String description, User sender, ArrayList<User> receiver) {
         return switch (messageType) {
             case TEXT -> new TextMessage(description, sender, receiver);
@@ -75,6 +56,19 @@ public class MessageFactory {
             case AUDIO -> new AudioMessage(description, sender, receiver);
             case VIDEO -> new VideoMessage(description, sender, receiver);
         };
+    }
+
+    public static MessageDecorator createDecoratedMessageWithList(
+            MessageType messageType, String description, User sender, ArrayList<User> receiver) {
+        MessageFactory message = useMessageFactory(messageType, description, sender, receiver);
+        return new BasicMessageDecorator(message);
+    }
+
+    public static MessageFactory createMessage(
+            MessageType messageType, String description, User sender, User receiver) {
+        ArrayList<User> temporaryUserArray = new ArrayList<>();
+        temporaryUserArray.add(receiver);
+        return useMessageFactory(messageType, description, sender, temporaryUserArray);
     }
 
     // Factory Method to create specific message types based on the MessageType enum
@@ -90,24 +84,20 @@ public class MessageFactory {
 //        return useMessageFactory(messageType, description, sender, receiver);
 //    }
 
-
-
-    public static MessageDecorator createDecoratedMessageWithList(
-            MessageType messageType, String description, User sender, ArrayList<User> receiver) {
-        MessageFactory message = useMessageFactory(messageType, description, sender, receiver);
-        return new BasicMessageDecorator(message);
-    }
-
-    public static MessageFactory createMessage(
-            MessageType messageType, String description, User sender, User receiver) {
-        ArrayList<User> temporaryUserArray = new ArrayList<>();
-        temporaryUserArray.add(receiver);
-        return useMessageFactory(messageType, description, sender, temporaryUserArray);
-    }
-
     public static MessageFactory createMessageWithList(
             MessageType messageType, String description, User sender, ArrayList<User> receiver) {
         return useMessageFactory(messageType, description, sender, receiver);
+    }
+
+    public MessageType getType() {
+
+        return switch (this) {
+            case TextMessage textMessage -> MessageType.TEXT;
+            case ImageMessage imageMessage -> MessageType.IMAGE;
+            case AudioMessage audioMessage -> MessageType.AUDIO;
+            case VideoMessage videoMessage -> MessageType.VIDEO;
+            default -> null;
+        };
     }
 
     public String getDescription() {
@@ -130,10 +120,6 @@ public class MessageFactory {
         return this.receiver.getFirst();
     }
 
-    public ArrayList<User> getReceiverList() {
-        return this.receiver;
-    }
-
     public void setReceiver(User receiver) {
         this.receiver = new ArrayList<>();
         this.receiver.add(receiver);
@@ -143,12 +129,20 @@ public class MessageFactory {
         this.receiver = receivers;
     }
 
+    public ArrayList<User> getReceiverList() {
+        return this.receiver;
+    }
+
     public long getID() {
         return this.ID;
     }
 
     public MessageDecorator getDecoratedMessage() {
         return new BasicMessageDecorator(this);
+    }
+
+    public enum MessageType {
+        TEXT, IMAGE, AUDIO, VIDEO
     }
 
 

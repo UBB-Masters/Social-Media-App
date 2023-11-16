@@ -2,7 +2,6 @@ package main.test.testEntities.TestUsers;
 
 import Entities.Misc.IDGenerator;
 import Entities.User.Administrator;
-import Entities.User.ProfilePicture;
 import Entities.User.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class TestUser {
     private User user;

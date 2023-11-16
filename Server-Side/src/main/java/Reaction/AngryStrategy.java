@@ -1,4 +1,5 @@
 package Reaction;
+
 import Entities.Post.Post;
 import Strategy.ReactionStrategy;
 

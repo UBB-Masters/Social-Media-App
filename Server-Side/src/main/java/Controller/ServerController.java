@@ -7,30 +7,26 @@ import Entities.Message.MessageFactory;
 import Entities.Post.Comment;
 import Entities.Post.Hashtag;
 import Entities.Post.Post;
-import Proxy.PostProxy;
-import Reaction.Reaction;
 import Entities.User.User;
+import Events.Events;
+import Persistence.InMemoryEventRepository;
 import Persistence.InMemoryMessageRepository;
 import Persistence.InMemoryPostRepository;
 import Persistence.InMemoryUserRepository;
-import Persistence.InMemoryEventRepository;
-import Events.Events;
+import Proxy.PostProxy;
+import Reaction.Reaction;
 
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ServerController {
+    private final static Logger LOGGER = Logger.getLogger(ServerController.class.getName());
     private final InMemoryUserRepository userRepository;
     private final InMemoryMessageRepository memoryMessageRepository;
-
     private final InMemoryEventRepository eventRepository;
-
     private final InMemoryPostRepository postRepository;
     private boolean newPostNotification;
-
-
-    private final static Logger LOGGER = Logger.getLogger(ServerController.class.getName());
 
 
     public ServerController(
@@ -98,8 +94,6 @@ public class ServerController {
     }
 
 
-
-
     public void removeMessage(MessageDecorator message) {
         memoryMessageRepository.removeMessage(message);
     }
@@ -108,8 +102,6 @@ public class ServerController {
         MessageDecorator messageDecorator = message.getDecoratedMessage();
         memoryMessageRepository.removeMessage(messageDecorator);
     }
-
-
 
 
 //    public ArrayList<MessageFactory> getUserMessages(User user){
@@ -166,7 +158,6 @@ public class ServerController {
     }
 
 
-
     public ArrayList<MessageFactory> getSentMessages(User sender) {
         ArrayList<MessageFactory> sentMessages = new ArrayList<>();
 
@@ -183,9 +174,6 @@ public class ServerController {
 
         return sentMessages;
     }
-
-
-
 
 
     public User getUserById(int userId) {
@@ -389,10 +377,7 @@ public class ServerController {
     }
 
 
-
-
     //get hashtag by id
-
 
 
 }

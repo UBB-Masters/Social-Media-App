@@ -1,4 +1,5 @@
 package Entities.Channel;
+
 import Entities.User.User;
 
 import javax.persistence.*;

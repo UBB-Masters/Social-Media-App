@@ -10,16 +10,13 @@ import java.util.*;
 public class Events implements Observable {
 
     private final long ID;
+    private final List<Observer> observers = new ArrayList<>();
     private String eventName;
     private String eventDescription;
     private Set<User> participants;
     private Set<User> interestedUsers;
-
     private Date eventDate;
-
     private String eventLocation;
-
-    private final List<Observer> observers = new ArrayList<>();
 
     public Events(String eventName, String eventDescription, Date eventDate, String eventLocation) {
         this.ID = IDGenerator.generateID(Events.class);
@@ -114,7 +111,7 @@ public class Events implements Observable {
 
     @Override
     public void notifyObservers() {
-        for(Observer observer : observers){
+        for (Observer observer : observers) {
             observer.update(this);
         }
     }

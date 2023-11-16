@@ -1,6 +1,7 @@
 package Reaction;
-import Entities.Post.Post;
+
 import Strategy.ReactionStrategy;
+
 public class ReactionFactory {
 
     public static ReactionStrategy createReactionStrategy(String reactionType) {

@@ -1,6 +1,6 @@
 package Entities.Exceptions;
 
-public class ChanelException extends RuntimeException{
+public class ChanelException extends RuntimeException {
     public ChanelException() {
         super("A chanel-related exception occurred.");
     }

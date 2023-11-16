@@ -42,9 +42,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class InMemoryMessageRepository {
-    private final Set<MessageDecorator> messages;
-
     private static InMemoryMessageRepository instance = null;
+    private final Set<MessageDecorator> messages;
 
     private InMemoryMessageRepository() {
         messages = new HashSet<>();

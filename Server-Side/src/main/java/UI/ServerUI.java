@@ -1,23 +1,22 @@
 package UI;
 
 import Controller.ServerController;
-import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
 import Entities.Post.Comment;
 import Entities.Post.Hashtag;
 import Entities.Post.Post;
-import Proxy.PostProxy;
-import Reaction.Reaction;
 import Entities.User.User;
+import Events.Events;
 import Persistence.InMemoryEventRepository;
 import Persistence.InMemoryMessageRepository;
 import Persistence.InMemoryPostRepository;
 import Persistence.InMemoryUserRepository;
-import Events.Events;
+import Proxy.PostProxy;
+import Reaction.Reaction;
+import Reaction.ReactionFactory;
 import Strategy.ReactionStrategy;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
-import Reaction.ReactionFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -391,7 +390,6 @@ public class ServerUI {
     }
 
 
-
     private static void displayEvents(ServerController serverController) {
         System.out.println("Showing all events:");
         serverController.getAllEvents()
@@ -663,18 +661,18 @@ public class ServerUI {
         System.out.println("Enter Post ID:");
         Option<Integer> postIdOption = readInput(scanner);
 
-        if(postIdOption.isDefined()) {
+        if (postIdOption.isDefined()) {
             long postId = postIdOption.get();
             Post post = serverController.getPostById(postId);
 
-            if(post != null) {
+            if (post != null) {
                 System.out.println("Enter reaction (Like, Love, Haha, Wow, Sad, Angry):");
                 scanner.nextLine();
                 String reactionType = scanner.nextLine().trim();
 
                 ReactionStrategy reactionStrategy = ReactionFactory.createReactionStrategy(reactionType);
 
-                if(reactionStrategy != null) {
+                if (reactionStrategy != null) {
 
                     long userId = 123;
 

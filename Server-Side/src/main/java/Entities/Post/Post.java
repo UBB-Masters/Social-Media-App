@@ -13,15 +13,13 @@ import java.util.List;
 
 public class Post implements Observable {
     private final long postId;
-    private long userId;
-    private String content;
-    private Date timestamp;
     private final ArrayList<Comment> comments;
     private final ArrayList<Reaction> reactions;
     private final List<Hashtag> hashtags;
-
     private final List<Observer> observers = new ArrayList<>();
-
+    private long userId;
+    private String content;
+    private Date timestamp;
     private ReactionStrategy reactionStrategy; // Add a reference to the strategy
 
 
@@ -116,7 +114,7 @@ public class Post implements Observable {
 
     @Override
     public void notifyObservers() {
-        for(Observer observer : observers){
+        for (Observer observer : observers) {
             observer.update(this);
         }
     }

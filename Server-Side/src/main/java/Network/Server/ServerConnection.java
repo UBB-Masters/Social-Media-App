@@ -45,15 +45,16 @@
 ////}
 //
 package Network.Server;
-import javax.net.ssl.SSLSocket;
+
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 import java.io.*;
 
 public class ServerConnection {
 
-    private static final String[] protocols = new String[] {"TLSv1.3"};
-    private static final String[] cipher_suites = new String[] {"TLS_AES_128_GCM_SHA256"};
+    private static final String[] protocols = new String[]{"TLSv1.3"};
+    private static final String[] cipher_suites = new String[]{"TLS_AES_128_GCM_SHA256"};
 
     public static void main(String[] args) throws Exception {
         SSLServerSocket serverSocket = null;

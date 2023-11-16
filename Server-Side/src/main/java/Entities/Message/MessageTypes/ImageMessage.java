@@ -31,6 +31,15 @@ public class ImageMessage extends MessageFactory {
         this.pictureFileName = pictureFileName;
     }
 
+    public static BufferedImage loadImageFromFile(String filePath) throws IOException {
+        try {
+            return ImageIO.read(new File(filePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IOException(e);
+        }
+    }
+
     public String getPictureFileName() {
         return pictureFileName;
     }
@@ -41,15 +50,6 @@ public class ImageMessage extends MessageFactory {
 
     public String getPictureFilePath(String baseDirectory) {
         return baseDirectory + "/" + pictureFileName;
-    }
-
-    public static BufferedImage loadImageFromFile(String filePath) throws IOException {
-        try {
-            return ImageIO.read(new File(filePath));
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IOException(e);
-        }
     }
 
     @Override

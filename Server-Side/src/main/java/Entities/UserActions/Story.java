@@ -18,15 +18,15 @@ public class Story {
         return ID;
     }
 
-    public void setVisibility(User.Visibility visibility) {
-        this.visibility = visibility;
-    }
-
     public User getUser() {
         return user;
     }
 
     public User.Visibility getVisibility() {
         return visibility;
+    }
+
+    public void setVisibility(User.Visibility visibility) {
+        this.visibility = visibility;
     }
 }
