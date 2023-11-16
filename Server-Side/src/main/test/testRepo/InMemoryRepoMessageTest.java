@@ -1,4 +1,4 @@
-package main.test.testEntities.TestUsers.testRepo;
+package main.test.testRepo;
 
 import Entities.Message.MessageDecorator.BasicMessageDecorator;
 import Entities.Message.MessageDecorator.MessageDecorator;

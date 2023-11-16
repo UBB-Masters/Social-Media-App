@@ -1,4 +1,4 @@
-package main.test.testEntities.TestUsers.Messages;
+package main.test.Messages;
 
 import Entities.Exceptions.MessageException;
 import Entities.Message.MessageFactory;

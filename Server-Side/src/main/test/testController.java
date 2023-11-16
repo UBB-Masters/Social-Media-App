@@ -1,4 +1,4 @@
-package main.test.testEntities.TestUsers;
+package main.test;
 
 import Controller.ServerController;
 import Entities.Message.MessageDecorator.MessageDecorator;

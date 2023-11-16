@@ -1,4 +1,4 @@
-package main.test.testEntities.TestUsers.testRepo;
+package main.test.testRepo;
 
 import Entities.Exceptions.DataBaseException;
 import Entities.User.User;

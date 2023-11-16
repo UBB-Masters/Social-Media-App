@@ -1,4 +1,4 @@
-package main.test.testEntities.TestUsers.TestPosts;
+package main.test.TestPosts;
 
 import Entities.Post.Hashtag;
 import Entities.Post.Post;
