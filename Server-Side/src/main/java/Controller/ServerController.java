@@ -14,7 +14,7 @@ import Persistence.InMemoryMessageRepository;
 import Persistence.InMemoryPostRepository;
 import Persistence.InMemoryUserRepository;
 import Proxy.PostProxy;
-import Reaction.Reaction;
+import Entities.Reaction.Reaction;
 
 import java.util.*;
 import java.util.logging.Level;

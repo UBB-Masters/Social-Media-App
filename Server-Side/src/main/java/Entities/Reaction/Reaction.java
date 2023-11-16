@@ -1,9 +1,16 @@
-package Reaction;
+package Entities.Reaction;
 
 import Entities.Misc.IDGenerator;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table
 public class Reaction {
-    private final long reactionId;
+    @Id
+    private long reactionId;
     private long userId;
     private String reactionType;
 
@@ -11,6 +18,10 @@ public class Reaction {
         this.reactionId = IDGenerator.generateID(Reaction.class);
         this.userId = userId;
         this.reactionType = reactionType;
+    }
+
+    public Reaction() {
+        this.reactionId = IDGenerator.generateID(Reaction.class);
     }
 
     public long getReactionId() {

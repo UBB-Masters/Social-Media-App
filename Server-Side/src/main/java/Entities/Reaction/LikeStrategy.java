@@ -1,12 +1,12 @@
-package Reaction;
+package Entities.Reaction;
 
 import Entities.Post.Post;
 import Strategy.ReactionStrategy;
 
-public class AngryStrategy implements ReactionStrategy {
+public class LikeStrategy implements ReactionStrategy {
     @Override
     public void react(Post post, long userId) {
-        Reaction reaction = new Reaction(userId, "Angry");
+        Reaction reaction = new Reaction(userId, "Like");
         post.addReaction(reaction);
     }
 }

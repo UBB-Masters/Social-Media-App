@@ -1,4 +1,4 @@
-package Reaction;
+package Entities.Reaction;
 
 import Strategy.ReactionStrategy;
 

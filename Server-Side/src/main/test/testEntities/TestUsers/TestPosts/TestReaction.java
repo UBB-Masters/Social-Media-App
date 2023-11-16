@@ -1,7 +1,7 @@
 package main.test.testEntities.TestUsers.TestPosts;
 
 import Entities.Misc.IDGenerator;
-import Reaction.Reaction;
+import Entities.Reaction.Reaction;
 import org.junit.jupiter.api.BeforeEach;
 import org.testng.annotations.Test;
 

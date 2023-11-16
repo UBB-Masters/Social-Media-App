@@ -4,23 +4,32 @@ import Entities.Misc.IDGenerator;
 import Entities.User.User;
 import Observer.Observable;
 import Observer.Observer;
-import Reaction.Reaction;
+import Entities.Reaction.Reaction;
 import Strategy.ReactionStrategy;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Entity
+@Table
 public class Post implements Observable {
+    @Id
     private final long postId;
-    private final ArrayList<Comment> comments;
-    private final ArrayList<Reaction> reactions;
-    private final List<Hashtag> hashtags;
+    @ManyToMany
+    private ArrayList<Comment> comments;
+    @ManyToMany
+    private ArrayList<Reaction> reactions;
+    @ManyToMany
+    private List<Hashtag> hashtags;
+    @Transient
     private final List<Observer> observers = new ArrayList<>();
     private long userId;
     private String content;
     private Date timestamp;
-    private ReactionStrategy reactionStrategy; // Add a reference to the strategy
+    @Transient
+    private ReactionStrategy reactionStrategy;
 
 
     public Post(long userId, String content, Date timestamp) {
@@ -31,6 +40,10 @@ public class Post implements Observable {
         this.comments = new ArrayList<>();
         this.reactions = new ArrayList<>();
         this.hashtags = new ArrayList<>();
+    }
+
+    public Post() {
+        this.postId = IDGenerator.generateID(Post.class);
     }
 
     public long getPostId() {

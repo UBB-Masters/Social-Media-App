@@ -2,17 +2,27 @@ package Entities.Post;
 
 import Entities.Misc.IDGenerator;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 
+@Entity
+@Table
 public class Hashtag {
+    @Id
     private final long hashtagID;
-    private final String tag;
-    private final ArrayList<Post> posts;
+    private String tag;
+    @ManyToMany
+    private ArrayList<Post> posts;
 
     public Hashtag(String tag) {
         hashtagID = IDGenerator.generateID(Hashtag.class);
         this.tag = tag;
         this.posts = new ArrayList<>();
+    }
+
+    public Hashtag() {
+        this.tag = "tag";
+        this.hashtagID = IDGenerator.generateID(Hashtag.class);
     }
 
     public long getHashtagID() {

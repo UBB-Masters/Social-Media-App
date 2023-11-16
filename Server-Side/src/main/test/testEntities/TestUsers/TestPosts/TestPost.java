@@ -2,7 +2,7 @@ package main.test.testEntities.TestUsers.TestPosts;
 
 import Entities.Post.Comment;
 import Entities.Post.Post;
-import Reaction.Reaction;
+import Entities.Reaction.Reaction;
 import org.junit.jupiter.api.BeforeEach;
 import org.testng.annotations.Test;
 
