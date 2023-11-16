@@ -138,7 +138,7 @@ public class TestUser {
     @Test
     public void testProfilePictureFileName() {
         ProfilePicture profilePicture = user.getProfilePicture();
-        assertEquals("default", profilePicture.getPictureFileName());
+        assertEquals("default", profilePicture.getPicture());
     }
 
     @Test

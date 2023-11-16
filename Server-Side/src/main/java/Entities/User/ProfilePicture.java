@@ -6,26 +6,26 @@ import java.io.File;
 import java.io.IOException;
 
 public class ProfilePicture {
-    private String pictureFileName;
+    private String picture;
 
-    public void setPictureFileName(String pictureFileName) {
-        this.pictureFileName = pictureFileName;
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public ProfilePicture() {
-        this.pictureFileName = "default";
+        this.picture = "default";
     }
 
     public ProfilePicture(String pictureFileName) {
-        this.pictureFileName = pictureFileName;
+        this.picture = pictureFileName;
     }
 
-    public String getPictureFileName() {
-        return pictureFileName;
+    public String getPicture() {
+        return picture;
     }
 
     public String getPictureFilePath(String baseDirectory) {
-        return baseDirectory + "/" + pictureFileName;
+        return baseDirectory + "/" + picture;
     }
 
     public static BufferedImage loadImageFromFile(String filePath) throws IOException {
