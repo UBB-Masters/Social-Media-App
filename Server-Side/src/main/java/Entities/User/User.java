@@ -3,7 +3,7 @@ package Entities.User;
 import Entities.Misc.Email;
 import Entities.Misc.IDGenerator;
 import Entities.Post.Post;
-import Events.Events;
+import Entities.Events.Events;
 import Observer.Observable;
 import Observer.Observer;
 

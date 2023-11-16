@@ -1,19 +1,27 @@
-package Events;
+package Entities.Events;
 
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
 import Observer.Observable;
 import Observer.Observer;
 
+import javax.persistence.*;
 import java.util.*;
 
+@Entity
+@Table
 public class Events implements Observable {
 
+    @Id
     private final long ID;
+    @Transient
     private final List<Observer> observers = new ArrayList<>();
     private String eventName;
     private String eventDescription;
+    @OneToMany(mappedBy = "event")
     private Set<User> participants;
+
+    @OneToMany(mappedBy = "event")
     private Set<User> interestedUsers;
     private Date eventDate;
     private String eventLocation;
@@ -26,6 +34,16 @@ public class Events implements Observable {
         this.interestedUsers = new HashSet<>();
         this.eventDate = eventDate;
         this.eventLocation = eventLocation;
+    }
+
+    public Events() {
+        this.ID = IDGenerator.generateID(Events.class);
+        this.eventName = "eventName";
+        this.eventDescription = "eventDescription";
+        this.participants = new HashSet<>();
+        this.interestedUsers = new HashSet<>();
+        this.eventDate = new Date();
+        this.eventLocation = "eventLocation";
     }
 
     public long getID() {

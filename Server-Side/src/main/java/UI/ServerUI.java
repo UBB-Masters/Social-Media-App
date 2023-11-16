@@ -6,7 +6,7 @@ import Entities.Post.Comment;
 import Entities.Post.Hashtag;
 import Entities.Post.Post;
 import Entities.User.User;
-import Events.Events;
+import Entities.Events.Events;
 import Persistence.InMemoryEventRepository;
 import Persistence.InMemoryMessageRepository;
 import Persistence.InMemoryPostRepository;

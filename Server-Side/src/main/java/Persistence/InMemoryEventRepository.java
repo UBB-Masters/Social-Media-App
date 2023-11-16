@@ -2,7 +2,7 @@ package Persistence;
 
 import Entities.Exceptions.DataBaseException;
 import Entities.User.User;
-import Events.Events;
+import Entities.Events.Events;
 
 import java.util.HashSet;
 import java.util.Set;
