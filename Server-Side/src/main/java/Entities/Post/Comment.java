@@ -2,9 +2,15 @@ package Entities.Post;
 
 import Entities.Misc.IDGenerator;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
+@Entity
+@Table
 public class Comment {
+    @Id
     private final long commentId;
     private long postId;
     private String content;
@@ -12,11 +18,15 @@ public class Comment {
     private long userId;
 
     public Comment(long postId, String content, Date timestamp, long userId) {
-        commentId = IDGenerator.generateID(Comment.class);
+        this.commentId = IDGenerator.generateID(Comment.class);
         this.postId = postId;
         this.content = content;
         this.timestamp = timestamp;
         this.userId = userId;
+    }
+
+    public Comment() {
+        commentId = IDGenerator.generateID(Comment.class);
     }
 
     public long getCommentId() {

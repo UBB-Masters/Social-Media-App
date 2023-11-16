@@ -3,34 +3,41 @@ package Entities.Message.MessageTypes;
 import Entities.Message.MessageFactory;
 import Entities.User.User;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.ArrayList;
 
+@Entity
+@Table
 public class TextMessage extends MessageFactory {
-    private String content;
-
     public TextMessage(String description, User sender, ArrayList<User> receiver) {
         super(description, sender, receiver);
     }
 
-    public TextMessage(String description, User sender, ArrayList<User> receiver, String content) {
+    public TextMessage(String description, User sender, ArrayList<User> receiver, String messageData) {
         super(description, sender, receiver);
-        this.content = content;
+        this.messageData = messageData;
     }
 
-    public TextMessage(String description, User sender, User receiver, String content) {
+    public TextMessage(String description, User sender, User receiver, String messageData) {
         super(description, sender, receiver);
-        this.content = content;
+        this.messageData = messageData;
     }
+
     public TextMessage(String description, User sender, User receiver) {
         super(description, sender, receiver);
     }
 
-    public String getContent() {
-        return content;
+    public TextMessage() {
+        super();
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public String getMessageData() {
+        return messageData;
+    }
+
+    public void setMessageData(String messageData) {
+        this.messageData = messageData;
     }
 
     @Override
@@ -40,7 +47,7 @@ public class TextMessage extends MessageFactory {
                 ", description='" + description + '\'' +
                 ", sender=" + sender +
                 ", receiver=" + receiver +
-                ", content='" + content + '\'' +
+                ", content='" + messageData + '\'' +
                 '}';
     }
 }

@@ -4,35 +4,46 @@ import Entities.Misc.IDGenerator;
 import Entities.User.User;
 import Observer.Observable;
 import Observer.Observer;
-import Reaction.Reaction;
+import Entities.Reaction.Reaction;
 import Strategy.ReactionStrategy;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Entity
+@Table
 public class Post implements Observable {
+    @Id
     private final long postId;
+    @ManyToMany
+    private ArrayList<Comment> comments;
+    @ManyToMany
+    private ArrayList<Reaction> reactions;
+    @ManyToMany
+    private List<Hashtag> hashtags;
+    @Transient
+    private final List<Observer> observers = new ArrayList<>();
     private long userId;
     private String content;
     private Date timestamp;
-    private final ArrayList<Comment> comments;
-    private final ArrayList<Reaction> reactions;
-    private final List<Hashtag> hashtags;
-
-    private final List<Observer> observers = new ArrayList<>();
-
-    private ReactionStrategy reactionStrategy; // Add a reference to the strategy
+    @Transient
+    private ReactionStrategy reactionStrategy;
 
 
     public Post(long userId, String content, Date timestamp) {
-        this.postId = IDGenerator.generateID(Entities.Post.Post.class);
+        this.postId = IDGenerator.generateID(Post.class);
         this.userId = userId;
         this.content = content;
         this.timestamp = timestamp;
         this.comments = new ArrayList<>();
         this.reactions = new ArrayList<>();
         this.hashtags = new ArrayList<>();
+    }
+
+    public Post() {
+        this.postId = IDGenerator.generateID(Post.class);
     }
 
     public long getPostId() {
@@ -116,7 +127,7 @@ public class Post implements Observable {
 
     @Override
     public void notifyObservers() {
-        for(Observer observer : observers){
+        for (Observer observer : observers) {
             observer.update(this);
         }
     }

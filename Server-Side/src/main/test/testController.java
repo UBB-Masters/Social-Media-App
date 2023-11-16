@@ -6,9 +6,9 @@ import Entities.Message.MessageFactory;
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
 import Persistence.InMemoryEventRepository;
+import Persistence.InMemoryMessageRepository;
 import Persistence.InMemoryPostRepository;
 import Persistence.InMemoryUserRepository;
-import Persistence.InMemoryMessageRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -94,7 +94,6 @@ public class testController {
         System.out.println(messageToRemove);
 
         serverController.removeMessageFactory(messageToRemove);
-
 
 
         // Check if the message is removed from the repository

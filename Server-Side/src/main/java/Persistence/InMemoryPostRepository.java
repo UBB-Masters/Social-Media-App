@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryPostRepository {
-    private final List<Post> posts;
-
     private static InMemoryPostRepository instance = null;
+    private final List<Post> posts;
 
     private InMemoryPostRepository() {
         this.posts = new ArrayList<>();

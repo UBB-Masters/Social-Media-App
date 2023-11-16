@@ -1,39 +1,41 @@
 package Entities.User;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import javax.persistence.*;
 
+@Entity
+@Table
 public class ProfilePicture {
-    private String pictureFileName;
 
-    public void setPictureFileName(String pictureFileName) {
-        this.pictureFileName = pictureFileName;
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long pictureID;
+    @OneToOne(mappedBy = "user_id")
+    private User user;
+    private String picture;
 
     public ProfilePicture() {
-        this.pictureFileName = "default";
+        this.picture = "default";
+        this.user = new User();
     }
 
-    public ProfilePicture(String pictureFileName) {
-        this.pictureFileName = pictureFileName;
+    public ProfilePicture(String pictureFileName, User user) {
+        this.picture = pictureFileName;
+        this.user = user;
     }
 
-    public String getPictureFileName() {
-        return pictureFileName;
+    public long getPictureID() {
+        return pictureID;
     }
 
-    public String getPictureFilePath(String baseDirectory) {
-        return baseDirectory + "/" + pictureFileName;
+    public void setPictureID(long pictureID) {
+        this.pictureID = pictureID;
     }
 
-    public static BufferedImage loadImageFromFile(String filePath) throws IOException {
-        try {
-            return ImageIO.read(new File(filePath));
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IOException(e);
-        }
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 }

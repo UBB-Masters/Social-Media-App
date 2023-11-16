@@ -3,37 +3,41 @@ package Entities.Message.MessageTypes;
 import Entities.Message.MessageFactory;
 import Entities.User.User;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.ArrayList;
 
+@Entity
+@Table
 public class VideoMessage extends MessageFactory {
-
-    private String videoFilePath;
-
     public VideoMessage(String description, User sender, ArrayList<User> receiver) {
         super(description, sender, receiver);
     }
 
-    public VideoMessage(String description, User sender, ArrayList<User> receiver, String videoFilePath) {
+    public VideoMessage(String description, User sender, ArrayList<User> receiver, String messageData) {
         super(description, sender, receiver);
-        this.videoFilePath = videoFilePath;
+        this.messageData = messageData;
     }
 
-    public VideoMessage(String description, User sender, User receiver, String videoFilePath) {
+    public VideoMessage(String description, User sender, User receiver, String messageData) {
         super(description, sender, receiver);
-        this.videoFilePath = videoFilePath;
+        this.messageData = messageData;
     }
 
     public VideoMessage(String description, User sender, User receiver) {
         super(description, sender, receiver);
     }
 
-
-    public String getVideoFilePath() {
-        return videoFilePath;
+    public VideoMessage() {
+        super();
     }
 
-    public void setVideoFilePath(String videoFilePath) {
-        this.videoFilePath = videoFilePath;
+    public String getMessageData() {
+        return messageData;
+    }
+
+    public void setMessageData(String messageData) {
+        this.messageData = messageData;
     }
 
     @Override
@@ -43,7 +47,7 @@ public class VideoMessage extends MessageFactory {
                 ", description='" + description + '\'' +
                 ", sender=" + sender +
                 ", receiver=" + receiver +
-                ", videoFilePath='" + videoFilePath + '\'' +
+                ", videoFilePath='" + messageData + '\'' +
                 '}';
     }
 }

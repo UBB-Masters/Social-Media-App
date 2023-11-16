@@ -8,10 +8,21 @@ CREATE TABLE User(
     password_hash VARCHAR(100),
     birthdate DATETIME,
     email VARCHAR(100),
-    profile_picture VARCHAR(100),
     visibility BIT,
     permission BIT,
     user_status BIT
+);
+
+CREATE TABLE Admin (
+    adminID BIGINT PRIMARY KEY,
+    FOREIGN KEY (adminID) REFERENCES User(userID)
+);
+
+CREATE TABLE ProfilePicture (
+    pictureID BIGINT PRIMARY KEY,
+    picture VARCHAR(100),
+    userID BIGINT UNIQUE,
+    FOREIGN KEY (userID) REFERENCES User(userID)
 );
 
 CREATE TABLE GroupChat (
@@ -120,9 +131,3 @@ CREATE TABLE StoryComment(
     FOREIGN KEY (storyID) REFERENCES Story(storyID),
     FOREIGN KEY (commentID) REFERENCES Comment(commentID)
 );
-
-INSERT INTO user (userID, username, password_hash, birthdate, email, profile_picture, visibility, permission, user_status)
-VALUES
-(1, 'john_doe', 'hashed_password_123', '1990-05-15 00:00:00', 'john@example.com', 'profile_pic.jpg', 1, 1, 1),
-(2, 'jane_smith', 'hashed_password_456', '1988-10-20 00:00:00', 'jane@example.com', 'avatar.jpg', 1, 1, 1),
-(3, 'bob_jackson', 'hashed_password_789', '1995-03-25 00:00:00', 'bob@example.com', 'user_pic.jpg', 1, 1, 1);
