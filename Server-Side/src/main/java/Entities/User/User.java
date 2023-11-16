@@ -46,7 +46,7 @@ public class User {
     }
 
     public enum Visibility {
-        PRIVATE, FRIENDS, PUBLIC
+        PRIVATE, PUBLIC
     }
 
     public enum Permission {
