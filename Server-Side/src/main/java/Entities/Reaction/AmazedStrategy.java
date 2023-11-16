@@ -3,6 +3,7 @@ package Entities.Reaction;
 import Entities.Post.Post;
 import Strategy.ReactionStrategy;
 
+
 public class AmazedStrategy implements ReactionStrategy {
     @Override
     public void react(Post post, long userId) {
