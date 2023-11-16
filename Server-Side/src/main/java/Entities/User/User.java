@@ -17,8 +17,6 @@ public class User{
     private Date birthdate;
     private String email;
     private Visibility defaultVisibility;
-    @Column(name = "profile_picture_id")
-    private Long profilePictureID;
 
     @Enumerated(EnumType.STRING)
     private Permission permission;
@@ -34,7 +32,6 @@ public class User{
         this.birthdate = user.birthdate;
         this.email = user.email;
         this.defaultVisibility = user.defaultVisibility;
-        this.profilePictureID = user.profilePictureID;
         this.permission = Permission.USER;
         this.userStatus = UserStatus.ACTIVE;
     }
@@ -46,7 +43,6 @@ public class User{
         this.birthdate = birthdate;
         this.email = email;
         this.defaultVisibility = defaultVisibility;
-        this.profilePictureID = 1L;
         this.permission = Permission.USER;
         this.userStatus = UserStatus.ACTIVE;
     }
@@ -81,7 +77,6 @@ public class User{
                 ", birthdate=" + birthdate +
                 ", email=" + email +
                 ", defaultVisibility=" + defaultVisibility +
-                ", profilePicture=" + profilePictureID +
                 '}';
     }
 
@@ -136,14 +131,6 @@ public class User{
 
     public void setEmail(Email email) {
         this.email = email.getAddress();
-    }
-
-    public long getProfilePicture() {
-        return profilePictureID;
-    }
-
-    public void setProfilePicture(ProfilePicture profilePicture) {
-        this.profilePictureID = profilePicture.getPictureID();
     }
 
     public Permission getPermission() {

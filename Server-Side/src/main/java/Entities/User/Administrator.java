@@ -5,7 +5,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "administrators") // Adjust table name as needed
+@Table(name = "admin")
 public class Administrator extends User {
 
     public Administrator(String username, String password, Date birthdate, String email, Visibility defaultVisibility) {
@@ -15,6 +15,7 @@ public class Administrator extends User {
 
     public Administrator() {
         super();
+        this.setPermission(Permission.ADMIN);
     }
 
     public void banUser(User user) {

@@ -1,8 +1,10 @@
 package main.test.testEntities.TestUsers;
 
 import Entities.Misc.IDGenerator;
+import Entities.User.Administrator;
 import Entities.User.ProfilePicture;
 import Entities.User.User;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -131,43 +133,39 @@ public class TestUser {
     }
 
     @Test
-    public void testProfilePictureNotNull() {
-        assertNotNull(user.getProfilePicture());
+    public void createUserAndVerifyFields() {
+        // Create a user
+        User user = new User();
+        user.setUsername("testUser");
+        user.setPassword("password");
+        user.setBirthdate(new Date());
+        user.setEmail("test@example.com");
+        user.setDefaultVisibility(User.Visibility.PUBLIC);
+
+        // Verify user fields
+        Assertions.assertEquals("testUser", user.getUsername());
+        Assertions.assertEquals("password", user.getPassword());
+        Assertions.assertNotNull(user.getBirthdate());
+        Assertions.assertEquals("test@example.com", user.getEmail());
+        Assertions.assertEquals(User.Visibility.PUBLIC, user.getDefaultVisibility());
     }
 
     @Test
-    public void testProfilePictureFileName() {
-        ProfilePicture profilePicture = user.getProfilePicture();
-        assertEquals("default", profilePicture.getPicture());
-    }
+    public void createAdministratorAndVerifyPermission() {
+        // Create an administrator
+        Administrator admin = new Administrator();
+        admin.setUsername("adminUser");
+        admin.setPassword("adminPassword");
+        admin.setBirthdate(new Date());
+        admin.setEmail("admin@example.com");
+        admin.setDefaultVisibility(User.Visibility.PRIVATE);
 
-    @Test
-    public void testSetProfilePicture() {
-        ProfilePicture newProfilePicture = new ProfilePicture("new_picture.jpg");
-        user.setProfilePicture(newProfilePicture);
-        assertEquals(newProfilePicture, user.getProfilePicture());
+        // Verify admin fields and permission
+        Assertions.assertEquals("adminUser", admin.getUsername());
+        Assertions.assertEquals("adminPassword", admin.getPassword());
+        Assertions.assertNotNull(admin.getBirthdate());
+        Assertions.assertEquals("admin@example.com", admin.getEmail());
+        Assertions.assertEquals(User.Visibility.PRIVATE, admin.getDefaultVisibility());
+        Assertions.assertEquals(User.Permission.ADMIN, admin.getPermission());
     }
-
-    @Test
-    public void testSetProfilePictureFailure() {
-        ProfilePicture originalProfilePicture = user.getProfilePicture();
-        ProfilePicture newProfilePicture = new ProfilePicture("new_picture.jpg");
-        user.setProfilePicture(newProfilePicture);
-        assertNotEquals(originalProfilePicture, user.getProfilePicture());
-    }
-
-    @Test
-    public void testSetProfilePictureNull() {
-        ProfilePicture originalProfilePicture = user.getProfilePicture();
-        user.setProfilePicture(null);
-        assertNotEquals(originalProfilePicture, user.getProfilePicture());
-    }
-
-    @Test
-    public void testSetProfilePictureNullFailure() {
-        ProfilePicture originalProfilePicture = user.getProfilePicture();
-        user.setProfilePicture(null);
-        assertNotEquals(originalProfilePicture, user.getProfilePicture());
-    }
-
 }

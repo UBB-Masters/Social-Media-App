@@ -1,25 +1,26 @@
 package Entities.User;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "profilepicture")
 public class ProfilePicture {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long pictureID;
-
+    @OneToOne(mappedBy = "user_id")
+    private User user;
     private String picture;
 
     public ProfilePicture() {
         this.picture = "default";
+        this.user = new User();
     }
 
-    public ProfilePicture(String pictureFileName) {
+    public ProfilePicture(String pictureFileName, User user) {
         this.picture = pictureFileName;
+        this.user = user;
     }
 
     public long getPictureID() {

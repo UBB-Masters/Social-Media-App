@@ -1,22 +1,22 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class RunServer {
     public static void main(String[] args) {
-//        try {
-//            Connection con = DriverManager.getConnection(
-//                    "jdbc:mysql://localhost:3306/data_base", "root", "password");
-//            Statement stmt = con.createStatement();
-//            ResultSet rs = stmt.executeQuery("select * from User");
-//            while (rs.next())
-//                System.out.println(rs.getInt(1) +
-//                        "  " + rs.getString(2) +
-//                        "  " + rs.getString(3));
-//            con.close();
-//        } catch (Exception e) {
-//            System.out.println(e);
-//        }
+        String url = "jdbc:mysql://localhost:3306/data_base";
+        String username = "root";
+        String password = "password";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet resultSet = metaData.getTables(null, null, "%", new String[]{"TABLE"});
+
+            System.out.println("Tables in the database:");
+            while (resultSet.next()) {
+                String tableName = resultSet.getString("TABLE_NAME");
+                System.out.println(tableName);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
