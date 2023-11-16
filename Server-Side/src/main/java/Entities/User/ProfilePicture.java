@@ -3,7 +3,7 @@ package Entities.User;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "profilepicture")
+@Table
 public class ProfilePicture {
 
     @Id
