@@ -11,7 +11,16 @@ public class InMemoryEventRepository {
 
     private Set<Events> events;
 
-    public InMemoryEventRepository() {
+    private static InMemoryEventRepository instance = null;
+
+    public static InMemoryEventRepository getInstance() {
+        if(instance == null) {
+            instance = new InMemoryEventRepository();
+        }
+        return instance;
+    }
+
+    private InMemoryEventRepository() {
         this.events = new HashSet<>();
     }
 

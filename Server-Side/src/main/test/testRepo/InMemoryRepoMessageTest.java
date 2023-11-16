@@ -1,16 +1,17 @@
 package main.test.testRepo;
 
+import Entities.Message.MessageDecorator.BasicMessageDecorator;
+import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
 import Entities.User.User;
 import Persistence.InMemoryMessageRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,46 +22,65 @@ public class InMemoryRepoMessageTest {
 
     @BeforeEach
     public void setUp() {
-        messageRepository = new InMemoryMessageRepository();
+        messageRepository = InMemoryMessageRepository.getInstance();
 
         // Create some test messages
-        testMessage1 = MessageFactory.createMessage(MessageFactory.MessageType.TEXT,
-                "Test message 1", null, new ArrayList<User>());
-        testMessage2 = MessageFactory.createMessage(MessageFactory.MessageType.TEXT,
-                "Test message 2", null, new ArrayList<User>());
+        testMessage1 = MessageFactory.createMessage(
+                MessageFactory.MessageType.TEXT, "Test message 1", null, null);
+        testMessage2 = MessageFactory.createMessage(
+                MessageFactory.MessageType.TEXT, "Test message 2", null, null);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        // Clear the messages in the repository after each test
+        messageRepository.getMessages().clear();
     }
 
     @Test
     public void testAddMessage() {
-        messageRepository.addMessage(testMessage1);
-        Set<MessageFactory> messages = messageRepository.getMessages();
-        assertTrue(messages.contains(testMessage1));
+        // Decorate the messages
+        MessageDecorator decoratedMessage1 = new BasicMessageDecorator(testMessage1);
+        MessageDecorator decoratedMessage2 = new BasicMessageDecorator(testMessage2);
+
+        messageRepository.addMessage(decoratedMessage1);
+        Set<MessageDecorator> messages = messageRepository.getMessages();
+
+        assertTrue(messages.contains(decoratedMessage1));
+        assertFalse(messages.contains(decoratedMessage2));
         assertEquals(1, messages.size());
     }
 
     @Test
     public void testRemoveMessage() {
-        messageRepository.addMessage(testMessage1);
-        messageRepository.addMessage(testMessage2);
+        // Decorate the messages
+        MessageDecorator decoratedMessage1 = new BasicMessageDecorator(testMessage1);
+        MessageDecorator decoratedMessage2 = new BasicMessageDecorator(testMessage2);
 
-        messageRepository.removeMessage(testMessage1);
-        Set<MessageFactory> messages = messageRepository.getMessages();
+        messageRepository.addMessage(decoratedMessage1);
+        messageRepository.addMessage(decoratedMessage2);
 
-        assertFalse(messages.contains(testMessage1));
-        assertTrue(messages.contains(testMessage2));
+        messageRepository.removeMessage(decoratedMessage1);
+        Set<MessageDecorator> messages = messageRepository.getMessages();
+
+        assertFalse(messages.contains(decoratedMessage1));
+        assertTrue(messages.contains(decoratedMessage2));
         assertEquals(1, messages.size());
     }
 
     @Test
     public void testGetMessages() {
-        Set<MessageFactory> testMessages = new HashSet<>();
-        testMessages.add(testMessage1);
-        testMessages.add(testMessage2);
+        // Decorate the messages
+        MessageDecorator decoratedMessage1 = new BasicMessageDecorator(testMessage1);
+        MessageDecorator decoratedMessage2 = new BasicMessageDecorator(testMessage2);
 
-        messageRepository.addMessage(testMessage1);
-        messageRepository.addMessage(testMessage2);
+        messageRepository.addMessage(decoratedMessage1);
+        messageRepository.addMessage(decoratedMessage2);
 
-        Set<MessageFactory> messages = messageRepository.getMessages();
-        assertEquals(testMessages, messages);
+        Set<MessageDecorator> messages = messageRepository.getMessages();
+
+        assertTrue(messages.contains(decoratedMessage1));
+        assertTrue(messages.contains(decoratedMessage2));
+        assertEquals(2, messages.size());
     }
 }

@@ -2,10 +2,14 @@ package Entities.User;
 
 import Entities.Misc.Email;
 import Entities.Misc.IDGenerator;
+import Entities.Post.Post;
+import Events.Events;
+import Observer.Observer;
+import Observer.Observable;
 
 import java.util.Date;
 
-public class User {
+public class User implements Observer {
     protected final long ID;
     protected String username;
     protected String password;
@@ -44,6 +48,19 @@ public class User {
         this.permission = Permission.USER;
         this.userStatus = UserStatus.ACTIVE;
     }
+
+    @Override
+    public void update(Observable observable) {
+        if(observable instanceof Events) {
+            Events event = (Events) observable;
+            System.out.println("User " + this.username + " has been notified of the event " + event.getEventName());
+        } else if(observable instanceof Post) {
+            Post post = (Post) observable;
+            System.out.println("User " + this.username + " has been notified of the post " + post.getContent());
+        }
+    }
+
+
 
     public enum Visibility {
         PRIVATE, PUBLIC

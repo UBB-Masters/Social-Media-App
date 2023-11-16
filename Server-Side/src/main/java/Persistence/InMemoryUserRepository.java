@@ -7,8 +7,17 @@ import java.util.HashSet;
 
 public class InMemoryUserRepository extends InMemoryRepositoryTemplate<User> {
 
-    public InMemoryUserRepository() {
+    private static InMemoryUserRepository instance = null;
+
+    private InMemoryUserRepository() {
         super(new HashSet<>());
+    }
+
+    public static InMemoryUserRepository getInstance() {
+        if (instance == null) {
+            instance = new InMemoryUserRepository();
+        }
+        return instance;
     }
 
     public User findById(int id) {
@@ -63,4 +72,5 @@ public class InMemoryUserRepository extends InMemoryRepositoryTemplate<User> {
         }
         return userToRemove;
     }
+
 }

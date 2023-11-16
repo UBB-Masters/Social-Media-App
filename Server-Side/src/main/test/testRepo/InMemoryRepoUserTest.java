@@ -16,7 +16,8 @@ public class InMemoryRepoUserTest {
 
     @BeforeEach
     public void setUp() {
-        userRepository = new InMemoryUserRepository();
+        userRepository = InMemoryUserRepository.getInstance();
+        userRepository.getEntities().clear(); // Reset the repository before each test
 
         // Create some test users
         testUser1 = new User("user1", "password1", null, "user1@example.com", User.Visibility.PUBLIC);
