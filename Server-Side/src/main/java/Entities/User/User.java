@@ -2,13 +2,16 @@ package Entities.User;
 
 import Entities.Misc.Email;
 import Entities.Misc.IDGenerator;
-
-import javax.persistence.*;
+import Entities.Post.Post;
+import Events.Events;
+import Observer.Observer;
+import Observer.Observable;
 import java.util.Date;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "User")
-public class User{
+public class User implements Observer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ID;
@@ -54,6 +57,17 @@ public class User{
 
     public void setID(Long id) {
         this.ID = id;
+    }
+
+    @Override
+    public void update(Observable observable) {
+        if(observable instanceof Events) {
+            Events event = (Events) observable;
+            System.out.println("User " + this.username + " has been notified of the event " + event.getEventName());
+        } else if(observable instanceof Post) {
+            Post post = (Post) observable;
+            System.out.println("User " + this.username + " has been notified of the post " + post.getContent());
+        }
     }
 
     public enum Visibility {

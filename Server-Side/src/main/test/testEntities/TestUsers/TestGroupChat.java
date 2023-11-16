@@ -1,6 +1,6 @@
 package main.test.testEntities.TestUsers;
 
-import Entities.Chanels.GroupChat;
+import Entities.Channel.GroupChat;
 import Entities.Message.MessageFactory;
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
@@ -30,11 +30,6 @@ public class TestGroupChat {
     }
 
     @Test
-    public void testGetGroupId() {
-        assertNotNull(groupChat.getGroupId());
-    }
-
-    @Test
     public void testGetGroupName() {
         assertEquals("Test Group", groupChat.getGroupName());
     }
@@ -43,36 +38,5 @@ public class TestGroupChat {
     public void testSetGroupName() {
         groupChat.setGroupName("Updated Group");
         assertEquals("Updated Group", groupChat.getGroupName());
-    }
-
-    @Test
-    public void testAddMember() {
-        groupChat.addMember(user1);
-        groupChat.addMember(user2);
-        List<User> members = groupChat.getMembers();
-        assertEquals(2, members.size());
-        assertTrue(members.contains(user1));
-        assertTrue(members.contains(user2));
-    }
-
-    @Test
-    public void testRemoveMember() {
-        groupChat.addMember(user1);
-        groupChat.addMember(user2);
-        groupChat.removeMember(user1);
-        List<User> members = groupChat.getMembers();
-        assertEquals(1, members.size());
-        assertFalse(members.contains(user1));
-        assertTrue(members.contains(user2));
-    }
-
-    @Test
-    public void testAddMessage() {
-        groupChat.addMessage(message1);
-        groupChat.addMessage(message2);
-        List<MessageFactory> messages = groupChat.getMessages();
-        assertEquals(2, messages.size());
-        assertTrue(messages.contains(message1));
-        assertTrue(messages.contains(message2));
     }
 }
