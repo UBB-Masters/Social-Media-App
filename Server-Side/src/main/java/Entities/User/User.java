@@ -9,6 +9,7 @@ import Observer.Observer;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "User")
@@ -27,6 +28,8 @@ public class User implements Observer {
 
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
+    @OneToMany
+    private List<Post> posts;
 
 
     public User(User user) {
@@ -38,9 +41,10 @@ public class User implements Observer {
         this.defaultVisibility = user.defaultVisibility;
         this.permission = Permission.USER;
         this.userStatus = UserStatus.ACTIVE;
+        this.posts = user.posts;
     }
 
-    public User(String username, String password, Date birthdate, String email, Visibility defaultVisibility) {
+    public User(String username, String password, Date birthdate, String email, Visibility defaultVisibility, List<Post> posts) {
         this.ID = IDGenerator.generateID(User.class);
         this.username = username;
         this.password = password;
@@ -49,6 +53,7 @@ public class User implements Observer {
         this.defaultVisibility = defaultVisibility;
         this.permission = Permission.USER;
         this.userStatus = UserStatus.ACTIVE;
+        this.posts = posts;
     }
 
     public User() {
@@ -154,6 +159,14 @@ public class User implements Observer {
 
     public enum Visibility {
         PRIVATE, PUBLIC
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> post) {
+        this.posts = post;
     }
 
     public enum Permission {
