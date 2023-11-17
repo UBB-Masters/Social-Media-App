@@ -34,24 +34,24 @@
 //        messages.remove(message);
 //    }
 //}
-package Persistence;
+package Persistence.InMemoryRepositories;
 
 import Entities.Message.MessageDecorator.MessageDecorator;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class MessageRepository {
-    private static MessageRepository instance = null;
+public class InMemoryMessageRepository {
+    private static InMemoryMessageRepository instance = null;
     private final Set<MessageDecorator> messages;
 
-    private MessageRepository() {
+    private InMemoryMessageRepository() {
         messages = new HashSet<>();
     }
 
-    public static MessageRepository getInstance() {
+    public static InMemoryMessageRepository getInstance() {
         if (instance == null) {
-            instance = new MessageRepository();
+            instance = new InMemoryMessageRepository();
         }
         return instance;
     }

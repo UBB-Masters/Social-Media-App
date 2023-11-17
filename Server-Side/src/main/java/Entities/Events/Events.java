@@ -9,19 +9,18 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
-@Table
+@Table(name = "events")
 public class Events implements Observable {
-
     @Id
     private final long ID;
     @Transient
     private final List<Observer> observers = new ArrayList<>();
     private String eventName;
     private String eventDescription;
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "user")
     private Set<User> participants;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "user")
     private Set<User> interestedUsers;
     private Date eventDate;
     private String eventLocation;

@@ -5,7 +5,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table
+@Table(name = "admin")
 public class Administrator extends User {
 
     public Administrator(String username, String password, Date birthdate, String email, Visibility defaultVisibility) {

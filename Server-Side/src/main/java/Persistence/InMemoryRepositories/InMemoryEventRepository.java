@@ -1,4 +1,4 @@
-package Persistence;
+package Persistence.InMemoryRepositories;
 
 import Entities.Exceptions.DataBaseException;
 import Entities.User.User;
@@ -7,18 +7,18 @@ import Entities.Events.Events;
 import java.util.HashSet;
 import java.util.Set;
 
-public class EventRepository {
+public class InMemoryEventRepository {
 
-    private static EventRepository instance = null;
+    private static InMemoryEventRepository instance = null;
     private Set<Events> events;
 
-    private EventRepository() {
+    private InMemoryEventRepository() {
         this.events = new HashSet<>();
     }
 
-    public static EventRepository getInstance() {
+    public static InMemoryEventRepository getInstance() {
         if (instance == null) {
-            instance = new EventRepository();
+            instance = new InMemoryEventRepository();
         }
         return instance;
     }

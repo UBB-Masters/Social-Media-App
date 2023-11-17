@@ -7,10 +7,10 @@ import Entities.Post.Hashtag;
 import Entities.Post.Post;
 import Entities.User.User;
 import Entities.Events.Events;
-import Persistence.EventRepository;
-import Persistence.MessageRepository;
-import Persistence.PostRepository;
-import Persistence.UserRepository;
+import Persistence.InMemoryRepositories.InMemoryEventRepository;
+import Persistence.InMemoryRepositories.InMemoryMessageRepository;
+import Persistence.InMemoryRepositories.InMemoryPostRepository;
+import Persistence.InMemoryRepositories.InMemoryUserInMemoryRepository;
 import Proxy.PostProxy;
 import Entities.Reaction.Reaction;
 import Entities.Reaction.ReactionFactory;
@@ -27,10 +27,10 @@ public class ServerUI {
     //hash set with users
     public static void main(String[] args) {
         ServerController serverController = new ServerController(
-                UserRepository.getInstance(),
-                MessageRepository.getInstance(),
-                EventRepository.getInstance(),
-                PostRepository.getInstance()
+                InMemoryUserInMemoryRepository.getInstance(),
+                InMemoryMessageRepository.getInstance(),
+                InMemoryEventRepository.getInstance(),
+                InMemoryPostRepository.getInstance()
         );
 
         Scanner scanner = new Scanner(System.in);

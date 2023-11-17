@@ -5,7 +5,7 @@ import Entities.Misc.IDGenerator;
 import javax.persistence.*;
 
 @Entity
-@Table
+@Table(name = "groupchat")
 public class GroupChat {
 
     @Id

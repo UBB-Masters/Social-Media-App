@@ -1,21 +1,21 @@
-package Persistence;
+package Persistence.InMemoryRepositories;
 
 import Entities.Post.Post;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostRepository {
-    private static PostRepository instance = null;
+public class InMemoryPostRepository {
+    private static InMemoryPostRepository instance = null;
     private final List<Post> posts;
 
-    private PostRepository() {
+    private InMemoryPostRepository() {
         this.posts = new ArrayList<>();
     }
 
-    public static PostRepository getInstance() {
+    public static InMemoryPostRepository getInstance() {
         if (instance == null) {
-            instance = new PostRepository();
+            instance = new InMemoryPostRepository();
         }
         return instance;
     }

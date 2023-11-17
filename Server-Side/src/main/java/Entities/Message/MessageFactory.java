@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@Table
+@Table(name = "message")
 public class MessageFactory {
 
     @Id

@@ -3,7 +3,7 @@ package main.test.testRepo;
 import Entities.Message.MessageDecorator.BasicMessageDecorator;
 import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
-import Persistence.MessageRepository;
+import Persistence.InMemoryRepositories.InMemoryMessageRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,13 +13,13 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryRepoMessageTest {
-    private MessageRepository messageRepository;
+    private InMemoryMessageRepository inMemoryMessageRepository;
     private MessageFactory testMessage1;
     private MessageFactory testMessage2;
 
     @BeforeEach
     public void setUp() {
-        messageRepository = MessageRepository.getInstance();
+        inMemoryMessageRepository = InMemoryMessageRepository.getInstance();
 
         // Create some test messages
         testMessage1 = MessageFactory.createMessage(
@@ -31,7 +31,7 @@ public class InMemoryRepoMessageTest {
     @AfterEach
     public void tearDown() {
         // Clear the messages in the repository after each test
-        messageRepository.getMessages().clear();
+        inMemoryMessageRepository.getMessages().clear();
     }
 
     @Test
@@ -40,8 +40,8 @@ public class InMemoryRepoMessageTest {
         MessageDecorator decoratedMessage1 = new BasicMessageDecorator(testMessage1);
         MessageDecorator decoratedMessage2 = new BasicMessageDecorator(testMessage2);
 
-        messageRepository.addMessage(decoratedMessage1);
-        Set<MessageDecorator> messages = messageRepository.getMessages();
+        inMemoryMessageRepository.addMessage(decoratedMessage1);
+        Set<MessageDecorator> messages = inMemoryMessageRepository.getMessages();
 
         assertTrue(messages.contains(decoratedMessage1));
         assertFalse(messages.contains(decoratedMessage2));
@@ -54,11 +54,11 @@ public class InMemoryRepoMessageTest {
         MessageDecorator decoratedMessage1 = new BasicMessageDecorator(testMessage1);
         MessageDecorator decoratedMessage2 = new BasicMessageDecorator(testMessage2);
 
-        messageRepository.addMessage(decoratedMessage1);
-        messageRepository.addMessage(decoratedMessage2);
+        inMemoryMessageRepository.addMessage(decoratedMessage1);
+        inMemoryMessageRepository.addMessage(decoratedMessage2);
 
-        messageRepository.removeMessage(decoratedMessage1);
-        Set<MessageDecorator> messages = messageRepository.getMessages();
+        inMemoryMessageRepository.removeMessage(decoratedMessage1);
+        Set<MessageDecorator> messages = inMemoryMessageRepository.getMessages();
 
         assertFalse(messages.contains(decoratedMessage1));
         assertTrue(messages.contains(decoratedMessage2));
@@ -71,10 +71,10 @@ public class InMemoryRepoMessageTest {
         MessageDecorator decoratedMessage1 = new BasicMessageDecorator(testMessage1);
         MessageDecorator decoratedMessage2 = new BasicMessageDecorator(testMessage2);
 
-        messageRepository.addMessage(decoratedMessage1);
-        messageRepository.addMessage(decoratedMessage2);
+        inMemoryMessageRepository.addMessage(decoratedMessage1);
+        inMemoryMessageRepository.addMessage(decoratedMessage2);
 
-        Set<MessageDecorator> messages = messageRepository.getMessages();
+        Set<MessageDecorator> messages = inMemoryMessageRepository.getMessages();
 
         assertTrue(messages.contains(decoratedMessage1));
         assertTrue(messages.contains(decoratedMessage2));

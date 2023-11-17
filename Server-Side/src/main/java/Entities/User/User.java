@@ -8,6 +8,7 @@ import Observer.Observable;
 import Observer.Observer;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,19 +17,27 @@ import java.util.List;
 public class User implements Observer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "userID")
     private Long ID;
+    @Column(name = "username")
     private String username;
+    @Column(name = "password_hash")
     private String password;
+    @Column(name = "birthdate")
     private Date birthdate;
+    @Column(name = "email")
     private String email;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "visibility")
     private Visibility defaultVisibility;
-
+    @Column(name = "visibility")
     @Enumerated(EnumType.STRING)
     private Permission permission;
-
+    @Column(name = "user_status")
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
     @OneToMany
+
     private List<Post> posts;
 
 
@@ -59,6 +68,18 @@ public class User implements Observer {
     public User() {
         this.permission = Permission.USER;
         this.userStatus = UserStatus.ACTIVE;
+    }
+
+    public User(String username, String password, Date birthdate, String email, Visibility defaultVisibility) {
+        this.ID = IDGenerator.generateID(User.class);
+        this.username = username;
+        this.password = password;
+        this.birthdate = birthdate;
+        this.email = email;
+        this.defaultVisibility = defaultVisibility;
+        this.permission = Permission.USER;
+        this.userStatus = UserStatus.ACTIVE;
+        this.posts = new ArrayList<Post>();
     }
 
     @Override

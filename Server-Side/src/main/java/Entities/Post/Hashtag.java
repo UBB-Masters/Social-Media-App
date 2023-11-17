@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 
 @Entity
-@Table
+@Table(name = "hashtag")
 public class Hashtag {
     @Id
     private final long hashtagID;

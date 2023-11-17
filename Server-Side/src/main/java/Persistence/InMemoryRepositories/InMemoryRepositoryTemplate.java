@@ -1,13 +1,13 @@
-package Persistence;
+package Persistence.InMemoryRepositories;
 
 import Entities.Exceptions.DataBaseException;
 
 import java.util.Set;
 
-abstract class RepositoryTemplate<T> {
+abstract class InMemoryRepositoryTemplate<T> {
     private Set<T> entities;
 
-    public RepositoryTemplate(Set<T> entities) {
+    public InMemoryRepositoryTemplate(Set<T> entities) {
 
         this.entities = entities;
     }

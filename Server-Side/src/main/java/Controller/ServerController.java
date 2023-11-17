@@ -9,10 +9,10 @@ import Entities.Post.Hashtag;
 import Entities.Post.Post;
 import Entities.User.User;
 import Entities.Events.Events;
-import Persistence.EventRepository;
-import Persistence.MessageRepository;
-import Persistence.PostRepository;
-import Persistence.UserRepository;
+import Persistence.InMemoryRepositories.InMemoryEventRepository;
+import Persistence.InMemoryRepositories.InMemoryMessageRepository;
+import Persistence.InMemoryRepositories.InMemoryPostRepository;
+import Persistence.InMemoryRepositories.InMemoryUserInMemoryRepository;
 import Proxy.PostProxy;
 import Entities.Reaction.Reaction;
 
@@ -22,23 +22,23 @@ import java.util.logging.Logger;
 
 public class ServerController {
     private final static Logger LOGGER = Logger.getLogger(ServerController.class.getName());
-    private final UserRepository userRepository;
-    private final MessageRepository memoryMessageRepository;
-    private final EventRepository eventRepository;
-    private final PostRepository postRepository;
+    private final InMemoryUserInMemoryRepository userRepository;
+    private final InMemoryMessageRepository memoryInMemoryMessageRepository;
+    private final InMemoryEventRepository eventRepository;
+    private final InMemoryPostRepository inMemoryPostRepository;
     private boolean newPostNotification;
 
 
     public ServerController(
-            UserRepository userRepository,
-            MessageRepository memoryMessageRepository,
-            EventRepository eventRepository,
-            PostRepository postRepository
+            InMemoryUserInMemoryRepository userRepository,
+            InMemoryMessageRepository memoryInMemoryMessageRepository,
+            InMemoryEventRepository eventRepository,
+            InMemoryPostRepository inMemoryPostRepository
     ) {
         this.userRepository = userRepository;
-        this.memoryMessageRepository = memoryMessageRepository;
+        this.memoryInMemoryMessageRepository = memoryInMemoryMessageRepository;
         this.eventRepository = eventRepository;
-        this.postRepository = postRepository;
+        this.inMemoryPostRepository = inMemoryPostRepository;
     }
 
     public void addUser(User user) {
@@ -90,17 +90,17 @@ public class ServerController {
         MessageDecorator decoratedMessage = new BasicMessageDecorator(baseMessage);
 
         // Add the decorated message to the repository
-        memoryMessageRepository.addMessage(decoratedMessage);
+        memoryInMemoryMessageRepository.addMessage(decoratedMessage);
     }
 
 
     public void removeMessage(MessageDecorator message) {
-        memoryMessageRepository.removeMessage(message);
+        memoryInMemoryMessageRepository.removeMessage(message);
     }
 
     public void removeMessageFactory(MessageFactory message) {
         MessageDecorator messageDecorator = message.getDecoratedMessage();
-        memoryMessageRepository.removeMessage(messageDecorator);
+        memoryInMemoryMessageRepository.removeMessage(messageDecorator);
     }
 
 
@@ -148,7 +148,7 @@ public class ServerController {
     public ArrayList<MessageFactory> getUserMessages(User user) {
         ArrayList<MessageFactory> userMessages = new ArrayList<>();
 
-        for (MessageDecorator message : memoryMessageRepository.getMessages()) {
+        for (MessageDecorator message : memoryInMemoryMessageRepository.getMessages()) {
             if (message.getReceiver().equals(user) && message instanceof BasicMessageDecorator decorator) {
                 userMessages.add(decorator.getDecoratedMessage());
             }
@@ -161,7 +161,7 @@ public class ServerController {
     public ArrayList<MessageFactory> getSentMessages(User sender) {
         ArrayList<MessageFactory> sentMessages = new ArrayList<>();
 
-        for (MessageDecorator message : memoryMessageRepository.getMessages()) {
+        for (MessageDecorator message : memoryInMemoryMessageRepository.getMessages()) {
             if (message.getSender().equals(sender)) {
                 if (message instanceof MessageDecorator) {
                     MessageDecorator decorator = (MessageDecorator) message;
@@ -305,7 +305,7 @@ public class ServerController {
 
     public void createPost(User user, String content) {
         Post newPost = new Post(user.getID(), content, new Date());
-        postRepository.addPost(newPost);
+        inMemoryPostRepository.addPost(newPost);
         List<User> users = getAllUsers();
         for (User u : users) {
             newPost.addObserver(u);
@@ -323,7 +323,7 @@ public class ServerController {
         String content = postProxy.getContent();
 
         Post newPost = new Post(user.getID(), content, new Date());
-        postRepository.addPost(newPost);
+        inMemoryPostRepository.addPost(newPost);
 
         List<User> users = getAllUsers();
         for (User u : users) {
@@ -338,34 +338,34 @@ public class ServerController {
 
     public void addCommentToPost(Post post, Comment comment) {
         post.addComment(comment);
-        postRepository.updatePost(post);
+        inMemoryPostRepository.updatePost(post);
     }
 
     public void reactToPost(Post post, Reaction reaction) {
         post.addReaction(reaction);
-        postRepository.updatePost(post);
+        inMemoryPostRepository.updatePost(post);
     }
 
     public void addHashtagToPost(Post post, Hashtag hashtag) {
         post.addHashtag(hashtag);
-        postRepository.updatePost(post);
+        inMemoryPostRepository.updatePost(post);
     }
 
     public void removeHashtagFromPost(Post post, Hashtag hashtag) {
         post.removeHashtag(hashtag);
-        postRepository.updatePost(post);
+        inMemoryPostRepository.updatePost(post);
     }
 
     public List<Post> getAllPosts() {
-        return postRepository.getAllPosts();
+        return inMemoryPostRepository.getAllPosts();
     }
 
     public List<Post> getPostsByUser(User user) {
-        return postRepository.getPostsByUserId(user.getID());
+        return inMemoryPostRepository.getPostsByUserId(user.getID());
     }
 
     public Post getPostById(long postId) {
-        return postRepository.getPostById(postId);
+        return inMemoryPostRepository.getPostById(postId);
     }
 
     public boolean hasNewPostNotification() {

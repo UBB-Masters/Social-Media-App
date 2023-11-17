@@ -1,21 +1,21 @@
-package Persistence;
+package Persistence.InMemoryRepositories;
 
 import Entities.Exceptions.DataBaseException;
 import Entities.User.User;
 
 import java.util.HashSet;
 
-public class UserRepository extends RepositoryTemplate<User> {
+public class InMemoryUserInMemoryRepository extends InMemoryRepositoryTemplate<User> {
 
-    private static UserRepository instance = null;
+    private static InMemoryUserInMemoryRepository instance = null;
 
-    private UserRepository() {
+    private InMemoryUserInMemoryRepository() {
         super(new HashSet<>());
     }
 
-    public static UserRepository getInstance() {
+    public static InMemoryUserInMemoryRepository getInstance() {
         if (instance == null) {
-            instance = new UserRepository();
+            instance = new InMemoryUserInMemoryRepository();
         }
         return instance;
     }

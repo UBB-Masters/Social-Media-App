@@ -5,10 +5,10 @@ import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
-import Persistence.EventRepository;
-import Persistence.MessageRepository;
-import Persistence.PostRepository;
-import Persistence.UserRepository;
+import Persistence.InMemoryRepositories.InMemoryEventRepository;
+import Persistence.InMemoryRepositories.InMemoryMessageRepository;
+import Persistence.InMemoryRepositories.InMemoryPostRepository;
+import Persistence.InMemoryRepositories.InMemoryUserInMemoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,33 +21,33 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class testController {
     private ServerController serverController;
-    private UserRepository userRepository;
-    private MessageRepository messageRepository;
+    private InMemoryUserInMemoryRepository userRepository;
+    private InMemoryMessageRepository inMemoryMessageRepository;
 
-    private EventRepository eventsRepository;
+    private InMemoryEventRepository eventsRepository;
 
-    private PostRepository postRepository;
+    private InMemoryPostRepository inMemoryPostRepository;
     private User testUser1;
     private User testUser2;
 
     @BeforeEach
     public void setUp() {
         IDGenerator.resetCounters();
-        userRepository = UserRepository.getInstance();
-        messageRepository = MessageRepository.getInstance();
-        eventsRepository = EventRepository.getInstance();
-        postRepository = PostRepository.getInstance();
+        userRepository = InMemoryUserInMemoryRepository.getInstance();
+        inMemoryMessageRepository = InMemoryMessageRepository.getInstance();
+        eventsRepository = InMemoryEventRepository.getInstance();
+        inMemoryPostRepository = InMemoryPostRepository.getInstance();
 
-        serverController = new ServerController(userRepository, messageRepository, eventsRepository, postRepository);
+        serverController = new ServerController(userRepository, inMemoryMessageRepository, eventsRepository, inMemoryPostRepository);
 
         testUser1 = new User("user1", "password1", new Date(), "user1@example.com", User.Visibility.PUBLIC);
         testUser2 = new User("user2", "password2", new Date(), "user2@example.com", User.Visibility.PUBLIC);
 
         // Clear repositories for each test
         userRepository.getEntities().clear(); // Add this method to your repository implementations
-        messageRepository.getMessages().clear();
+        inMemoryMessageRepository.getMessages().clear();
         eventsRepository.getAllEvents().clear();
-        postRepository.getAllPosts().clear();
+        inMemoryPostRepository.getAllPosts().clear();
     }
 
     @Test
@@ -97,7 +97,7 @@ public class testController {
 
 
         // Check if the message is removed from the repository
-        Set<MessageDecorator> remainingMessages = messageRepository.getMessages();
+        Set<MessageDecorator> remainingMessages = inMemoryMessageRepository.getMessages();
 
         System.out.println(remainingMessages);
         assertFalse(remainingMessages.contains(messageToRemove));

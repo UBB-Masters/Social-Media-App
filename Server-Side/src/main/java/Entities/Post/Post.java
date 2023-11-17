@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "post")
 public class Post implements Observable {
     @Id
     private final long postId;

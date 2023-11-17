@@ -3,14 +3,16 @@ package Entities.User;
 import javax.persistence.*;
 
 @Entity
-@Table
+@Table(name = "profilepicture")
 public class ProfilePicture {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long pictureID;
-    @OneToOne(mappedBy = "user_id")
+    @OneToOne
+    @JoinColumn(name = "pictureID")
     private User user;
+    @Column(name = "picture")
     private String picture;
 
     public ProfilePicture() {
