@@ -2,19 +2,21 @@ package Entities.UserActions;
 
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
+import org.springframework.data.annotation.Reference;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "story")
 public class Story {
     @Id
+    @Column(name = "storyID")
     private final long ID;
     @ManyToOne
+    @Column(name = "userID")
     private final User user;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "visibility")
     private User.Visibility visibility;
 
     public Story(long ID,User user, User.Visibility visibility) {

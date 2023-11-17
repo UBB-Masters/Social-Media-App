@@ -25,6 +25,12 @@ public class ProfilePicture {
         this.user = user;
     }
 
+    public ProfilePicture(long ID, String pictureFileName, User user) {
+        this.pictureID = ID;
+        this.picture = pictureFileName;
+        this.user = user;
+    }
+
     public long getPictureID() {
         return pictureID;
     }
