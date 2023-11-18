@@ -104,46 +104,6 @@ public class ServerController {
     }
 
 
-//    public ArrayList<MessageFactory> getUserMessages(User user){
-//        ArrayList<MessageFactory> userMessages = new ArrayList<>();
-//
-//        for(MessageFactory message : memoryMessageRepository.getMessages()){
-//            if(message.getReceiver().equals(user))
-//                userMessages.add(message);
-//        }
-//
-//        return userMessages;
-//    }
-
-
-//    public ArrayList<MessageFactory> getSentMessages(User sender) {
-//        ArrayList<MessageFactory> sentMessages = new ArrayList<>();
-//
-//        for (MessageFactory message : memoryMessageRepository.getMessages()) {
-//            if (message.getSender().equals(sender)) {
-//                sentMessages.add(message);
-//            }
-//        }
-//
-//        return sentMessages;
-//    }
-
-
-    // Update method signature to return MessageDecorator type
-//    public ArrayList<MessageFactory> getUserMessages(User user) {
-//        ArrayList<MessageFactory> userMessages = new ArrayList<>();
-//
-//        for (MessageDecorator message : memoryMessageRepository.getMessages()) {
-//            if (message.getReceiver().equals(user)) {
-//                if (message instanceof BasicMessageDecorator) {
-//                    MessageFactory messageFactory = ((BasicMessageDecorator) message).getDecoratedMessage();
-//                    userMessages.add(messageFactory);
-//                }
-//            }
-//        }
-//
-//        return userMessages;
-//    }
 
     public ArrayList<MessageFactory> getUserMessages(User user) {
         ArrayList<MessageFactory> userMessages = new ArrayList<>();
