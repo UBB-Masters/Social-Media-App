@@ -4,8 +4,9 @@ import Entities.Misc.IDGenerator;
 import Entities.User.User;
 import Observer.Observable;
 import Observer.Observer;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
+
 import java.util.*;
 
 @Entity

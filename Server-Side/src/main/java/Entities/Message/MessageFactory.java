@@ -8,11 +8,12 @@ import Entities.Message.MessageTypes.TextMessage;
 import Entities.Message.MessageTypes.VideoMessage;
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+
 import java.util.ArrayList;
 import java.util.Collection;
 

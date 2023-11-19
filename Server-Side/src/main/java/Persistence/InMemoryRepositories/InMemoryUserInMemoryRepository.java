@@ -2,13 +2,18 @@ package Persistence.InMemoryRepositories;
 
 import Entities.Exceptions.DataBaseException;
 import Entities.User.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 
+@Repository
 public class InMemoryUserInMemoryRepository extends InMemoryRepositoryTemplate<User> {
 
     private static InMemoryUserInMemoryRepository instance = null;
 
+    @Autowired
     private InMemoryUserInMemoryRepository() {
         super(new HashSet<>());
     }

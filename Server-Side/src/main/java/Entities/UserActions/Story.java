@@ -2,9 +2,10 @@ package Entities.UserActions;
 
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
+import jakarta.persistence.*;
 import org.springframework.data.annotation.Reference;
 
-import javax.persistence.*;
+
 
 @Entity
 @Table(name = "story")

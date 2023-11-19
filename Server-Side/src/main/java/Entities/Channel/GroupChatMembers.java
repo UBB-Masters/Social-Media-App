@@ -1,8 +1,8 @@
 package Entities.Channel;
 
 import Entities.User.User;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
+import Entities.Misc.IDGenerator;
 
 @Entity
 @Table

@@ -1,84 +1,97 @@
-//package UI;
-//
-//import Controller.ServerController;
-//import Entities.Message.MessageFactory;
-//import Entities.Post.Comment;
-//import Entities.Post.Hashtag;
+package Controller;
+
+import Entities.Events.Events;
+import Entities.Message.MessageFactory;
+import Entities.Post.Comment;
+import Entities.Post.Hashtag;
 //import Entities.Post.Post;
-//import Entities.User.User;
-//import Entities.Events.Events;
-//import Persistence.InMemoryRepositories.InMemoryEventRepository;
-//import Persistence.InMemoryRepositories.InMemoryMessageRepository;
-//import Persistence.InMemoryRepositories.InMemoryPostRepository;
-//import Persistence.InMemoryRepositories.InMemoryUserInMemoryRepository;
+import Entities.Reaction.Reaction;
+import Entities.Reaction.ReactionFactory;
+import Entities.User.User;
 //import Proxy.PostProxy;
-//import Entities.Reaction.Reaction;
-//import Entities.Reaction.ReactionFactory;
-//import Strategy.ReactionStrategy;
-//import io.vavr.control.Option;
-//import io.vavr.control.Try;
-//
-//import java.text.ParseException;
-//import java.text.SimpleDateFormat;
-//import java.util.*;
-//
-//public class ServerUI {
-//
-//    //hash set with users
-//    public static void main(String[] args) {
-//        ServerController serverController = new ServerController(
-//                InMemoryUserInMemoryRepository.getInstance(),
-//                InMemoryMessageRepository.getInstance(),
-//                InMemoryEventRepository.getInstance(),
-//                InMemoryPostRepository.getInstance()
-//
-//        );
-//
-//        Scanner scanner = new Scanner(System.in);
-//
-//        User user1 = new User("user1", "password1", new Date(), "user1@gmail.com", User.Visibility.PUBLIC);
-//        User user2 = new User("user2", "password2", new Date(), "user2@gmail.com", User.Visibility.PUBLIC);
-//
-//        serverController.addUser(user1);
-//        serverController.addUser(user2);
-//        int choice;
-//        do {
-//            displayMainMenu();
-//            Option<Integer> inputOption = readInput(scanner);
-//            choice = inputOption.getOrElse(-1);
-//            scanner.nextLine(); // Consume new line
-//
-//            switch (choice) {
-//                case 1:
-//                    userOperations(serverController, scanner);
-//                    break;
-//                case 2:
-//                    eventOperations(serverController, scanner);
-//                    break;
-//                case 3:
-//                    System.out.println("Exiting...");
-//                    break;
-//                default:
-//                    System.out.println("Invalid choice");
-//            }
-//
-//        } while (choice != 3);
-//    }
-//
-//
-//    private static void userOperations(ServerController serverController, Scanner scanner) {
-//        int choice;
-//        do {
-//            displayUserMenu();
-//            Option<Integer> inputOption = readInput(scanner);
-//            choice = inputOption.getOrElse(-1);
-//            scanner.nextLine(); // Consume new line
-//
-//            switch (choice) {
-//                case 1:
-//                    addUser(serverController, scanner);
-//                    break;
-//                case 2:
+import Strategy.ReactionStrategy;
+import io.vavr.control.Option;
+import io.vavr.control.Try;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
+
+public class UiSpring implements CommandLineRunner {
+
+    private final ServerController serverController;
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UiSpring(ServerController serverController, UserRepository userRepository) {
+        this.serverController = serverController;
+        this.userRepository = userRepository;
+
+
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(UiSpring.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+
+
+        Scanner scanner = new Scanner(System.in);
+
+        User user1 = new User("user1", "password1", new Date(), "user1@gmail.com", User.Visibility.PUBLIC);
+        User user2 = new User("user2", "password2", new Date(), "user2@gmail.com", User.Visibility.PUBLIC);
+
+        serverController.addUser(user1);
+        serverController.addUser(user2);
+        int choice;
+        do {
+            displayMainMenu();
+            Option<Integer> inputOption = readInput(scanner);
+            choice = inputOption.getOrElse(-1);
+            scanner.nextLine(); // Consume new line
+
+            switch (choice) {
+                case 1:
+                    userOperations(serverController, scanner);
+                    break;
+                case 2:
+                    eventOperations(serverController, scanner);
+                    break;
+                case 3:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+            }
+
+        } while (choice != 3);
+    }
+
+
+    private static void userOperations(ServerController serverController, Scanner scanner) {
+        int choice;
+        do {
+            displayUserMenu();
+            Option<Integer> inputOption = readInput(scanner);
+            choice = inputOption.getOrElse(-1);
+            scanner.nextLine(); // Consume new line
+
+            switch (choice) {
+                case 1:
+                    addUser(serverController, scanner);
+                    break;
+                case 2:
 //                    removeUser(serverController, scanner);
 //                    break;
 //                case 3:
@@ -95,30 +108,30 @@
 //                    break;
 //                case 7:
 //                    participateInEvent(serverController, scanner);
-//                    break;
-//                case 8:
-//                    postOperations(serverController, scanner);
-//                    break;
-//                case 9:
-//                    System.out.println("Going back to the main menu...");
-//                    return; // Exit the method to go back
-//                default:
-//                    System.out.println("Invalid choice");
-//            }
-//
-//        } while (choice != 8);
-//    }
-//
-//    private static void eventOperations(ServerController serverController, Scanner scanner) {
-//        int choice;
-//        do {
-//            displayEventMenu();
-//            Option<Integer> inputOption = readInput(scanner);
-//            choice = inputOption.getOrElse(-1);
-//            scanner.nextLine(); // Consume new line
-//
-//            switch (choice) {
-//                case 1:
+                    break;
+                case 8:
+                    postOperations(serverController, scanner);
+                    break;
+                case 9:
+                    System.out.println("Going back to the main menu...");
+                    return; // Exit the method to go back
+                default:
+                    System.out.println("Invalid choice");
+            }
+
+        } while (choice != 8);
+    }
+
+    private static void eventOperations(ServerController serverController, Scanner scanner) {
+        int choice;
+        do {
+            displayEventMenu();
+            Option<Integer> inputOption = readInput(scanner);
+            choice = inputOption.getOrElse(-1);
+            scanner.nextLine(); // Consume new line
+
+            switch (choice) {
+                case 1:
 //                    addEvent(serverController, scanner);
 //                    break;
 //                case 2:
@@ -135,28 +148,28 @@
 //                    break;
 //                case 6:
 //                    displayUsersInterestedNotParticipating(serverController, scanner);
-//                    break;
-//                case 7:
-//                    System.out.println("Going back to the main menu...");
-//                    return; // Exit the method to go back
-//                default:
-//                    System.out.println("Invalid choice");
-//            }
-//
-//        } while (choice != 7);
-//    }
-//
-//
-//    private static void postOperations(ServerController serverController, Scanner scanner) {
-//        int choice;
-//        do {
-//            displayPostMenu();
-//            Option<Integer> inputOption = readInput(scanner);
-//            choice = inputOption.getOrElse(-1);
-//            scanner.nextLine(); // Consume new line
-//
-//            switch (choice) {
-//                case 1:
+                    break;
+                case 7:
+                    System.out.println("Going back to the main menu...");
+                    return; // Exit the method to go back
+                default:
+                    System.out.println("Invalid choice");
+            }
+
+        } while (choice != 7);
+    }
+
+
+    private static void postOperations(ServerController serverController, Scanner scanner) {
+        int choice;
+        do {
+            displayPostMenu();
+            Option<Integer> inputOption = readInput(scanner);
+            choice = inputOption.getOrElse(-1);
+            scanner.nextLine(); // Consume new line
+
+            switch (choice) {
+                case 1:
 //                    createPost(serverController, scanner);
 //                    break;
 //                case 2:
@@ -182,100 +195,101 @@
 //                    break;
 //                case 9:
 //                    reactToAnotherUserPost(serverController, scanner);
-//                    break;
-//                case 10:
-//                    System.out.println("Going back to the main menu...");
-//                    return; // Exit the method to go back
-//                default:
-//                    System.out.println("Invalid choice");
-//            }
-//        } while (choice != 8);
-//    }
-//
-//    private static void displayMainMenu() {
-//        System.out.println("Choose an option:");
-//        System.out.println("1. User Operations");
-//        System.out.println("2. Event Operations");
-//        System.out.println("3. Exit");
-//    }
-//
-//    private static void displayUserMenu() {
-//        System.out.println("User Operations:");
-//        System.out.println("1. Add User");
-//        System.out.println("2. Remove User");
-//        System.out.println("3. Update User");
-//        System.out.println("4. Retrieve all users");
-//        System.out.println("5. Send a message");
-//        System.out.println("6. See all your sent messages");
-//        System.out.println("7. Participate in events");
-//        System.out.println("8. Manage your posts");
-//        System.out.println("9. Go back to main menu");
-//    }
-//
-//    private static void displayEventMenu() {
-//        System.out.println("Event Operations:");
-//        System.out.println("1. Add Event");
-//        System.out.println("2. Remove Event");
-//        System.out.println("3. Update Event");
-//        System.out.println("4. Retrieve all events");
-//        System.out.println("5. See event participants");
-//        System.out.println("6. See interested users that are not participating in the event");
-//        System.out.println("7. Go back to main menu");
-//    }
-//
-//
-//    private static void displayPostMenu() {
-//        System.out.println("Post Operations:");
-//        System.out.println("1. Create a Post");
-//        System.out.println("2. Add a Comment to a Post");
-//        System.out.println("3. React to a Post");
-//        System.out.println("4. Add Hashtag to a Post");
-//        System.out.println("5. Remove Hashtag from a Post");
-//        System.out.println("6. Display All Posts");
-//        System.out.println("7. Display User's Posts");
-//        System.out.println("8. Comment to another post");
-//        System.out.println("9. React to another post");
-//        System.out.println("10. Go back to User Operations");
-//    }
-//
-//
-//    private static Option<Integer> readInput(Scanner scanner) {
-//        System.out.println("Enter your choice:");
-//        return Try.of(scanner::nextInt).toOption();
-//
-//    }
-//
-//    private static void displayAllUsers(ServerController serverController) {
-//        System.out.println("Printing all users:");
-//        serverController.getAllUsers()
-//                .forEach(System.out::println); // Assuming toString() in User class provides necessary information
-//    }
-//
-//    private static void addUser(ServerController serverController, Scanner scanner) {
-//        System.out.println("Enter username:");
-//        String username = scanner.nextLine().trim();
-//
-//        System.out.println("Enter password:");
-//        String password = scanner.nextLine().trim();
-//
-//        System.out.println("Enter birthdate (YYYY-MM-DD):");
-//        Date birthDate = Try.of(() -> new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine().trim()))
-//                .getOrElseThrow(() -> new RuntimeException("Invalid date format"));
-//
-//        System.out.println("Enter email:");
-//        String email = scanner.nextLine().trim();
-//
-//        System.out.println("Enter visibility (PRIVATE, FRIENDS, PUBLIC):");
-//        User.Visibility visibility = Try.of(() -> User.Visibility.valueOf(scanner.nextLine().trim().toUpperCase()))
-//                .getOrElseThrow(() -> new RuntimeException("Invalid visibility"));
-//
-//        User newUser = new User(username, password, birthDate, email, visibility);
-//
-//        Try<Void> addUserAttempt = Try.run(() -> serverController.addUser(newUser));
-//        addUserAttempt.onSuccess(ignore -> System.out.println("User added successfully!"))
-//                .onFailure(error -> System.out.println("Failed to add user: " + error.getMessage()));
-//    }
-//
+                    break;
+                case 10:
+                    System.out.println("Going back to the main menu...");
+                    return; // Exit the method to go back
+                default:
+                    System.out.println("Invalid choice");
+            }
+        } while (choice != 8);
+    }
+
+    private static void displayMainMenu() {
+        System.out.println("Choose an option:");
+        System.out.println("1. User Operations");
+        System.out.println("2. Event Operations");
+        System.out.println("3. Exit");
+    }
+
+    private static void displayUserMenu() {
+        System.out.println("User Operations:");
+        System.out.println("1. Add User");
+        System.out.println("2. Remove User");
+        System.out.println("3. Update User");
+        System.out.println("4. Retrieve all users");
+        System.out.println("5. Send a message");
+        System.out.println("6. See all your sent messages");
+        System.out.println("7. Participate in events");
+        System.out.println("8. Manage your posts");
+        System.out.println("9. Go back to main menu");
+    }
+
+    private static void displayEventMenu() {
+        System.out.println("Event Operations:");
+        System.out.println("1. Add Event");
+        System.out.println("2. Remove Event");
+        System.out.println("3. Update Event");
+        System.out.println("4. Retrieve all events");
+        System.out.println("5. See event participants");
+        System.out.println("6. See interested users that are not participating in the event");
+        System.out.println("7. Go back to main menu");
+    }
+
+
+    private static void displayPostMenu() {
+        System.out.println("Post Operations:");
+        System.out.println("1. Create a Post");
+        System.out.println("2. Add a Comment to a Post");
+        System.out.println("3. React to a Post");
+        System.out.println("4. Add Hashtag to a Post");
+        System.out.println("5. Remove Hashtag from a Post");
+        System.out.println("6. Display All Posts");
+        System.out.println("7. Display User's Posts");
+        System.out.println("8. Comment to another post");
+        System.out.println("9. React to another post");
+        System.out.println("10. Go back to User Operations");
+    }
+
+
+    private static Option<Integer> readInput(Scanner scanner) {
+        System.out.println("Enter your choice:");
+        return Try.of(scanner::nextInt).toOption();
+
+    }
+
+    private static void displayAllUsers(ServerController serverController) {
+        System.out.println("Printing all users:");
+        serverController.getAllUsers()
+                .forEach(System.out::println); // Assuming toString() in User class provides necessary information
+    }
+
+    private static void addUser(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter username:");
+        String username = scanner.nextLine().trim();
+
+        System.out.println("Enter password:");
+        String password = scanner.nextLine().trim();
+
+        System.out.println("Enter birthdate (YYYY-MM-DD):");
+        Date birthDate = Try.of(() -> new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine().trim()))
+                .getOrElseThrow(() -> new RuntimeException("Invalid date format"));
+
+        System.out.println("Enter email:");
+        String email = scanner.nextLine().trim();
+
+        System.out.println("Enter visibility (PRIVATE, FRIENDS, PUBLIC):");
+        User.Visibility visibility = Try.of(() -> User.Visibility.valueOf(scanner.nextLine().trim().toUpperCase()))
+                .getOrElseThrow(() -> new RuntimeException("Invalid visibility"));
+
+        User newUser = new User(username, password, birthDate, email, visibility);
+
+        Try<Void> addUserAttempt = Try.run(() -> serverController.addUser(newUser));
+        addUserAttempt.onSuccess(ignore -> System.out.println("User added successfully!"))
+                .onFailure(error -> System.out.println("Failed to add user: " + error.getMessage()));
+    }
+}
+
 //    private static void removeUser(ServerController serverController, Scanner scanner) {
 //        System.out.println("Enter ID of the user to remove:");
 //        Option<Integer> idOption = readInput(scanner);
@@ -560,29 +574,6 @@
 //    }
 //
 //
-////    private static void createPost(ServerController serverController, Scanner scanner) {
-////        System.out.println("Enter your ID:");
-////        Option<Integer> userIdOption = readInput(scanner);
-////
-////        if (userIdOption.isDefined()) {
-////            User user = serverController.getUserById(userIdOption.get());
-////
-////            if (user != null) {
-////                System.out.println("Enter post content:");
-////                // Clear the input buffer
-////                scanner.nextLine();
-////                String content = scanner.nextLine().trim();
-////
-////                serverController.createPost(user, content);
-////                System.out.println("Post created successfully!");
-////            } else {
-////                System.out.println("Invalid user ID");
-////            }
-////        } else {
-////            System.out.println("Invalid input for user ID");
-////        }
-////    }
-//
 //    private static void createPost(ServerController serverController, Scanner scanner) {
 //        System.out.println("Enter your ID:");
 //        Option<Integer> userIdOption = readInput(scanner);
@@ -632,31 +623,6 @@
 //            System.out.println("Invalid Post ID");
 //        }
 //    }
-//
-//    // UI method to react to a post
-////    private static void reactToPost(ServerController serverController, Scanner scanner) {
-////        System.out.println("Enter Post ID:");
-////        Option<Integer> postIdOption = readInput(scanner);
-////
-////        if (postIdOption.isDefined()) {
-////            long postId = postIdOption.get();
-////            Post post = serverController.getPostById(postId);
-////
-////            if (post != null) {
-////                System.out.println("Enter reaction (Like, Love, Haha, Wow, Sad, Angry):");
-////                scanner.nextLine();
-////                String reactionType = scanner.nextLine().trim();
-////
-////                Reaction reaction = new Reaction(123, reactionType); // replace 123 with actual user ID
-////                serverController.reactToPost(post, reaction);
-////                System.out.println("Reacted to the post!");
-////            } else {
-////                System.out.println("Post not found.");
-////            }
-////        } else {
-////            System.out.println("Invalid Post ID");
-////        }
-////    }
 //
 //    private static void reactToPost(ServerController serverController, Scanner scanner) {
 //        System.out.println("Enter Post ID:");
@@ -835,4 +801,7 @@
 //            System.out.println("Invalid Post ID");
 //        }
 //    }
+//
+//
 //}
+

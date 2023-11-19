@@ -6,8 +6,8 @@ import Observer.Observable;
 import Observer.Observer;
 import Entities.Reaction.Reaction;
 import Strategy.ReactionStrategy;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +18,7 @@ public class Post implements Observable {
     @Id
     private final long postId;
     @ManyToMany
-    private ArrayList<Comment> comments;
+    private List<Comment> comments;
     @ManyToMany
     private ArrayList<Reaction> reactions;
     @ManyToMany

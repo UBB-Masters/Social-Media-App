@@ -2,9 +2,10 @@ package Entities.Message.MessageTypes;
 
 import Entities.Message.MessageFactory;
 import Entities.User.User;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+
 import java.util.ArrayList;
 
 @Entity

@@ -6,51 +6,72 @@ import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
 import Entities.Post.Comment;
 import Entities.Post.Hashtag;
-import Entities.Post.Post;
+//import Entities.Post.Post;
 import Entities.User.User;
+import Controller.UserRepository;
 import Entities.Events.Events;
 import Persistence.InMemoryRepositories.InMemoryEventRepository;
 import Persistence.InMemoryRepositories.InMemoryMessageRepository;
 import Persistence.InMemoryRepositories.InMemoryPostRepository;
 import Persistence.InMemoryRepositories.InMemoryUserInMemoryRepository;
-import Proxy.PostProxy;
+//import Proxy.PostProxy;
 import Entities.Reaction.Reaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+@Service
 public class ServerController {
     private final static Logger LOGGER = Logger.getLogger(ServerController.class.getName());
-    private final InMemoryUserInMemoryRepository userRepository;
-    private final InMemoryMessageRepository memoryInMemoryMessageRepository;
-    private final InMemoryEventRepository eventRepository;
-    private final InMemoryPostRepository inMemoryPostRepository;
+//    private final InMemoryUserInMemoryRepository userRepository;
+    private final UserRepository userRepositoryy;
+//    private final InMemoryMessageRepository memoryInMemoryMessageRepository;
+//    private final InMemoryEventRepository eventRepository;
+//    private final InMemoryPostRepository inMemoryPostRepository;
     private boolean newPostNotification;
 
 
+
+    @Autowired
     public ServerController(
-            InMemoryUserInMemoryRepository userRepository,
-            InMemoryMessageRepository memoryInMemoryMessageRepository,
-            InMemoryEventRepository eventRepository,
-            InMemoryPostRepository inMemoryPostRepository
+//            InMemoryMessageRepository memoryInMemoryMessageRepository,
+//            InMemoryEventRepository eventRepository,
+//            InMemoryPostRepository inMemoryPostRepository,
+            UserRepository userRepositoryy
     ) {
-        this.userRepository = userRepository;
-        this.memoryInMemoryMessageRepository = memoryInMemoryMessageRepository;
-        this.eventRepository = eventRepository;
-        this.inMemoryPostRepository = inMemoryPostRepository;
+//        this.userRepository = userRepository;
+//        this.memoryInMemoryMessageRepository = memoryInMemoryMessageRepository;
+//        this.eventRepository = eventRepository;
+//        this.inMemoryPostRepository = inMemoryPostRepository;
+        this.userRepositoryy = userRepositoryy;
     }
+
+//    public void addUser(User user) {
+//        userRepository.add(user);
+//    }
 
     public void addUser(User user) {
-        userRepository.add(user);
+        userRepositoryy.save(user);
     }
+
+//    public void removeUser(User user) {
+//        userRepository.remove(user);
+//    }
 
     public void removeUser(User user) {
-        userRepository.remove(user);
+        userRepositoryy.delete(user);
     }
 
+//    public void updateUser(User oldUser, User newUser) {
+//        userRepository.update(oldUser, newUser);
+//    }
+
     public void updateUser(User oldUser, User newUser) {
-        userRepository.update(oldUser, newUser);
+        userRepositoryy.save(newUser);
     }
 
     public void updateUserUsername(User user, String newUsername) {
@@ -77,264 +98,280 @@ public class ServerController {
         updateUser(user, updatedUser);
     }
 
+    public User getUserByID(long userID) {
+        return userRepositoryy.findById(userID).orElse(null);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepositoryy.findAll();
+    }
+
+    public User removeUserById(Long id) {
+        User user = userRepositoryy.findById(id).orElse(null);
+        if (user != null) {
+            userRepositoryy.delete(user);
+        }
+        return user;
+    }
+
 
 //    public void sendMessage(User sender, User receiver, String message) {
 //        memoryMessageRepository.addMessage(MessageFactory.createMessage(MessageFactory.MessageType.TEXT, message, sender, receiver));
 //    }
-
-    public void sendMessage(User sender, User receiver, String message) {
-        MessageFactory baseMessage = MessageFactory.createMessage(
-                MessageFactory.MessageType.TEXT, message, sender, receiver);
-
-        // Decorate the message
-        MessageDecorator decoratedMessage = new BasicMessageDecorator(baseMessage);
-
-        // Add the decorated message to the repository
-        memoryInMemoryMessageRepository.addMessage(decoratedMessage);
-    }
-
-
-    public void removeMessage(MessageDecorator message) {
-        memoryInMemoryMessageRepository.removeMessage(message);
-    }
-
-    public void removeMessageFactory(MessageFactory message) {
-        MessageDecorator messageDecorator = message.getDecoratedMessage();
-        memoryInMemoryMessageRepository.removeMessage(messageDecorator);
-    }
-
-
-
-    public ArrayList<MessageFactory> getUserMessages(User user) {
-        ArrayList<MessageFactory> userMessages = new ArrayList<>();
-
-        for (MessageDecorator message : memoryInMemoryMessageRepository.getMessages()) {
-            if (message.getReceiver().equals(user) && message instanceof BasicMessageDecorator decorator) {
-                userMessages.add(decorator.getDecoratedMessage());
-            }
-        }
-
-        return userMessages;
-    }
-
-
-    public ArrayList<MessageFactory> getSentMessages(User sender) {
-        ArrayList<MessageFactory> sentMessages = new ArrayList<>();
-
-        for (MessageDecorator message : memoryInMemoryMessageRepository.getMessages()) {
-            if (message.getSender().equals(sender)) {
-                if (message instanceof MessageDecorator) {
-                    MessageDecorator decorator = (MessageDecorator) message;
-                    sentMessages.add(((BasicMessageDecorator) decorator).getDecoratedMessage());
-                } else {
-                    sentMessages.add((MessageFactory) message);
-                }
-            }
-        }
-
-        return sentMessages;
-    }
-
-
-    public User getUserById(int userId) {
-        return userRepository.findById(userId);
-    }
-
-    public User getUserById(long userId) {
-        return userRepository.findById(userId);
-    }
-
-    //method that returns all users from the repo
-    public List<User> getAllUsers() {
-        return new ArrayList<>(userRepository.getEntities());
-    }
-
-    public User removeUserByID(Integer id) {
-        return userRepository.removeUserById(id);
-    }
-
-    public User removeUserByID(Long id) {
-        return userRepository.removeUserById(id);
-    }
-
-
-    public void addEvent(Events event) {
-        try {
-            eventRepository.addEvent(event);
-            event.notifyObservers();
-        } catch (DataBaseException e) {
-            LOGGER.log(Level.SEVERE, "Exception while adding an event: " + e.getMessage(), e);
-        }
-    }
-
-    public void removeEvent(Events event) {
-        try {
-            eventRepository.removeEvent(event);
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Exception while removing an event: " + ex.getMessage(), ex);
-        }
-    }
-
-
-    public Set<User> getEventParticipants(Events event) {
-        return event.getParticipants();
-    }
-
-
-    public Set<Events> getAllEvents() {
-        return eventRepository.getAllEvents();
-    }
-
-    public Events getEventById(long id) {
-        return eventRepository.findEventByID(id);
-    }
-
-    public void addParticipantToEvent(Events event, User user) {
-        eventRepository.addParticipantToEvent(event, user);
-    }
-
-    public void addParticipantToEventById(long id, User user) {
-        eventRepository.addParticipantToEventById(id, user);
-    }
-
-    public void removeParticipantFromEvent(Events event, User user) {
-        eventRepository.removeParticipantFromEvent(event, user);
-    }
-
-    public void removeParticipantFromEventById(long id, User user) {
-        eventRepository.removeParticipantFromEventById(id, user);
-    }
-
-    public void addInterestedUserToEvent(Events event, User user) {
-        eventRepository.addInterestedUserToEvent(event, user);
-    }
-
-    public void addInterestedUserToEventById(long id, User user) {
-        eventRepository.addInterestedUserToEventById(id, user);
-    }
-
-    public void removeInterestedUserFromEvent(Events event, User user) {
-        eventRepository.removeInterestedUserFromEvent(event, user);
-    }
-
-    public void removeInterestedUserFromEventById(long id, User user) {
-        eventRepository.removeInterestedUserFromEventById(id, user);
-    }
-
-    public Events removeEventByID(Integer id) {
-        try {
-            eventRepository.removeEventById(id);
-        } catch (DataBaseException e) {
-            LOGGER.log(Level.SEVERE, "Exception while removing an event: " + e.getMessage(), e);
-        }
-        return null;
-    }
-
-    public void updateEvent(Events oldEvent, Events newEvent) {
-        try {
-            eventRepository.updateEvent(oldEvent, newEvent);
-        } catch (DataBaseException e) {
-            LOGGER.log(Level.SEVERE, "Exception while updating an event: " + e.getMessage(), e);
-        }
-    }
-
-    public Events getEventByID(int eventId) {
-        // Logic to retrieve the event by ID
-        return eventRepository.findEventByID(eventId); // Example method call to retrieve the event from the repository
-    }
-
-
-    public void joinEvent(User user, Events event) {
-        event.addParticipant(user);
-    }
-
-    public void showInterest(User user, Events event) {
-        event.addInterestedUser(user);
-    }
-
-    public Set<User> getUsersInterestedInEvent(Events event) {
-        Set<User> allInterestedUsers = event.getInterestedUsers();
-        Set<User> allParticipants = event.getParticipants();
-
-        Set<User> interestedButNotParticipating = new HashSet<>(allInterestedUsers);
-        interestedButNotParticipating.removeAll(allParticipants);
-
-        return interestedButNotParticipating;
-    }
-
-
-    public void createPost(User user, String content) {
-        Post newPost = new Post(user.getID(), content, new Date());
-        inMemoryPostRepository.addPost(newPost);
-        List<User> users = getAllUsers();
-        for (User u : users) {
-            newPost.addObserver(u);
-        }
-
-        newPost.notifyObservers(); // Notify all observers (users) about the new post
-
-        this.newPostNotification = true;
-
-
-    }
-
-    public void createPostProxy(User user, PostProxy postProxy) {
-        // Loading content if necessary
-        String content = postProxy.getContent();
-
-        Post newPost = new Post(user.getID(), content, new Date());
-        inMemoryPostRepository.addPost(newPost);
-
-        List<User> users = getAllUsers();
-        for (User u : users) {
-            newPost.addObserver(u);
-        }
-
-        newPost.notifyObservers(); // Notify all observers (users) about the new post
-
-        this.newPostNotification = true;
-    }
-
-
-    public void addCommentToPost(Post post, Comment comment) {
-        post.addComment(comment);
-        inMemoryPostRepository.updatePost(post);
-    }
-
-    public void reactToPost(Post post, Reaction reaction) {
-        post.addReaction(reaction);
-        inMemoryPostRepository.updatePost(post);
-    }
-
-    public void addHashtagToPost(Post post, Hashtag hashtag) {
-        post.addHashtag(hashtag);
-        inMemoryPostRepository.updatePost(post);
-    }
-
-    public void removeHashtagFromPost(Post post, Hashtag hashtag) {
-        post.removeHashtag(hashtag);
-        inMemoryPostRepository.updatePost(post);
-    }
-
-    public List<Post> getAllPosts() {
-        return inMemoryPostRepository.getAllPosts();
-    }
-
-    public List<Post> getPostsByUser(User user) {
-        return inMemoryPostRepository.getPostsByUserId(user.getID());
-    }
-
-    public Post getPostById(long postId) {
-        return inMemoryPostRepository.getPostById(postId);
-    }
-
-    public boolean hasNewPostNotification() {
-        return newPostNotification;
-    }
-
-    public void clearNewPostNotification() {
-        this.newPostNotification = false;
-    }
+//
+//    public void sendMessage(User sender, User receiver, String message) {
+//        MessageFactory baseMessage = MessageFactory.createMessage(
+//                MessageFactory.MessageType.TEXT, message, sender, receiver);
+//
+//        // Decorate the message
+//        MessageDecorator decoratedMessage = new BasicMessageDecorator(baseMessage);
+//
+//        // Add the decorated message to the repository
+//        memoryInMemoryMessageRepository.addMessage(decoratedMessage);
+//    }
+//
+//
+//    public void removeMessage(MessageDecorator message) {
+//        memoryInMemoryMessageRepository.removeMessage(message);
+//    }
+//
+//    public void removeMessageFactory(MessageFactory message) {
+//        MessageDecorator messageDecorator = message.getDecoratedMessage();
+//        memoryInMemoryMessageRepository.removeMessage(messageDecorator);
+//    }
+//
+//
+//
+//    public ArrayList<MessageFactory> getUserMessages(User user) {
+//        ArrayList<MessageFactory> userMessages = new ArrayList<>();
+//
+//        for (MessageDecorator message : memoryInMemoryMessageRepository.getMessages()) {
+//            if (message.getReceiver().equals(user) && message instanceof BasicMessageDecorator decorator) {
+//                userMessages.add(decorator.getDecoratedMessage());
+//            }
+//        }
+//
+//        return userMessages;
+//    }
+//
+//
+//    public ArrayList<MessageFactory> getSentMessages(User sender) {
+//        ArrayList<MessageFactory> sentMessages = new ArrayList<>();
+//
+//        for (MessageDecorator message : memoryInMemoryMessageRepository.getMessages()) {
+//            if (message.getSender().equals(sender)) {
+//                if (message instanceof MessageDecorator) {
+//                    MessageDecorator decorator = (MessageDecorator) message;
+//                    sentMessages.add(((BasicMessageDecorator) decorator).getDecoratedMessage());
+//                } else {
+//                    sentMessages.add((MessageFactory) message);
+//                }
+//            }
+//        }
+//
+//        return sentMessages;
+//    }
+//
+//
+//    public User getUserById(int userId) {
+//        return userRepository.findById(userId);
+//    }
+//
+//    public User getUserById(long userId) {
+//        return userRepository.findById(userId);
+//    }
+//
+//    //method that returns all users from the repo
+////    public List<User> getAllUsers() {
+////        return new ArrayList<>(userRepository.getEntities());
+////    }
+//
+//    public User removeUserByID(Integer id) {
+//        return userRepository.removeUserById(id);
+//    }
+//
+//    public User removeUserByID(Long id) {
+//        return userRepository.removeUserById(id);
+//    }
+//
+//
+//    public void addEvent(Events event) {
+//        try {
+//            eventRepository.addEvent(event);
+//            event.notifyObservers();
+//        } catch (DataBaseException e) {
+//            LOGGER.log(Level.SEVERE, "Exception while adding an event: " + e.getMessage(), e);
+//        }
+//    }
+//
+//    public void removeEvent(Events event) {
+//        try {
+//            eventRepository.removeEvent(event);
+//        } catch (Exception ex) {
+//            LOGGER.log(Level.SEVERE, "Exception while removing an event: " + ex.getMessage(), ex);
+//        }
+//    }
+//
+//
+//    public Set<User> getEventParticipants(Events event) {
+//        return event.getParticipants();
+//    }
+
+
+//    public Set<Events> getAllEvents() {
+//        return eventRepository.getAllEvents();
+//    }
+//
+//    public Events getEventById(long id) {
+//        return eventRepository.findEventByID(id);
+//    }
+//
+//    public void addParticipantToEvent(Events event, User user) {
+//        eventRepository.addParticipantToEvent(event, user);
+//    }
+//
+//    public void addParticipantToEventById(long id, User user) {
+//        eventRepository.addParticipantToEventById(id, user);
+//    }
+
+//    public void removeParticipantFromEvent(Events event, User user) {
+//        eventRepository.removeParticipantFromEvent(event, user);
+//    }
+//
+//    public void removeParticipantFromEventById(long id, User user) {
+//        eventRepository.removeParticipantFromEventById(id, user);
+//    }
+//
+//    public void addInterestedUserToEvent(Events event, User user) {
+//        eventRepository.addInterestedUserToEvent(event, user);
+//    }
+//
+//    public void addInterestedUserToEventById(long id, User user) {
+//        eventRepository.addInterestedUserToEventById(id, user);
+//    }
+//
+//    public void removeInterestedUserFromEvent(Events event, User user) {
+//        eventRepository.removeInterestedUserFromEvent(event, user);
+//    }
+//
+//    public void removeInterestedUserFromEventById(long id, User user) {
+//        eventRepository.removeInterestedUserFromEventById(id, user);
+//    }
+//
+//    public Events removeEventByID(Integer id) {
+//        try {
+//            eventRepository.removeEventById(id);
+//        } catch (DataBaseException e) {
+//            LOGGER.log(Level.SEVERE, "Exception while removing an event: " + e.getMessage(), e);
+//        }
+//        return null;
+//    }
+//
+//    public void updateEvent(Events oldEvent, Events newEvent) {
+//        try {
+//            eventRepository.updateEvent(oldEvent, newEvent);
+//        } catch (DataBaseException e) {
+//            LOGGER.log(Level.SEVERE, "Exception while updating an event: " + e.getMessage(), e);
+//        }
+//    }
+//
+//    public Events getEventByID(int eventId) {
+//        // Logic to retrieve the event by ID
+//        return eventRepository.findEventByID(eventId); // Example method call to retrieve the event from the repository
+//    }
+//
+//
+//    public void joinEvent(User user, Events event) {
+//        event.addParticipant(user);
+//    }
+//
+//    public void showInterest(User user, Events event) {
+//        event.addInterestedUser(user);
+//    }
+//
+//    public Set<User> getUsersInterestedInEvent(Events event) {
+//        Set<User> allInterestedUsers = event.getInterestedUsers();
+//        Set<User> allParticipants = event.getParticipants();
+//
+//        Set<User> interestedButNotParticipating = new HashSet<>(allInterestedUsers);
+//        interestedButNotParticipating.removeAll(allParticipants);
+//
+//        return interestedButNotParticipating;
+//    }
+//
+//
+//    public void createPost(User user, String content) {
+//        Post newPost = new Post(user.getID(), content, new Date());
+//        inMemoryPostRepository.addPost(newPost);
+//        List<User> users = getAllUsers();
+//        for (User u : users) {
+//            newPost.addObserver(u);
+//        }
+//
+//        newPost.notifyObservers(); // Notify all observers (users) about the new post
+//
+//        this.newPostNotification = true;
+//
+//
+//    }
+//
+//    public void createPostProxy(User user, PostProxy postProxy) {
+//        // Loading content if necessary
+//        String content = postProxy.getContent();
+//
+//        Post newPost = new Post(user.getID(), content, new Date());
+//        inMemoryPostRepository.addPost(newPost);
+//
+//        List<User> users = getAllUsers();
+//        for (User u : users) {
+//            newPost.addObserver(u);
+//        }
+//
+//        newPost.notifyObservers(); // Notify all observers (users) about the new post
+//
+//        this.newPostNotification = true;
+//    }
+//
+//
+//    public void addCommentToPost(Post post, Comment comment) {
+//        post.addComment(comment);
+//        inMemoryPostRepository.updatePost(post);
+//    }
+//
+//    public void reactToPost(Post post, Reaction reaction) {
+//        post.addReaction(reaction);
+//        inMemoryPostRepository.updatePost(post);
+//    }
+//
+//    public void addHashtagToPost(Post post, Hashtag hashtag) {
+//        post.addHashtag(hashtag);
+//        inMemoryPostRepository.updatePost(post);
+//    }
+//
+//    public void removeHashtagFromPost(Post post, Hashtag hashtag) {
+//        post.removeHashtag(hashtag);
+//        inMemoryPostRepository.updatePost(post);
+//    }
+//
+//    public List<Post> getAllPosts() {
+//        return inMemoryPostRepository.getAllPosts();
+//    }
+//
+//    public List<Post> getPostsByUser(User user) {
+//        return inMemoryPostRepository.getPostsByUserId(user.getID());
+//    }
+//
+//    public Post getPostById(long postId) {
+//        return inMemoryPostRepository.getPostById(postId);
+//    }
+//
+//    public boolean hasNewPostNotification() {
+//        return newPostNotification;
+//    }
+//
+//    public void clearNewPostNotification() {
+//        this.newPostNotification = false;
+//    }
 
 
     //get hashtag by id

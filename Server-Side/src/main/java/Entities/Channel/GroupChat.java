@@ -1,8 +1,8 @@
 package Entities.Channel;
 
 import Entities.Misc.IDGenerator;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 
 @Entity
 @Table(name = "groupchat")

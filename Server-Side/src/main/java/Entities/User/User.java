@@ -6,8 +6,8 @@ import Entities.Misc.IDGenerator;
 import Entities.Post.Post;
 import Observer.Observable;
 import Observer.Observer;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
