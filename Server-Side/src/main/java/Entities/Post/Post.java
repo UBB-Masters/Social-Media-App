@@ -28,6 +28,10 @@ public class Post implements Observable {
     private long userId;
     private String content;
     private Date timestamp;
+//    @ManyToOne
+//    @JoinColumn(name = "userID")
+//    private User user;
+
     @Transient
     private ReactionStrategy reactionStrategy;
 
@@ -142,7 +146,7 @@ public class Post implements Observable {
     }
 
     public void reactToPost(User user) {
-        reactionStrategy.react(this, user.getID());
+        reactionStrategy.react(this, user.getUserID());
     }
 
 }

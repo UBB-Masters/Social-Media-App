@@ -11,7 +11,7 @@ public class ProfilePicture {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long pictureID;
     @OneToOne
-    @JoinColumn(name = "pictureID")
+    @JoinColumn(name = "userID")
     private User user;
     @Column(name = "picture")
     private String picture;

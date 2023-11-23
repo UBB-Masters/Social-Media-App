@@ -29,7 +29,7 @@ public class InMemoryRepoUserTest {
 
     @Test
     public void testFindById() {
-        User foundUser = userRepository.findById(testUser1.getID());
+        User foundUser = userRepository.findById(testUser1.getUserID());
         assertEquals(testUser1, foundUser);
     }
 
@@ -44,7 +44,7 @@ public class InMemoryRepoUserTest {
         User newUser = new User("user3", "password3", null, "user3@example.com", User.Visibility.PUBLIC);
         userRepository.add(newUser);
 
-        User foundUser = userRepository.findById(newUser.getID());
+        User foundUser = userRepository.findById(newUser.getUserID());
         assertEquals(newUser, foundUser);
     }
 
@@ -52,7 +52,7 @@ public class InMemoryRepoUserTest {
     public void testRemoveUser() throws DataBaseException {
         userRepository.remove(testUser1);
 
-        User foundUser = userRepository.findById(testUser1.getID());
+        User foundUser = userRepository.findById(testUser1.getUserID());
         assertNull(foundUser);
     }
 
@@ -63,13 +63,13 @@ public class InMemoryRepoUserTest {
 
         userRepository.update(testUser1, updatedUser1);
 
-        User foundUser = userRepository.findById(testUser1.getID());
+        User foundUser = userRepository.findById(testUser1.getUserID());
         assertEquals(updatedUser1, foundUser);
     }
 
     @Test
     public void testRemoveUserById() throws DataBaseException {
-        long userId = testUser1.getID();
+        long userId = testUser1.getUserID();
         User removedUser = userRepository.removeUserById(userId);
 
         assertEquals(testUser1, removedUser);

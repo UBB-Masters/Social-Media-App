@@ -1,5 +1,6 @@
 package Entities.Message;
 
+import Entities.Channel.GroupChat;
 import Entities.Message.MessageDecorator.BasicMessageDecorator;
 import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageTypes.AudioMessage;
@@ -8,10 +9,7 @@ import Entities.Message.MessageTypes.TextMessage;
 import Entities.Message.MessageTypes.VideoMessage;
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 
 import java.util.ArrayList;
@@ -25,8 +23,10 @@ public class MessageFactory {
     protected final long ID;
     protected String description;
     @ManyToOne
+    @JoinColumn(name = "userID")
     protected User sender;
     @ManyToOne
+    @JoinColumn(name = "userID")
     protected User receiver;
     protected String messageData;
 

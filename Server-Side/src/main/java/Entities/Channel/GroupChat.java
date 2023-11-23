@@ -1,7 +1,11 @@
 package Entities.Channel;
 
+import Entities.Message.MessageFactory;
 import Entities.Misc.IDGenerator;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -12,7 +16,19 @@ public class GroupChat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long groupId;
 
+    @Column(name = "groupName")
     private String groupName;
+
+//    @OneToMany(mappedBy = "receiver")
+//    private List<MessageFactory> receivedMessages = new ArrayList<>();
+
+//    public List<MessageFactory> getReceivedMessages() {
+//        return receivedMessages;
+//    }
+//
+//    public void setReceivedMessages(List<MessageFactory> receivedMessages) {
+//        this.receivedMessages = receivedMessages;
+//    }
 
     public GroupChat() {
         this.groupId = IDGenerator.generateID(GroupChat.class);

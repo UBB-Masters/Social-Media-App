@@ -12,10 +12,12 @@ import Entities.User.User;
 import Strategy.ReactionStrategy;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
+import jakarta.persistence.Entity;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -24,8 +26,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
-
+@SpringBootApplication
+@EntityScan(basePackages = "Entities")
 public class UiSpring implements CommandLineRunner {
 
     private final ServerController serverController;

@@ -18,7 +18,7 @@ public class User implements Observer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userID")
-    private Long ID;
+    private Long userID;
     @Column(name = "username")
     private String username;
     @Column(name = "password_hash")
@@ -36,13 +36,11 @@ public class User implements Observer {
     @Column(name = "user_status")
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
-    @OneToMany
-
-    private List<Post> posts;
-
+    @OneToMany(mappedBy = "userID")
+    private List<Post> posts = new ArrayList<>();
 
     public User(User user) {
-        this.ID = user.ID;
+        this.userID = user.userID;
         this.username = user.username;
         this.password = user.password;
         this.birthdate = user.birthdate;
@@ -54,7 +52,7 @@ public class User implements Observer {
     }
 
     public User(String username, String password, Date birthdate, String email, Visibility defaultVisibility, List<Post> posts) {
-        this.ID = IDGenerator.generateID(User.class);
+        this.userID = IDGenerator.generateID(User.class);
         this.username = username;
         this.password = password;
         this.birthdate = birthdate;
@@ -71,7 +69,7 @@ public class User implements Observer {
     }
 
     public User(String username, String password, Date birthdate, String email, Visibility defaultVisibility) {
-        this.ID = IDGenerator.generateID(User.class);
+        this.userID = IDGenerator.generateID(User.class);
         this.username = username;
         this.password = password;
         this.birthdate = birthdate;
@@ -96,7 +94,7 @@ public class User implements Observer {
     @Override
     public String toString() {
         return "User{" +
-                "ID=" + ID +
+                "ID=" + userID +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", birthdate=" + birthdate +
@@ -107,7 +105,7 @@ public class User implements Observer {
 
     @Override
     public boolean equals(Object other) {
-        return other.getClass() == this.getClass() && this.getID() == ((User) other).getID();
+        return other.getClass() == this.getClass() && this.getUserID() == ((User) other).getUserID();
     }
 
     public Visibility getDefaultVisibility() {
@@ -118,12 +116,12 @@ public class User implements Observer {
         this.defaultVisibility = defaultVisibility;
     }
 
-    public long getID() {
-        return ID;
+    public long getUserID() {
+        return userID;
     }
 
-    public void setID(Long id) {
-        this.ID = id;
+    public void setUserID(Long id) {
+        this.userID = id;
     }
 
     public String getUsername() {

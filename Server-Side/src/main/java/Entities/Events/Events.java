@@ -18,10 +18,10 @@ public class Events implements Observable {
     private final List<Observer> observers = new ArrayList<>();
     private String eventName;
     private String eventDescription;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "userID")
     private Set<User> participants;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "userID")
     private Set<User> interestedUsers;
     private Date eventDate;
     private String eventLocation;

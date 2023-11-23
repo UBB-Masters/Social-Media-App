@@ -3,7 +3,6 @@ package Entities.UserActions;
 import Entities.Misc.IDGenerator;
 import Entities.User.User;
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Reference;
 
 
 
@@ -14,7 +13,7 @@ public class Story {
     @Column(name = "storyID")
     private final long ID;
     @ManyToOne
-    @Column(name = "userID")
+    @JoinColumn(name = "userID")
     private final User user;
     @Enumerated(EnumType.STRING)
     @Column(name = "visibility")

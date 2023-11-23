@@ -41,7 +41,7 @@ public class TestUser {
 
     @Test
     public void testGetID() {
-        assertEquals(1, user.getID());
+        assertEquals(1, user.getUserID());
     }
 
     @Test

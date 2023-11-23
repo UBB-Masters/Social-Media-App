@@ -4,7 +4,6 @@ import Entities.Exceptions.DataBaseException;
 import Entities.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 
@@ -27,14 +26,14 @@ public class InMemoryUserInMemoryRepository extends InMemoryRepositoryTemplate<U
 
     public User findById(int id) {
         return getEntities().stream()
-                .filter(user -> user.getID() == id)
+                .filter(user -> user.getUserID() == id)
                 .findFirst()
                 .orElse(null);
     }
 
     public User findById(long id) {
         return getEntities().stream()
-                .filter(user -> user.getID() == id)
+                .filter(user -> user.getUserID() == id)
                 .findFirst()
                 .orElse(null);
     }
