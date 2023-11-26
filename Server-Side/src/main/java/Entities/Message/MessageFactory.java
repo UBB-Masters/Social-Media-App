@@ -23,10 +23,11 @@ public class MessageFactory {
     protected final long ID;
     protected String description;
     @ManyToOne
-    @JoinColumn(name = "userID")
+    @JoinColumn(name = "senderID")
     protected User sender;
+
     @ManyToOne
-    @JoinColumn(name = "userID")
+    @JoinColumn(name = "receiverID")
     protected User receiver;
     protected String messageData;
 

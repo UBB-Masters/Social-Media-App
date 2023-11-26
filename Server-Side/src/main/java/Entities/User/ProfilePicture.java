@@ -16,6 +16,12 @@ public class ProfilePicture {
     @Column(name = "picture")
     private String picture;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "userID")
+    private Long userID;
+
+
     public ProfilePicture() {
         this.picture = "default";
         this.user = new User();

@@ -14,6 +14,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "User")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype")
 public class User implements Observer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +40,10 @@ public class User implements Observer {
     private UserStatus userStatus;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProfilePicture profilePicture;
+
     public User(User user) {
         this.userID = user.userID;
         this.username = user.username;
