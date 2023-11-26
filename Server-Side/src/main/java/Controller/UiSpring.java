@@ -96,12 +96,12 @@ public class UiSpring implements CommandLineRunner {
                 case 2:
                     removeUser(serverController, scanner);
                     break;
-//                case 3:
-//                    updateUser(serverController, scanner);
-//                    break;
-//                case 4:
-//                    displayAllUsers(serverController);
-//                    break;
+                case 3:
+                    updateUser(serverController, scanner);
+                    break;
+                case 4:
+                    displayAllUsers(serverController);
+                    break;
 //                case 5:
 //                    sendMessage(serverController, scanner);
 //                    break;
@@ -110,7 +110,7 @@ public class UiSpring implements CommandLineRunner {
 //                    break;
 //                case 7:
 //                    participateInEvent(serverController, scanner);
-                    break;
+//                    break;
                 case 8:
                     postOperations(serverController, scanner);
                     break;
@@ -289,57 +289,71 @@ public class UiSpring implements CommandLineRunner {
         Try<Void> addUserAttempt = Try.run(() -> serverController.addUser(newUser));
         addUserAttempt.onSuccess(ignore -> System.out.println("User added successfully!"))
                 .onFailure(error -> System.out.println("Failed to add user: " + error.getMessage()));
+
+
     }
+
+    private static void removeUser(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter ID of the user to remove:");
+        Option<Long> idOption = readInput(scanner).map(Integer::longValue);
+        idOption.peek(id -> {
+            Try.of(() -> {
+                User removedUser = serverController.removeUserById(id);
+                System.out.println("User removed successfully!");
+                return removedUser;
+            }).onFailure(error -> System.out.println("Failed to remove user: " + error.getMessage()));
+        }).onEmpty(() -> System.out.println("Invalid ID"));
+    }
+
+
+    private static void updateUser(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter ID of the user to update:");
+        Option<Long> idOption = readInput(scanner).map(Integer::longValue);
+
+        idOption.peek(id -> {
+            User existingUser = serverController.getUserByID(id);
+            if (existingUser == null) {
+                System.out.println("User not found");
+                return;
+            }
+
+            // Clear the input buffer
+            scanner.nextLine();
+
+            System.out.println("Enter new username:");
+            String newUsername = scanner.nextLine().trim();
+            existingUser.setUsername(newUsername);
+
+            System.out.println("Enter new password:");
+            String newPassword = scanner.nextLine().trim();
+            existingUser.setPassword(newPassword);
+
+            System.out.println("Enter new birthdate (YYYY-MM-DD):");
+            Date newBirthdate = Try.of(() -> new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine().trim()))
+                    .getOrElseThrow(() -> new RuntimeException("Invalid date format"));
+            existingUser.setBirthdate(newBirthdate);
+
+            System.out.println("Enter new email:");
+            String newEmail = scanner.nextLine().trim();
+            existingUser.setEmail(newEmail);
+
+            System.out.println("Enter new visibility (PRIVATE, FRIENDS, PUBLIC):");
+            User.Visibility newVisibility = Try.of(() -> User.Visibility.valueOf(scanner.nextLine().trim().toUpperCase()))
+                    .getOrElseThrow(() -> new RuntimeException("Invalid visibility"));
+            existingUser.setDefaultVisibility(newVisibility);
+
+            // Save the updated user
+            Try<Void> updateUserAttempt = Try.run(() -> serverController.updateUser(existingUser, existingUser));
+            updateUserAttempt.onSuccess(ignore -> System.out.println("User updated successfully!"))
+                    .onFailure(error -> System.out.println("Failed to update user: " + error.getMessage()));
+        }).onEmpty(() -> System.out.println("Invalid ID"));
+    }
+
+
 }
 
-//    private static void removeUser(ServerController serverController, Scanner scanner) {
-//        System.out.println("Enter ID of the user to remove:");
-//        Option<Integer> idOption = readInput(scanner);
-//        idOption.peek(id -> {
-//            Try.of(() -> serverController.removeUserByID(id))
-//                    .onSuccess(ignored -> System.out.println("User removed successfully!"))
-//                    .onFailure(error -> System.out.println("Failed to remove user: " + error.getMessage()));
-//        }).onEmpty(() -> System.out.println("Invalid ID"));
-//    }
-//
-//    private static void updateUser(ServerController serverController, Scanner scanner) {
-//        System.out.println("Enter ID of the user to update:");
-//        Option<Integer> idOption = readInput(scanner);
-//
-//        idOption.peek(id -> {
-//            User user = serverController.getUserById(id);
-//            if (user == null) {
-//                System.out.println("User not found");
-//                return;
-//            }
-//
-//            // Clear the input buffer
-//            scanner.nextLine();
-//
-//            System.out.println("Enter new username:");
-//            String username = scanner.nextLine().trim();
-//
-//            System.out.println("Enter new password:");
-//            String password = scanner.nextLine().trim();
-//
-//            System.out.println("Enter new birthdate (YYYY-MM-DD):");
-//            Date birthDate = Try.of(() -> new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine().trim()))
-//                    .getOrElseThrow(() -> new RuntimeException("Invalid date format"));
-//
-//            System.out.println("Enter new email:");
-//            String email = scanner.nextLine().trim();
-//
-//            System.out.println("Enter new visibility (PRIVATE, FRIENDS, PUBLIC):");
-//            User.Visibility visibility = Try.of(() -> User.Visibility.valueOf(scanner.nextLine().trim().toUpperCase()))
-//                    .getOrElseThrow(() -> new RuntimeException("Invalid visibility"));
-//
-//            User newUser = new User(username, password, birthDate, email, visibility);
-//
-//            Try<Void> updateUserAttempt = Try.run(() -> serverController.updateUser(user, newUser));
-//            updateUserAttempt.onSuccess(ignore -> System.out.println("User updated successfully!"))
-//                    .onFailure(error -> System.out.println("Failed to update user: " + error.getMessage()));
-//        }).onEmpty(() -> System.out.println("Invalid ID"));
-//    }
+
+
 //
 //    private static void sendMessage(ServerController serverController, Scanner scanner) {
 //        System.out.println("Enter sender ID:");

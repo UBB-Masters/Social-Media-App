@@ -121,6 +121,7 @@ public class User implements Observer {
         this.defaultVisibility = defaultVisibility;
     }
 
+    //setter for visibility
     public long getUserID() {
         return userID;
     }
