@@ -1,6 +1,7 @@
 package Proxy;
 
 import Entities.Post.Post;
+import Entities.User.User;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -13,13 +14,14 @@ public class PostProxy {
     private String cachedContent;
     private Map<Long, String> accessControlMap; // Mapping of userId to access rights
 
-    public PostProxy(long userId, String content, Date timestamp) {
-        this.post = new Post(userId, content, timestamp);
+    public PostProxy(User user, String content, Date timestamp) {
+        this.post = new Post(user, content, timestamp);
         this.contentLoaded = false;
         this.cachedContent = null;
         this.accessControlMap = new HashMap<>(); // Add access control configurations
         initializeAccessControl(); // Initialize access control configuration
     }
+
 
     public long getPostId() {
         return post.getPostId();

@@ -16,7 +16,9 @@ import java.util.List;
 @Table(name = "post")
 public class Post implements Observable {
     @Id
-    private final long postId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "postID")
+    private Long postID;
     @ManyToMany
     private List<Comment> comments;
     @ManyToMany
@@ -25,20 +27,44 @@ public class Post implements Observable {
     private List<Hashtag> hashtags;
     @Transient
     private final List<Observer> observers = new ArrayList<>();
-    private long userId;
+//    private long userId;
     private String content;
     private Date timestamp;
-//    @ManyToOne
-//    @JoinColumn(name = "userID")
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userID")
+    private User user;
 
     @Transient
     private ReactionStrategy reactionStrategy;
 
 
-    public Post(long userId, String content, Date timestamp) {
-        this.postId = IDGenerator.generateID(Post.class);
-        this.userId = userId;
+    public User getUser() {
+
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public long getUserId() {
+        return user.getUserID();
+    }
+
+    public void setUserId(long userId) {
+        if (this.user != null) {
+            this.user.setUserID(userId);
+        } else {
+            throw new IllegalStateException("User object is null");
+        }
+    }
+    // If you still need to get the user ID, you can do it through the User object
+
+
+
+    public Post(User user, String content, Date timestamp) {
+        this.postID = IDGenerator.generateID(Post.class);
+        this.user = user;
         this.content = content;
         this.timestamp = timestamp;
         this.comments = new ArrayList<>();
@@ -47,20 +73,13 @@ public class Post implements Observable {
     }
 
     public Post() {
-        this.postId = IDGenerator.generateID(Post.class);
+        this.postID = IDGenerator.generateID(Post.class);
     }
 
     public long getPostId() {
-        return postId;
+        return postID;
     }
 
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
 
     public String getContent() {
         return content;
@@ -114,8 +133,8 @@ public class Post implements Observable {
     @Override
     public String toString() {
         return "Post{" +
-                "postId=" + postId +
-                ", userId=" + userId +
+                "postId=" + postID +
+                ", userId=" + (user != null ? user.getUserID() : "null") +
                 ", content='" + content + '\'' +
                 ", timestamp=" + timestamp +
                 ", comments=" + comments.size() +

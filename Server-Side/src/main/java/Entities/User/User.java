@@ -30,15 +30,14 @@ public class User implements Observer {
     @Enumerated(EnumType.STRING)
     @Column(name = "visibility")
     private Visibility defaultVisibility;
-    @Column(name = "visibility")
+    @Column(name = "permission")
     @Enumerated(EnumType.STRING)
     private Permission permission;
     @Column(name = "user_status")
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
-    @OneToMany(mappedBy = "userID")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
-
     public User(User user) {
         this.userID = user.userID;
         this.username = user.username;
