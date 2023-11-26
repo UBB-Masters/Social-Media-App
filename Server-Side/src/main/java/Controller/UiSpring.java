@@ -94,8 +94,8 @@ public class UiSpring implements CommandLineRunner {
                     addUser(serverController, scanner);
                     break;
                 case 2:
-//                    removeUser(serverController, scanner);
-//                    break;
+                    removeUser(serverController, scanner);
+                    break;
 //                case 3:
 //                    updateUser(serverController, scanner);
 //                    break;
