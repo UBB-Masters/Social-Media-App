@@ -102,12 +102,12 @@ public class UiSpring implements CommandLineRunner {
                 case 4:
                     displayAllUsers(serverController);
                     break;
-//                case 5:
-//                    sendMessage(serverController, scanner);
-//                    break;
-//                case 6:
-//                    displaySentMessages(serverController, scanner);
-//                    break;
+                case 5:
+                    sendMessage(serverController, scanner);
+                    break;
+                case 6:
+                    displaySentMessages(serverController, scanner);
+                    break;
 //                case 7:
 //                    participateInEvent(serverController, scanner);
 //                    break;
@@ -350,75 +350,78 @@ public class UiSpring implements CommandLineRunner {
     }
 
 
+    private static void sendMessage(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter sender ID:");
+        Option<Integer> senderIdOption = readInput(scanner);
+        System.out.println("Enter receiver ID:");
+        Option<Integer> receiverIdOption = readInput(scanner);
+
+        String message = null;
+        User sender;
+        User receiver;
+
+        if (senderIdOption.isDefined() && receiverIdOption.isDefined()) {
+            sender = serverController.getUserByID(senderIdOption.get());
+            receiver = serverController.getUserByID(receiverIdOption.get());
+
+            if (sender != null && receiver != null) {
+                scanner.nextLine();
+                System.out.println("Enter the message:");
+                Option<String> messageOption = readMessageInput(scanner);
+                if (messageOption.isDefined()) {
+                    message = messageOption.get();
+                    serverController.sendMessage(sender, receiver, message);
+                    System.out.println("Message sent successfully!");
+                } else {
+                    System.out.println("Invalid message");
+                }
+            } else {
+                System.out.println("Invalid sender or receiver ID");
+            }
+        } else {
+            System.out.println("Invalid input for sender or receiver ID");
+        }
+    }
+
+    private static Option<String> readMessageInput(Scanner scanner) {
+        String message = scanner.nextLine().trim();
+        return Option.of(message);
+    }
+
+    private static void displaySentMessages(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter sender ID:");
+        Option<Integer> senderIdOption = readInput(scanner);
+
+        if (senderIdOption.isDefined()) {
+            User sender = serverController.getUserByID(senderIdOption.get());
+
+            if (sender != null) {
+                ArrayList<MessageFactory> sentMessages = serverController.getSentMessages(sender);
+
+                if (!sentMessages.isEmpty()) {
+                    System.out.println("Messages sent by " + sender.getUsername() + ":");
+
+                    // Iterate through the sentMessages and retrieve their description
+                    sentMessages.forEach(message -> System.out.println(message.getDescription()));
+                } else {
+                    System.out.println("No messages found for " + sender.getUsername());
+                }
+            } else {
+                System.out.println("Invalid sender ID");
+            }
+        } else {
+            System.out.println("Invalid input for sender ID");
+        }
+    }
+
 }
 
 
 
-//
-//    private static void sendMessage(ServerController serverController, Scanner scanner) {
-//        System.out.println("Enter sender ID:");
-//        Option<Integer> senderIdOption = readInput(scanner);
-//        System.out.println("Enter receiver ID:");
-//        Option<Integer> receiverIdOption = readInput(scanner);
-//
-//        String message = null;
-//        User sender;
-//        User receiver;
-//
-//        if (senderIdOption.isDefined() && receiverIdOption.isDefined()) {
-//            sender = serverController.getUserById(senderIdOption.get());
-//            receiver = serverController.getUserById(receiverIdOption.get());
-//
-//            if (sender != null && receiver != null) {
-//                scanner.nextLine();
-//                System.out.println("Enter the message:");
-//                Option<String> messageOption = readMessageInput(scanner);
-//                if (messageOption.isDefined()) {
-//                    message = messageOption.get();
-//                    serverController.sendMessage(sender, receiver, message);
-//                    System.out.println("Message sent successfully!");
-//                } else {
-//                    System.out.println("Invalid message");
-//                }
-//            } else {
-//                System.out.println("Invalid sender or receiver ID");
-//            }
-//        } else {
-//            System.out.println("Invalid input for sender or receiver ID");
-//        }
-//    }
-//
-//    private static Option<String> readMessageInput(Scanner scanner) {
-//        String message = scanner.nextLine().trim();
-//        return Option.of(message);
-//    }
-//
-//
-//    private static void displaySentMessages(ServerController serverController, Scanner scanner) {
-//        System.out.println("Enter sender ID:");
-//        Option<Integer> senderIdOption = readInput(scanner);
-//
-//        if (senderIdOption.isDefined()) {
-//            User sender = serverController.getUserById(senderIdOption.get());
-//
-//            if (sender != null) {
-//                ArrayList<MessageFactory> sentMessages = serverController.getSentMessages(sender);
-//
-//                if (!sentMessages.isEmpty()) {
-//                    System.out.println("Messages sent by " + sender.getUsername() + ":");
-//
-//                    // Iterate through the sentMessages and retrieve their description
-//                    sentMessages.forEach(message -> System.out.println(message.getDescription()));
-//                } else {
-//                    System.out.println("No messages found for " + sender.getUsername());
-//                }
-//            } else {
-//                System.out.println("Invalid sender ID");
-//            }
-//        } else {
-//            System.out.println("Invalid input for sender ID");
-//        }
-//    }
+
+
+
+
 //
 //
 //    private static void displayEvents(ServerController serverController) {

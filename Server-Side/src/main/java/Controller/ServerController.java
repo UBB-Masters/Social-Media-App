@@ -1,37 +1,24 @@
 package Controller;
 
-import Entities.Exceptions.DataBaseException;
 import Entities.Message.MessageDecorator.BasicMessageDecorator;
 import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
-import Entities.Post.Comment;
-import Entities.Post.Hashtag;
 //import Entities.Post.Post;
 import Entities.User.User;
-import Controller.UserRepository;
-import Entities.Events.Events;
-import Persistence.InMemoryRepositories.InMemoryEventRepository;
-import Persistence.InMemoryRepositories.InMemoryMessageRepository;
-import Persistence.InMemoryRepositories.InMemoryPostRepository;
-import Persistence.InMemoryRepositories.InMemoryUserInMemoryRepository;
 //import Proxy.PostProxy;
-import Entities.Reaction.Reaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 @Service
 public class ServerController {
     private final static Logger LOGGER = Logger.getLogger(ServerController.class.getName());
-//    private final InMemoryUserInMemoryRepository userRepository;
-    private final UserRepository userRepositoryy;
-//    private final InMemoryMessageRepository memoryInMemoryMessageRepository;
-//    private final InMemoryEventRepository eventRepository;
-//    private final InMemoryPostRepository inMemoryPostRepository;
+    private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
+
     private boolean newPostNotification;
 
 
@@ -41,37 +28,25 @@ public class ServerController {
 //            InMemoryMessageRepository memoryInMemoryMessageRepository,
 //            InMemoryEventRepository eventRepository,
 //            InMemoryPostRepository inMemoryPostRepository,
-            UserRepository userRepositoryy
+            UserRepository userRepository,
+            MessageRepository messageRepository
     ) {
 //        this.userRepository = userRepository;
 //        this.memoryInMemoryMessageRepository = memoryInMemoryMessageRepository;
 //        this.eventRepository = eventRepository;
 //        this.inMemoryPostRepository = inMemoryPostRepository;
-        this.userRepositoryy = userRepositoryy;
+        this.userRepository = userRepository;
+        this.messageRepository = messageRepository;
     }
 
-//    public void addUser(User user) {
-//        userRepository.add(user);
-//    }
+
 
     public void addUser(User user) {
-        userRepositoryy.save(user);
+        userRepository.save(user);
     }
-
-//    public void removeUser(User user) {
-//        userRepository.remove(user);
-//    }
-
-    public void removeUser(User user) {
-        userRepositoryy.delete(user);
-    }
-
-//    public void updateUser(User oldUser, User newUser) {
-//        userRepository.update(oldUser, newUser);
-//    }
 
     public void updateUser(User oldUser, User newUser) {
-        userRepositoryy.save(newUser);
+        userRepository.save(newUser);
     }
 
     public void updateUserUsername(User user, String newUsername) {
@@ -99,36 +74,34 @@ public class ServerController {
     }
 
     public User getUserByID(long userID) {
-        return userRepositoryy.findById(userID).orElse(null);
+        return userRepository.findById(userID).orElse(null);
     }
 
     public List<User> getAllUsers() {
-        return userRepositoryy.findAll();
+        return userRepository.findAll();
     }
 
     public User removeUserById(Long id) {
-        User user = userRepositoryy.findById(id).orElse(null);
+        User user = userRepository.findById(id).orElse(null);
         if (user != null) {
-            userRepositoryy.delete(user);
+            userRepository.delete(user);
         }
         return user;
     }
 
 
-//    public void sendMessage(User sender, User receiver, String message) {
-//        memoryMessageRepository.addMessage(MessageFactory.createMessage(MessageFactory.MessageType.TEXT, message, sender, receiver));
-//    }
-//
-//    public void sendMessage(User sender, User receiver, String message) {
-//        MessageFactory baseMessage = MessageFactory.createMessage(
-//                MessageFactory.MessageType.TEXT, message, sender, receiver);
-//
-//        // Decorate the message
-//        MessageDecorator decoratedMessage = new BasicMessageDecorator(baseMessage);
-//
-//        // Add the decorated message to the repository
-//        memoryInMemoryMessageRepository.addMessage(decoratedMessage);
-//    }
+    public void sendMessage(User sender, User receiver, String message) {
+        MessageFactory baseMessage = MessageFactory.createMessage(
+                MessageFactory.MessageType.TEXT, message, sender, receiver);
+
+        // Decorate the message
+        MessageDecorator decoratedMessage = new BasicMessageDecorator(baseMessage);
+
+        // Add the decorated message to the repository
+        messageRepository.save(baseMessage);
+    }
+
+    //TODO -> implement a logging mechanism and encryption mechansim that uses the decorator for the messages
 //
 //
 //    public void removeMessage(MessageDecorator message) {
@@ -155,22 +128,22 @@ public class ServerController {
 //    }
 //
 //
-//    public ArrayList<MessageFactory> getSentMessages(User sender) {
-//        ArrayList<MessageFactory> sentMessages = new ArrayList<>();
-//
-//        for (MessageDecorator message : memoryInMemoryMessageRepository.getMessages()) {
-//            if (message.getSender().equals(sender)) {
-//                if (message instanceof MessageDecorator) {
-//                    MessageDecorator decorator = (MessageDecorator) message;
-//                    sentMessages.add(((BasicMessageDecorator) decorator).getDecoratedMessage());
-//                } else {
-//                    sentMessages.add((MessageFactory) message);
-//                }
-//            }
-//        }
-//
-//        return sentMessages;
-//    }
+    public ArrayList<MessageFactory> getSentMessages(User sender) {
+        ArrayList<MessageFactory> sentMessages = new ArrayList<>();
+
+        for (MessageDecorator message : messageRepository.findAll()) {
+            if (message.getSender().equals(sender)) {
+                if (message instanceof MessageDecorator) {
+                    MessageDecorator decorator = (MessageDecorator) message;
+                    sentMessages.add(((BasicMessageDecorator) decorator).getDecoratedMessage());
+                } else {
+                    sentMessages.add((MessageFactory) message);
+                }
+            }
+        }
+
+        return sentMessages;
+    }
 //
 //
 //    public User getUserById(int userId) {

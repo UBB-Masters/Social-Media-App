@@ -20,7 +20,10 @@ import java.util.Collection;
 public class MessageFactory {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "messageID")
     protected final long ID;
+    @Column(name = "description")
     protected String description;
     @ManyToOne
     @JoinColumn(name = "senderID")
@@ -29,6 +32,8 @@ public class MessageFactory {
     @ManyToOne
     @JoinColumn(name = "receiverID")
     protected User receiver;
+
+    @Column(name = "message_content")
     protected String messageData;
 
     public MessageFactory(String description, User sender, User receiver) {
