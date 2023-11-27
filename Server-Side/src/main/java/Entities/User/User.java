@@ -6,6 +6,7 @@ import Entities.Misc.IDGenerator;
 import Entities.Post.Post;
 import Observer.Observable;
 import Observer.Observer;
+import Utils.PasswordHasher;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -38,6 +39,10 @@ public class User implements Observer {
     @Column(name = "user_status")
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
+
+    @Column(name = "hashed_password")
+    private String hashedPassword;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
 
@@ -111,6 +116,31 @@ public class User implements Observer {
     @Override
     public boolean equals(Object other) {
         return other.getClass() == this.getClass() && this.getUserID() == ((User) other).getUserID();
+    }
+
+
+//    public String getHashedPassword() {
+//        return PasswordHasher.hashPassword(this.password);
+//    }
+    public String getHashedPassword() {
+        return hashedPassword;
+    }
+
+    public void setPasswordHashed(String password) {
+        this.hashedPassword = PasswordHasher.hashPassword(password);
+    }
+
+
+
+    public static User createWithHashedPassword(String username, String password, Date birthdate, String email, Visibility defaultVisibility) {
+        String hashedPassword = PasswordHasher.hashPassword(password);
+        User user = new User(username, hashedPassword, birthdate, email, defaultVisibility);
+        return new HashedPasswordDecorator(user);
+    }
+
+    public static User createWithHashedPassword(String username, String password, Date birthdate, String email, Visibility defaultVisibility, List<Post> posts) {
+        User user = new User(username, password, birthdate, email, defaultVisibility, posts);
+        return new HashedPasswordDecorator(user);
     }
 
     public Visibility getDefaultVisibility() {
@@ -201,4 +231,10 @@ public class User implements Observer {
     public enum UserStatus {
         ACTIVE, BANNED
     }
+
+    public boolean authenticate(String enteredPassword) {
+        String hashedEnteredPassword = PasswordHasher.hashPassword(enteredPassword);
+        return hashedEnteredPassword.equals(hashedPassword);
+    }
+
 }

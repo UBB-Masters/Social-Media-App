@@ -20,6 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
+//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.context.SecurityContextHolder;
+//import org.springframework.security.core.userdetails.UserDetails;
+
+
 
 
 import java.text.ParseException;
@@ -47,6 +53,8 @@ public class UiSpring implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+
+//        login();
 
 
         Scanner scanner = new Scanner(System.in);
@@ -80,6 +88,32 @@ public class UiSpring implements CommandLineRunner {
         } while (choice != 3);
     }
 
+//    private void login() {
+//        Scanner scanner = new Scanner(System.in);
+//
+//        System.out.println("Enter your username:");
+//        String username = scanner.nextLine().trim();
+//
+//        System.out.println("Enter your password:");
+//        String password = scanner.nextLine().trim();
+//
+//        // Perform authentication
+//        Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
+//        Authentication result = new UsernamePasswordAuthenticationFilter().attemptAuthentication(null, authentication);
+//
+//        // Set the authentication result to the security context
+//        SecurityContextHolder.getContext().setAuthentication(result);
+//
+//        // Check if authentication was successful
+//        if (result.isAuthenticated()) {
+//            UserDetails userDetails = (UserDetails) result.getPrincipal();
+//            System.out.println("Login successful. Welcome, " + userDetails.getUsername() + "!");
+//        } else {
+//            System.out.println("Login failed. Invalid username or password.");
+//            // You may choose to handle failed login differently, such as asking the user to try again.
+//            // For simplicity, this example does not handle retries.
+//        }
+//    }
 
     private static void userOperations(ServerController serverController, Scanner scanner) {
         int choice;
@@ -284,14 +318,13 @@ public class UiSpring implements CommandLineRunner {
         User.Visibility visibility = Try.of(() -> User.Visibility.valueOf(scanner.nextLine().trim().toUpperCase()))
                 .getOrElseThrow(() -> new RuntimeException("Invalid visibility"));
 
-        User newUser = new User(username, password, birthDate, email, visibility);
+        User newUser = User.createWithHashedPassword(username, password, birthDate, email, visibility);
 
         Try<Void> addUserAttempt = Try.run(() -> serverController.addUser(newUser));
         addUserAttempt.onSuccess(ignore -> System.out.println("User added successfully!"))
                 .onFailure(error -> System.out.println("Failed to add user: " + error.getMessage()));
-
-
     }
+
 
     private static void removeUser(ServerController serverController, Scanner scanner) {
         System.out.println("Enter ID of the user to remove:");
