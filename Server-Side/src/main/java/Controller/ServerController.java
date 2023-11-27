@@ -128,22 +128,19 @@ public class ServerController {
 //    }
 //
 //
-    public ArrayList<MessageFactory> getSentMessages(User sender) {
-        ArrayList<MessageFactory> sentMessages = new ArrayList<>();
+    public List<MessageFactory> getSentMessages(User sender) {
+        List<MessageFactory> sentMessages = new ArrayList<>();
 
-        for (MessageDecorator message : messageRepository.findAll()) {
+        for (MessageFactory message : messageRepository.findAll()) {
             if (message.getSender().equals(sender)) {
-                if (message instanceof MessageDecorator) {
-                    MessageDecorator decorator = (MessageDecorator) message;
-                    sentMessages.add(((BasicMessageDecorator) decorator).getDecoratedMessage());
-                } else {
-                    sentMessages.add((MessageFactory) message);
-                }
+                sentMessages.add(message);
             }
         }
 
         return sentMessages;
     }
+
+
 //
 //
 //    public User getUserById(int userId) {

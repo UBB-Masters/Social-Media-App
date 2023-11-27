@@ -396,13 +396,16 @@ public class UiSpring implements CommandLineRunner {
             User sender = serverController.getUserByID(senderIdOption.get());
 
             if (sender != null) {
-                ArrayList<MessageFactory> sentMessages = serverController.getSentMessages(sender);
+                List<MessageFactory> sentMessages = serverController.getSentMessages(sender);
 
                 if (!sentMessages.isEmpty()) {
                     System.out.println("Messages sent by " + sender.getUsername() + ":");
 
-                    // Iterate through the sentMessages and retrieve their description
-                    sentMessages.forEach(message -> System.out.println(message.getDescription()));
+                    // Iterate through the sentMessages and display sender, receiver, and description
+                    sentMessages.forEach(message ->
+                            System.out.println("Sender: " + message.getSenderName() +
+                                    ", Receiver: " + message.getReceiverName() +
+                                    ", Message: " + message.getDescription()));
                 } else {
                     System.out.println("No messages found for " + sender.getUsername());
                 }
@@ -413,6 +416,7 @@ public class UiSpring implements CommandLineRunner {
             System.out.println("Invalid input for sender ID");
         }
     }
+
 
 }
 

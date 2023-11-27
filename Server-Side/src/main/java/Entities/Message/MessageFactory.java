@@ -26,11 +26,11 @@ public class MessageFactory {
     @Column(name = "description")
     protected String description;
     @ManyToOne
-    @JoinColumn(name = "senderID")
+    @JoinColumn(name = "senderID", referencedColumnName = "userID")
     protected User sender;
 
     @ManyToOne
-    @JoinColumn(name = "receiverID")
+    @JoinColumn(name = "receiverID", referencedColumnName = "userID")
     protected User receiver;
 
     @Column(name = "message_content")
@@ -78,6 +78,9 @@ public class MessageFactory {
             case VIDEO -> new VideoMessage(description, sender, receiver);
         };
     }
+
+
+
 
     public static MessageDecorator createDecoratedMessageWithList(
             MessageType messageType, String description, User sender, ArrayList<User> receiver) {
@@ -150,6 +153,15 @@ public class MessageFactory {
     public enum MessageType {
         TEXT, IMAGE, AUDIO, VIDEO
     }
+
+    public String getSenderName() {
+        return sender.getUsername();
+    }
+
+    public String getReceiverName() {
+        return receiver.getUsername();
+    }
+
 
 
 }
