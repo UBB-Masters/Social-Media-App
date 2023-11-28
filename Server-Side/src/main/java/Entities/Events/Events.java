@@ -18,13 +18,30 @@ public class Events implements Observable {
     private final List<Observer> observers = new ArrayList<>();
     private String eventName;
     private String eventDescription;
-    @OneToMany(mappedBy = "userID")
+    @OneToMany(mappedBy = "userID", fetch = FetchType.EAGER)
     private Set<User> participants;
 
-    @OneToMany(mappedBy = "userID")
+    @OneToMany(mappedBy = "userID", fetch = FetchType.EAGER)
     private Set<User> interestedUsers;
+
+    public Date getEventDate() {
+        return eventDate;
+    }
+
+    public String getEventLocation() {
+        return eventLocation;
+    }
+
     private Date eventDate;
     private String eventLocation;
+
+    public void setEventDate(Date eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public void setEventLocation(String eventLocation) {
+        this.eventLocation = eventLocation;
+    }
 
     public Events(String eventName, String eventDescription, Date eventDate, String eventLocation) {
         this.ID = IDGenerator.generateID(Events.class);

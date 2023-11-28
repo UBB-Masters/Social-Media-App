@@ -128,6 +128,7 @@ public class UiSpring implements CommandLineRunner {
                     addUser(serverController, scanner);
                     break;
                 case 2:
+                    //TODO -> this acts weird
                     removeUser(serverController, scanner);
                     break;
                 case 3:
@@ -142,9 +143,9 @@ public class UiSpring implements CommandLineRunner {
                 case 6:
                     displaySentMessages(serverController, scanner);
                     break;
-//                case 7:
-//                    participateInEvent(serverController, scanner);
-//                    break;
+                case 7:
+                    participateInEvent(serverController, scanner);
+                    break;
                 case 8:
                     postOperations(serverController, scanner);
                     break;
@@ -168,22 +169,22 @@ public class UiSpring implements CommandLineRunner {
 
             switch (choice) {
                 case 1:
-//                    addEvent(serverController, scanner);
-//                    break;
-//                case 2:
-//                    removeEvent(serverController, scanner);
-//                    break;
-//                case 3:
-//                    updateEvent(serverController, scanner);
-//                    break;
-//                case 4:
-//                    displayEvents(serverController);
-//                    break;
-//                case 5:
-//                    displayEventParticipants(serverController, scanner);
-//                    break;
-//                case 6:
-//                    displayUsersInterestedNotParticipating(serverController, scanner);
+                    addEvent(serverController, scanner);
+                    break;
+                case 2:
+                    removeEvent(serverController, scanner);
+                    break;
+                case 3:
+                    updateEvent(serverController, scanner);
+                    break;
+                case 4:
+                    displayEvents(serverController);
+                    break;
+                case 5:
+                    displayEventParticipants(serverController, scanner);
+                    break;
+                case 6:
+                    displayUsersInterestedNotParticipating(serverController, scanner);
                     break;
                 case 7:
                     System.out.println("Going back to the main menu...");
@@ -450,6 +451,178 @@ public class UiSpring implements CommandLineRunner {
         }
     }
 
+    private static void addEvent(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter event title:");
+        String title = scanner.nextLine().trim();
+
+        System.out.println("Enter event description:");
+        String description = scanner.nextLine().trim();
+
+        System.out.println("Enter event date (YYYY-MM-DD HH:MM):");
+        Date eventDate;
+        try {
+            eventDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(scanner.nextLine().trim());
+        } catch (ParseException e) {
+            System.out.println("Invalid date format");
+            return;
+        }
+
+        System.out.println("Enter event location:");
+        String location = scanner.nextLine().trim();
+
+        Events newEvent = new Events(title, description, eventDate, location);
+
+        Try<Void> addEventAttempt = Try.run(() -> serverController.addEvent(newEvent));
+        addEventAttempt.onSuccess(ignore -> System.out.println("Event added successfully!"))
+                .onFailure(error -> System.out.println("Failed to add event: " + error.getMessage()));
+    }
+
+
+
+
+    private static void displayEvents(ServerController serverController) {
+        System.out.println("Showing all events:");
+        serverController.getAllEvents()
+                .forEach(System.out::println);
+    }
+
+
+
+
+    private static void removeEvent(ServerController serverController, Scanner scanner) {
+
+        System.out.println("Enter ID of the event to remove:");
+        Option<Integer> idOption = readInput(scanner);
+        idOption.peek(id -> {
+            Try.of(() -> serverController.removeEventByID(Long.valueOf(id)))
+                    .onSuccess(ignored -> System.out.println("Event removed successfully!"))
+                    .onFailure(error -> System.out.println("Failed to remove event: " + error.getMessage()));
+        }).onEmpty(() -> System.out.println("Invalid ID"));
+    }
+
+
+    private static void updateEvent(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter ID of the event to update:");
+        Option<Integer> idOption = readInput(scanner);
+        idOption.peek(id -> {
+            Events event = serverController.getEventById(Long.valueOf(id));
+            if (event == null) {
+                System.out.println("Event not found");
+                return;
+            }
+
+            // Clear the input buffer
+            scanner.nextLine();
+
+            System.out.println("Enter new title:");
+            String title = scanner.nextLine().trim();
+
+            System.out.println("Enter new description:");
+            String description = scanner.nextLine().trim();
+
+            System.out.println("Enter new date (YYYY-MM-DD HH:MM):");
+            Date eventDate;
+            try {
+                eventDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(scanner.nextLine().trim());
+            } catch (ParseException e) {
+                System.out.println("Invalid date format");
+                return;
+            }
+
+            System.out.println("Enter new location:");
+            String location = scanner.nextLine().trim();
+
+            Events newEvent = new Events(title, description, eventDate, location);
+
+            Try<Void> updateEventAttempt = Try.run(() -> serverController.updateEvent(event, newEvent));
+            updateEventAttempt.onSuccess(ignore -> System.out.println("Event updated successfully!"))
+                    .onFailure(error -> System.out.println("Failed to update event: " + error.getMessage()));
+        }).onEmpty(() -> System.out.println("Invalid ID"));
+    }
+
+
+    private static void displayEventParticipants(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter ID of the event:");
+        Option<Integer> idOption = readInput(scanner);
+        if (idOption.isDefined()) {
+            Events event = serverController.getEventById(Long.valueOf(idOption.get()));
+            if (event != null) {
+                Set<User> participants = serverController.getEventParticipants(event);
+                if (!participants.isEmpty()) {
+                    System.out.println("Participants of the event '" + event.getEventName() + "':");
+                    participants.forEach(System.out::println);
+                } else {
+                    System.out.println("No participants found for the event '" + event.getEventName() + "'");
+                }
+            } else {
+                System.out.println("Invalid event ID");
+            }
+        } else {
+            System.out.println("Invalid input for event ID");
+        }
+    }
+
+
+    private static void participateInEvent(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter event ID:");
+        Option<Integer> eventIdOption = readInput(scanner);
+
+        System.out.println("Enter your ID:");
+        Option<Integer> userIdOption = readInput(scanner);
+
+        if (eventIdOption.isDefined() && userIdOption.isDefined()) {
+            Events event = serverController.getEventById(Long.valueOf(eventIdOption.get()));
+            User user = serverController.getUserByID(userIdOption.get());
+
+            if (event != null && user != null) {
+                System.out.println("Do you want to:\n1. Participate in the event\n2. Show interest in the event");
+                Option<Integer> interestChoiceOption = readInput(scanner);
+
+                if (interestChoiceOption.isDefined()) {
+                    int choice = interestChoiceOption.get();
+
+                    if (choice == 1) {
+                        serverController.addParticipantToEvent(event, user);
+                        System.out.println("You have successfully participated in the event: " + event.getEventName());
+                    } else if (choice == 2) {
+                        serverController.addInterestedUserToEvent(event, user);
+                        System.out.println("You have shown interest in the event: " + event.getEventName());
+                    } else {
+                        System.out.println("Invalid choice");
+                    }
+                } else {
+                    System.out.println("Invalid choice");
+                }
+            } else {
+                System.out.println("Invalid event or user ID");
+            }
+        } else {
+            System.out.println("Invalid input for event or user ID");
+        }
+    }
+
+
+    private static void displayUsersInterestedNotParticipating(ServerController serverController, Scanner scanner) {
+        System.out.println("Enter the ID of the event to display interested users not participating:");
+        Option<Integer> eventIdOption = readInput(scanner);
+
+        if (eventIdOption.isDefined()) {
+            Events event = serverController.getEventById(Long.valueOf(eventIdOption.get()));
+            if (event != null) {
+                Set<User> interestedButNotParticipating = serverController.getUsersInterestedInEvent(event);
+                if (!interestedButNotParticipating.isEmpty()) {
+                    System.out.println("Users interested but not participating in the event:");
+                    interestedButNotParticipating.forEach(System.out::println);
+                } else {
+                    System.out.println("No users interested in the event but not participating");
+                }
+            } else {
+                System.out.println("Invalid event ID");
+            }
+        } else {
+            System.out.println("Invalid input for event ID");
+        }
+    }
 
 }
 
@@ -459,175 +632,7 @@ public class UiSpring implements CommandLineRunner {
 
 
 
-//
-//
-//    private static void displayEvents(ServerController serverController) {
-//        System.out.println("Showing all events:");
-//        serverController.getAllEvents()
-//                .forEach(System.out::println);
-//    }
-//
-//    private static void addEvent(ServerController serverController, Scanner scanner) {
-//        System.out.println("Enter event title:");
-//        String title = scanner.nextLine().trim();
-//
-//        System.out.println("Enter event description:");
-//        String description = scanner.nextLine().trim();
-//
-//        System.out.println("Enter event date (YYYY-MM-DD HH:MM):");
-//        Date eventDate;
-//        try {
-//            eventDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(scanner.nextLine().trim());
-//        } catch (ParseException e) {
-//            System.out.println("Invalid date format");
-//            return;
-//        }
-//
-//        System.out.println("Enter event location:");
-//        String location = scanner.nextLine().trim();
-//
-//        Events newEvent = new Events(title, description, eventDate, location);
-//
-//        Try<Void> addEventAttempt = Try.run(() -> serverController.addEvent(newEvent));
-//        addEventAttempt.onSuccess(ignore -> System.out.println("Event added successfully!"))
-//                .onFailure(error -> System.out.println("Failed to add event: " + error.getMessage()));
-//    }
-//
-//
-//    private static void removeEvent(ServerController serverController, Scanner scanner) {
-//
-//        System.out.println("Enter ID of the event to remove:");
-//        Option<Integer> idOption = readInput(scanner);
-//        idOption.peek(id -> {
-//            Try.of(() -> serverController.removeEventByID(id))
-//                    .onSuccess(ignored -> System.out.println("Event removed successfully!"))
-//                    .onFailure(error -> System.out.println("Failed to remove event: " + error.getMessage()));
-//        }).onEmpty(() -> System.out.println("Invalid ID"));
-//    }
-//
-//
-//    private static void updateEvent(ServerController serverController, Scanner scanner) {
-//        System.out.println("Enter ID of the event to update:");
-//        Option<Integer> idOption = readInput(scanner);
-//        idOption.peek(id -> {
-//            Events event = serverController.getEventByID(id);
-//            if (event == null) {
-//                System.out.println("Event not found");
-//                return;
-//            }
-//
-//            // Clear the input buffer
-//            scanner.nextLine();
-//
-//            System.out.println("Enter new title:");
-//            String title = scanner.nextLine().trim();
-//
-//            System.out.println("Enter new description:");
-//            String description = scanner.nextLine().trim();
-//
-//            System.out.println("Enter new date (YYYY-MM-DD HH:MM):");
-//            Date eventDate;
-//            try {
-//                eventDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(scanner.nextLine().trim());
-//            } catch (ParseException e) {
-//                System.out.println("Invalid date format");
-//                return;
-//            }
-//
-//            System.out.println("Enter new location:");
-//            String location = scanner.nextLine().trim();
-//
-//            Events newEvent = new Events(title, description, eventDate, location);
-//
-//            Try<Void> updateEventAttempt = Try.run(() -> serverController.updateEvent(event, newEvent));
-//            updateEventAttempt.onSuccess(ignore -> System.out.println("Event updated successfully!"))
-//                    .onFailure(error -> System.out.println("Failed to update event: " + error.getMessage()));
-//        }).onEmpty(() -> System.out.println("Invalid ID"));
-//    }
-//
-//
-//    private static void displayEventParticipants(ServerController serverController, Scanner scanner) {
-//        System.out.println("Enter ID of the event:");
-//        Option<Integer> idOption = readInput(scanner);
-//        if (idOption.isDefined()) {
-//            Events event = serverController.getEventByID(idOption.get());
-//            if (event != null) {
-//                Set<User> participants = serverController.getEventParticipants(event);
-//                if (!participants.isEmpty()) {
-//                    System.out.println("Participants of the event '" + event.getEventName() + "':");
-//                    participants.forEach(System.out::println);
-//                } else {
-//                    System.out.println("No participants found for the event '" + event.getEventName() + "'");
-//                }
-//            } else {
-//                System.out.println("Invalid event ID");
-//            }
-//        } else {
-//            System.out.println("Invalid input for event ID");
-//        }
-//    }
-//
-//
-//    private static void participateInEvent(ServerController serverController, Scanner scanner) {
-//        System.out.println("Enter event ID:");
-//        Option<Integer> eventIdOption = readInput(scanner);
-//
-//        System.out.println("Enter your ID:");
-//        Option<Integer> userIdOption = readInput(scanner);
-//
-//        if (eventIdOption.isDefined() && userIdOption.isDefined()) {
-//            Events event = serverController.getEventById(eventIdOption.get());
-//            User user = serverController.getUserById(userIdOption.get());
-//
-//            if (event != null && user != null) {
-//                System.out.println("Do you want to:\n1. Participate in the event\n2. Show interest in the event");
-//                Option<Integer> interestChoiceOption = readInput(scanner);
-//
-//                if (interestChoiceOption.isDefined()) {
-//                    int choice = interestChoiceOption.get();
-//
-//                    if (choice == 1) {
-//                        serverController.addParticipantToEvent(event, user);
-//                        System.out.println("You have successfully participated in the event: " + event.getEventName());
-//                    } else if (choice == 2) {
-//                        serverController.addInterestedUserToEvent(event, user);
-//                        System.out.println("You have shown interest in the event: " + event.getEventName());
-//                    } else {
-//                        System.out.println("Invalid choice");
-//                    }
-//                } else {
-//                    System.out.println("Invalid choice");
-//                }
-//            } else {
-//                System.out.println("Invalid event or user ID");
-//            }
-//        } else {
-//            System.out.println("Invalid input for event or user ID");
-//        }
-//    }
-//
-//
-//    private static void displayUsersInterestedNotParticipating(ServerController serverController, Scanner scanner) {
-//        System.out.println("Enter the ID of the event to display interested users not participating:");
-//        Option<Integer> eventIdOption = readInput(scanner);
-//
-//        if (eventIdOption.isDefined()) {
-//            Events event = serverController.getEventByID(eventIdOption.get());
-//            if (event != null) {
-//                Set<User> interestedButNotParticipating = serverController.getUsersInterestedInEvent(event);
-//                if (!interestedButNotParticipating.isEmpty()) {
-//                    System.out.println("Users interested but not participating in the event:");
-//                    interestedButNotParticipating.forEach(System.out::println);
-//                } else {
-//                    System.out.println("No users interested in the event but not participating");
-//                }
-//            } else {
-//                System.out.println("Invalid event ID");
-//            }
-//        } else {
-//            System.out.println("Invalid input for event ID");
-//        }
-//    }
+
 //
 //
 //    private static void createPost(ServerController serverController, Scanner scanner) {

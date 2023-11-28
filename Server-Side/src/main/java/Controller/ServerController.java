@@ -1,15 +1,19 @@
 package Controller;
 
+import Entities.Events.Events;
+import Entities.Exceptions.DataBaseException;
 import Entities.Message.MessageDecorator.BasicMessageDecorator;
 import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
 //import Entities.Post.Post;
 import Entities.User.User;
 //import Proxy.PostProxy;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -18,6 +22,8 @@ public class ServerController {
     private final static Logger LOGGER = Logger.getLogger(ServerController.class.getName());
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
+
+    private final EventRepository eventRepository;
 
     private boolean newPostNotification;
 
@@ -29,7 +35,8 @@ public class ServerController {
 //            InMemoryEventRepository eventRepository,
 //            InMemoryPostRepository inMemoryPostRepository,
             UserRepository userRepository,
-            MessageRepository messageRepository
+            MessageRepository messageRepository,
+            EventRepository eventRepository
     ) {
 //        this.userRepository = userRepository;
 //        this.memoryInMemoryMessageRepository = memoryInMemoryMessageRepository;
@@ -37,6 +44,7 @@ public class ServerController {
 //        this.inMemoryPostRepository = inMemoryPostRepository;
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
+        this.eventRepository = eventRepository;
     }
 
 
@@ -140,135 +148,117 @@ public class ServerController {
         return sentMessages;
     }
 
+    public void addEvent(Events event) {
+        try {
+            eventRepository.save(event);
+            event.notifyObservers();
+        } catch (DataBaseException e) {
+            LOGGER.log(Level.SEVERE, "Exception while adding an event: " + e.getMessage(), e);
+        }
+    }
 
-//
-//
-//    public User getUserById(int userId) {
-//        return userRepository.findById(userId);
-//    }
-//
-//    public User getUserById(long userId) {
-//        return userRepository.findById(userId);
-//    }
-//
-//    //method that returns all users from the repo
-////    public List<User> getAllUsers() {
-////        return new ArrayList<>(userRepository.getEntities());
-////    }
-//
-//    public User removeUserByID(Integer id) {
-//        return userRepository.removeUserById(id);
-//    }
-//
-//    public User removeUserByID(Long id) {
-//        return userRepository.removeUserById(id);
-//    }
-//
-//
-//    public void addEvent(Events event) {
-//        try {
-//            eventRepository.addEvent(event);
-//            event.notifyObservers();
-//        } catch (DataBaseException e) {
-//            LOGGER.log(Level.SEVERE, "Exception while adding an event: " + e.getMessage(), e);
-//        }
-//    }
-//
-//    public void removeEvent(Events event) {
-//        try {
-//            eventRepository.removeEvent(event);
-//        } catch (Exception ex) {
-//            LOGGER.log(Level.SEVERE, "Exception while removing an event: " + ex.getMessage(), ex);
-//        }
-//    }
-//
-//
-//    public Set<User> getEventParticipants(Events event) {
-//        return event.getParticipants();
-//    }
+    public void removeEvent(Events event) {
+        try {
+            eventRepository.delete(event);
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Exception while removing an event: " + ex.getMessage(), ex);
+        }
+    }
 
 
-//    public Set<Events> getAllEvents() {
-//        return eventRepository.getAllEvents();
-//    }
-//
-//    public Events getEventById(long id) {
-//        return eventRepository.findEventByID(id);
-//    }
-//
-//    public void addParticipantToEvent(Events event, User user) {
-//        eventRepository.addParticipantToEvent(event, user);
-//    }
-//
-//    public void addParticipantToEventById(long id, User user) {
-//        eventRepository.addParticipantToEventById(id, user);
-//    }
+    public Set<User> getEventParticipants(Events event) {
+        return event.getParticipants();
+    }
 
-//    public void removeParticipantFromEvent(Events event, User user) {
-//        eventRepository.removeParticipantFromEvent(event, user);
-//    }
-//
-//    public void removeParticipantFromEventById(long id, User user) {
-//        eventRepository.removeParticipantFromEventById(id, user);
-//    }
-//
-//    public void addInterestedUserToEvent(Events event, User user) {
-//        eventRepository.addInterestedUserToEvent(event, user);
-//    }
-//
-//    public void addInterestedUserToEventById(long id, User user) {
-//        eventRepository.addInterestedUserToEventById(id, user);
-//    }
-//
-//    public void removeInterestedUserFromEvent(Events event, User user) {
-//        eventRepository.removeInterestedUserFromEvent(event, user);
-//    }
-//
-//    public void removeInterestedUserFromEventById(long id, User user) {
-//        eventRepository.removeInterestedUserFromEventById(id, user);
-//    }
-//
-//    public Events removeEventByID(Integer id) {
-//        try {
-//            eventRepository.removeEventById(id);
-//        } catch (DataBaseException e) {
-//            LOGGER.log(Level.SEVERE, "Exception while removing an event: " + e.getMessage(), e);
-//        }
-//        return null;
-//    }
-//
-//    public void updateEvent(Events oldEvent, Events newEvent) {
-//        try {
-//            eventRepository.updateEvent(oldEvent, newEvent);
-//        } catch (DataBaseException e) {
-//            LOGGER.log(Level.SEVERE, "Exception while updating an event: " + e.getMessage(), e);
-//        }
-//    }
-//
+
+    public List<Events> getAllEvents() {
+        List<Events> events = eventRepository.findAll();
+        events.forEach(event -> {
+            Hibernate.initialize(event.getParticipants());
+            Hibernate.initialize(event.getInterestedUsers());
+        });
+        return events;
+    }
+
+
+    public Events getEventById(Long id) {
+        return eventRepository.findById(id).orElse(null);
+    }
+
+    public void addParticipantToEvent(Events event, User user) {
+        event.addParticipant(user);
+        eventRepository.save(event);
+    }
+
+
+    public void removeParticipantFromEvent(Events event, User user) {
+        event.removeParticipant(user);
+        eventRepository.save(event);
+    }
+
+
+
+    public void addInterestedUserToEvent(Events event, User user) {
+        event.addInterestedUser(user);
+        eventRepository.save(event);
+    }
+
+
+    public void removeInterestedUserFromEvent(Events event, User user) {
+        event.removeInterestedUser(user);
+        eventRepository.save(event);
+    }
+
+
+    public Events removeEventByID(Long id) {
+        try {
+            eventRepository.deleteById(id);
+        } catch (DataBaseException e) {
+            LOGGER.log(Level.SEVERE, "Exception while removing an event: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    public void updateEvent(Events oldEvent, Events newEvent) {
+        try {
+            // Modify the fields of the existing event
+            oldEvent.setEventName(newEvent.getEventName());
+            oldEvent.setEventDescription(newEvent.getEventDescription());
+            oldEvent.setEventDate(newEvent.getEventDate());
+            oldEvent.setEventLocation(newEvent.getEventLocation());
+
+            // Save the modified event
+            eventRepository.save(oldEvent);
+        } catch (DataBaseException e) {
+            LOGGER.log(Level.SEVERE, "Exception while updating an event: " + e.getMessage(), e);
+        }
+    }
+
+
 //    public Events getEventByID(int eventId) {
 //        // Logic to retrieve the event by ID
 //        return eventRepository.findEventByID(eventId); // Example method call to retrieve the event from the repository
 //    }
-//
-//
-//    public void joinEvent(User user, Events event) {
-//        event.addParticipant(user);
-//    }
-//
-//    public void showInterest(User user, Events event) {
-//        event.addInterestedUser(user);
-//    }
-//
-//    public Set<User> getUsersInterestedInEvent(Events event) {
-//        Set<User> allInterestedUsers = event.getInterestedUsers();
-//        Set<User> allParticipants = event.getParticipants();
-//
-//        Set<User> interestedButNotParticipating = new HashSet<>(allInterestedUsers);
-//        interestedButNotParticipating.removeAll(allParticipants);
-//
-//        return interestedButNotParticipating;
-//    }
-//
+
+
+    public void joinEvent(User user, Events event) {
+        event.addParticipant(user);
+    }
+
+    public void showInterest(User user, Events event) {
+        event.addInterestedUser(user);
+    }
+
+    public Set<User> getUsersInterestedInEvent(Events event) {
+        Set<User> allInterestedUsers = event.getInterestedUsers();
+        Set<User> allParticipants = event.getParticipants();
+
+        Set<User> interestedButNotParticipating = new HashSet<>(allInterestedUsers);
+        interestedButNotParticipating.removeAll(allParticipants);
+
+        return interestedButNotParticipating;
+    }
+
 //
 //    public void createPost(User user, String content) {
 //        Post newPost = new Post(user.getID(), content, new Date());

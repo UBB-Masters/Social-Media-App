@@ -1,4 +1,4 @@
-package Persistence.SpringRepositories;
+package Controller;
 
 import Entities.User.Administrator;
 import org.springframework.data.jpa.repository.JpaRepository;
