@@ -5,9 +5,12 @@ import Entities.Exceptions.DataBaseException;
 import Entities.Message.MessageDecorator.BasicMessageDecorator;
 import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
-//import Entities.Post.Post;
+import Entities.Post.Comment;
+import Entities.Post.Post;
+import Entities.Post.Hashtag;
 import Entities.User.User;
-//import Proxy.PostProxy;
+import Entities.Reaction.Reaction;
+import Proxy.PostProxy;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,8 @@ public class ServerController {
 
     private final EventRepository eventRepository;
 
+    private final PostRepository postRepository;
+
     private boolean newPostNotification;
 
 
@@ -36,7 +41,8 @@ public class ServerController {
 //            InMemoryPostRepository inMemoryPostRepository,
             UserRepository userRepository,
             MessageRepository messageRepository,
-            EventRepository eventRepository
+            EventRepository eventRepository,
+            PostRepository postRepository
     ) {
 //        this.userRepository = userRepository;
 //        this.memoryInMemoryMessageRepository = memoryInMemoryMessageRepository;
@@ -45,6 +51,7 @@ public class ServerController {
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
         this.eventRepository = eventRepository;
+        this.postRepository = postRepository;
     }
 
 
@@ -259,82 +266,81 @@ public class ServerController {
         return interestedButNotParticipating;
     }
 
-//
-//    public void createPost(User user, String content) {
-//        Post newPost = new Post(user.getID(), content, new Date());
-//        inMemoryPostRepository.addPost(newPost);
-//        List<User> users = getAllUsers();
-//        for (User u : users) {
-//            newPost.addObserver(u);
-//        }
-//
-//        newPost.notifyObservers(); // Notify all observers (users) about the new post
-//
-//        this.newPostNotification = true;
-//
-//
-//    }
-//
-//    public void createPostProxy(User user, PostProxy postProxy) {
-//        // Loading content if necessary
-//        String content = postProxy.getContent();
-//
-//        Post newPost = new Post(user.getID(), content, new Date());
-//        inMemoryPostRepository.addPost(newPost);
-//
-//        List<User> users = getAllUsers();
-//        for (User u : users) {
-//            newPost.addObserver(u);
-//        }
-//
-//        newPost.notifyObservers(); // Notify all observers (users) about the new post
-//
-//        this.newPostNotification = true;
-//    }
-//
-//
-//    public void addCommentToPost(Post post, Comment comment) {
-//        post.addComment(comment);
-//        inMemoryPostRepository.updatePost(post);
-//    }
-//
-//    public void reactToPost(Post post, Reaction reaction) {
-//        post.addReaction(reaction);
-//        inMemoryPostRepository.updatePost(post);
-//    }
-//
-//    public void addHashtagToPost(Post post, Hashtag hashtag) {
-//        post.addHashtag(hashtag);
-//        inMemoryPostRepository.updatePost(post);
-//    }
-//
-//    public void removeHashtagFromPost(Post post, Hashtag hashtag) {
-//        post.removeHashtag(hashtag);
-//        inMemoryPostRepository.updatePost(post);
-//    }
-//
-//    public List<Post> getAllPosts() {
-//        return inMemoryPostRepository.getAllPosts();
-//    }
-//
-//    public List<Post> getPostsByUser(User user) {
-//        return inMemoryPostRepository.getPostsByUserId(user.getID());
-//    }
-//
-//    public Post getPostById(long postId) {
-//        return inMemoryPostRepository.getPostById(postId);
-//    }
-//
-//    public boolean hasNewPostNotification() {
-//        return newPostNotification;
-//    }
-//
-//    public void clearNewPostNotification() {
-//        this.newPostNotification = false;
-//    }
+
+    public void createPost(User user, String content) {
+        Post newPost = new Post(user, content, new Date());
+        postRepository.save(newPost);
+        List<User> users = getAllUsers();
+        for (User u : users) {
+            newPost.addObserver(u);
+        }
+
+        newPost.notifyObservers(); // Notify all observers (users) about the new post
+
+        this.newPostNotification = true;
 
 
-    //get hashtag by id
+    }
+
+    public void createPostProxy(User user, PostProxy postProxy) {
+        // Loading content if necessary
+        String content = postProxy.getContent();
+
+        Post newPost = new Post(user, content, new Date());
+        postRepository.save(newPost);
+
+        List<User> users = getAllUsers();
+        for (User u : users) {
+            newPost.addObserver(u);
+        }
+
+        newPost.notifyObservers(); // Notify all observers (users) about the new post
+
+        this.newPostNotification = true;
+    }
+
+
+    public void addCommentToPost(Post post, Comment comment) {
+        post.addComment(comment);
+        postRepository.save(post);
+    }
+
+    public void reactToPost(Post post, Reaction reaction) {
+        post.addReaction(reaction);
+        postRepository.save(post);
+    }
+
+    public void addHashtagToPost(Post post, Hashtag hashtag) {
+        post.addHashtag(hashtag);
+        postRepository.save(post);
+    }
+
+    public void removeHashtagFromPost(Post post, Hashtag hashtag) {
+        post.removeHashtag(hashtag);
+        postRepository.save(post);
+    }
+
+    public List<Post> getAllPosts() {
+        return postRepository.findAll();
+    }
+
+    public List<Post> getPostsByUser(User user) {
+        return postRepository.findByUserId(user.getUserID());
+    }
+
+
+    public Post getPostById(long postId) {
+        return postRepository.findById(postId).orElse(null);
+    }
+
+    public boolean hasNewPostNotification() {
+        return newPostNotification;
+    }
+
+    public void clearNewPostNotification() {
+        this.newPostNotification = false;
+    }
+
 
 
 }

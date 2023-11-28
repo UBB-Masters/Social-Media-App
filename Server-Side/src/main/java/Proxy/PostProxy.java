@@ -14,13 +14,18 @@ public class PostProxy {
     private String cachedContent;
     private Map<Long, String> accessControlMap; // Mapping of userId to access rights
 
-    public PostProxy(User user, String content, Date timestamp) {
+    public PostProxy(long userId, String content, Date timestamp) {
+
+        User user = new User();
+        user.setUserID(userId);
+
         this.post = new Post(user, content, timestamp);
         this.contentLoaded = false;
         this.cachedContent = null;
         this.accessControlMap = new HashMap<>(); // Add access control configurations
         initializeAccessControl(); // Initialize access control configuration
     }
+
 
 
     public long getPostId() {
