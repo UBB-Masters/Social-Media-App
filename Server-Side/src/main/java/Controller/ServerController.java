@@ -33,7 +33,6 @@ public class ServerController {
     private boolean newPostNotification;
 
 
-
     @Autowired
     public ServerController(
 //            InMemoryMessageRepository memoryInMemoryMessageRepository,
@@ -53,7 +52,6 @@ public class ServerController {
         this.eventRepository = eventRepository;
         this.postRepository = postRepository;
     }
-
 
 
     public void addUser(User user) {
@@ -204,7 +202,6 @@ public class ServerController {
     }
 
 
-
     public void addInterestedUserToEvent(Events event, User user) {
         event.addInterestedUser(user);
         eventRepository.save(event);
@@ -274,13 +271,14 @@ public class ServerController {
         for (User u : users) {
             newPost.addObserver(u);
         }
-
-        newPost.notifyObservers(); // Notify all observers (users) about the new post
-
-        this.newPostNotification = true;
-
-
     }
+//
+//        newPost.notifyObservers(); // Notify all observers (users) about the new post
+//
+//        this.newPostNotification = true;
+//
+//
+//    }
 
     public void createPostProxy(User user, PostProxy postProxy) {
         // Loading content if necessary
@@ -298,40 +296,40 @@ public class ServerController {
 
         this.newPostNotification = true;
     }
-
-
-    public void addCommentToPost(Post post, Comment comment) {
-        post.addComment(comment);
-        postRepository.save(post);
-    }
-
-    public void reactToPost(Post post, Reaction reaction) {
-        post.addReaction(reaction);
-        postRepository.save(post);
-    }
-
-    public void addHashtagToPost(Post post, Hashtag hashtag) {
-        post.addHashtag(hashtag);
-        postRepository.save(post);
-    }
-
-    public void removeHashtagFromPost(Post post, Hashtag hashtag) {
-        post.removeHashtag(hashtag);
-        postRepository.save(post);
-    }
-
+//
+//
+//    public void addCommentToPost(Post post, Comment comment) {
+//        post.addComment(comment);
+//        postRepository.save(post);
+//    }
+//
+//    public void reactToPost(Post post, Reaction reaction) {
+//        post.addReaction(reaction);
+//        postRepository.save(post);
+//    }
+//
+//    public void addHashtagToPost(Post post, Hashtag hashtag) {
+//        post.addHashtag(hashtag);
+//        postRepository.save(post);
+//    }
+//
+//    public void removeHashtagFromPost(Post post, Hashtag hashtag) {
+//        post.removeHashtag(hashtag);
+//        postRepository.save(post);
+//    }
+//
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
-
-    public List<Post> getPostsByUser(User user) {
-        return postRepository.findByUserId(user.getUserID());
-    }
-
-
-    public Post getPostById(long postId) {
-        return postRepository.findById(postId).orElse(null);
-    }
+//
+//    public List<Post> getPostsByUser(User user) {
+//        return postRepository.findByUserId(user.getUserID());
+//    }
+//
+//
+//    public Post getPostById(long postId) {
+//        return postRepository.findById(postId).orElse(null);
+//    }
 
     public boolean hasNewPostNotification() {
         return newPostNotification;

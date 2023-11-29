@@ -22,7 +22,7 @@ public class Post implements Observable {
     @ManyToMany
     private List<Comment> comments;
     @ManyToMany
-    private ArrayList<Reaction> reactions;
+    private List<Reaction> reactions;
     @ManyToMany
     private List<Hashtag> hashtags;
     @Transient

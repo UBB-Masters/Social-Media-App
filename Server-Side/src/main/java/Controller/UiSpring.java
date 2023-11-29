@@ -209,8 +209,8 @@ public class UiSpring implements CommandLineRunner {
 
             switch (choice) {
                 case 1:
-//                    createPost(serverController, scanner);
-//                    break;
+                    createPost(serverController, scanner);
+                    break;
 //                case 2:
 //                    addCommentToPost(serverController, scanner);
 //                    break;
@@ -223,9 +223,9 @@ public class UiSpring implements CommandLineRunner {
 //                case 5:
 //                    removeHashtagFromPost(serverController, scanner);
 //                    break;
-//                case 6:
-//                    displayAllPosts(serverController);
-//                    break;
+                case 6:
+                    displayAllPosts(serverController);
+                    break;
 //                case 7:
 //                    displayUserPosts(serverController, scanner);
 //                    break;
@@ -234,7 +234,7 @@ public class UiSpring implements CommandLineRunner {
 //                    break;
 //                case 9:
 //                    reactToAnotherUserPost(serverController, scanner);
-                    break;
+//                    break;
                 case 10:
                     System.out.println("Going back to the main menu...");
                     return; // Exit the method to go back
@@ -654,114 +654,114 @@ public class UiSpring implements CommandLineRunner {
             System.out.println("Invalid input for user ID");
         }
     }
-
-    // UI method to add a comment to a post
-    private static void addCommentToPost(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter Post ID:");
-        Option<Integer> postIdOption = readInput(scanner);
-
-        if (postIdOption.isDefined()) {
-            long postId = postIdOption.get();
-            Post post = serverController.getPostById(postId);
-
-            if (post != null) {
-                System.out.println("Enter your comment:");
-                scanner.nextLine();
-                String commentText = scanner.nextLine().trim();
-
-                Comment comment = new Comment(postId, commentText, new Date(), 123); // replace 123 with actual user ID
-                serverController.addCommentToPost(post, comment);
-                System.out.println("Comment added to the post!");
-            } else {
-                System.out.println("Post not found.");
-            }
-        } else {
-            System.out.println("Invalid Post ID");
-        }
-    }
-
-    private static void reactToPost(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter Post ID:");
-        Option<Integer> postIdOption = readInput(scanner);
-
-        if (postIdOption.isDefined()) {
-            long postId = postIdOption.get();
-            Post post = serverController.getPostById(postId);
-
-            if (post != null) {
-                System.out.println("Enter reaction (Like, Love, Haha, Wow, Sad, Angry):");
-                scanner.nextLine();
-                String reactionType = scanner.nextLine().trim();
-
-                ReactionStrategy reactionStrategy = ReactionFactory.createReactionStrategy(reactionType);
-
-                if (reactionStrategy != null) {
-
-                    long userId = 123;
-
-                    reactionStrategy.react(post, userId);
-                    System.out.println("Reacted to the post with " + reactionType + "!");
-                } else {
-                    System.out.println("Invalid reaction type");
-                }
-            } else {
-                System.out.println("Post not found.");
-            }
-        } else {
-            System.out.println("Invalid Post ID");
-        }
-    }
-
-    // UI method to add a hashtag to a post
-    private static void addHashtagToPost(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter Post ID:");
-        Option<Integer> postIdOption = readInput(scanner);
-
-        if (postIdOption.isDefined()) {
-            long postId = postIdOption.get();
-            Post post = serverController.getPostById(postId);
-
-            if (post != null) {
-                System.out.println("Enter hashtag:");
-                scanner.nextLine();
-                String hashtagText = scanner.nextLine().trim();
-
-                Hashtag hashtag = new Hashtag(hashtagText);
-                serverController.addHashtagToPost(post, hashtag);
-                System.out.println("Hashtag added to the post!");
-            } else {
-                System.out.println("Post not found.");
-            }
-        } else {
-            System.out.println("Invalid Post ID");
-        }
-    }
-
-    // UI method to remove a hashtag from a post
-    private static void removeHashtagFromPost(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter Post ID:");
-        Option<Integer> postIdOption = readInput(scanner);
-
-        if (postIdOption.isDefined()) {
-            long postId = postIdOption.get();
-            Post post = serverController.getPostById(postId);
-
-            if (post != null) {
-                System.out.println("Enter hashtag to remove:");
-                scanner.nextLine();
-                String hashtagText = scanner.nextLine().trim();
-
-                Hashtag hashtagToRemove = new Hashtag(hashtagText);
-                serverController.removeHashtagFromPost(post, hashtagToRemove);
-                System.out.println("Hashtag removed from the post!");
-            } else {
-                System.out.println("Post not found.");
-            }
-        } else {
-            System.out.println("Invalid Post ID");
-        }
-    }
-
+//
+//    // UI method to add a comment to a post
+//    private static void addCommentToPost(ServerController serverController, Scanner scanner) {
+//        System.out.println("Enter Post ID:");
+//        Option<Integer> postIdOption = readInput(scanner);
+//
+//        if (postIdOption.isDefined()) {
+//            long postId = postIdOption.get();
+//            Post post = serverController.getPostById(postId);
+//
+//            if (post != null) {
+//                System.out.println("Enter your comment:");
+//                scanner.nextLine();
+//                String commentText = scanner.nextLine().trim();
+//
+//                Comment comment = new Comment(postId, commentText, new Date(), 123); // replace 123 with actual user ID
+//                serverController.addCommentToPost(post, comment);
+//                System.out.println("Comment added to the post!");
+//            } else {
+//                System.out.println("Post not found.");
+//            }
+//        } else {
+//            System.out.println("Invalid Post ID");
+//        }
+//    }
+//
+//    private static void reactToPost(ServerController serverController, Scanner scanner) {
+//        System.out.println("Enter Post ID:");
+//        Option<Integer> postIdOption = readInput(scanner);
+//
+//        if (postIdOption.isDefined()) {
+//            long postId = postIdOption.get();
+//            Post post = serverController.getPostById(postId);
+//
+//            if (post != null) {
+//                System.out.println("Enter reaction (Like, Love, Haha, Wow, Sad, Angry):");
+//                scanner.nextLine();
+//                String reactionType = scanner.nextLine().trim();
+//
+//                ReactionStrategy reactionStrategy = ReactionFactory.createReactionStrategy(reactionType);
+//
+//                if (reactionStrategy != null) {
+//
+//                    long userId = 123;
+//
+//                    reactionStrategy.react(post, userId);
+//                    System.out.println("Reacted to the post with " + reactionType + "!");
+//                } else {
+//                    System.out.println("Invalid reaction type");
+//                }
+//            } else {
+//                System.out.println("Post not found.");
+//            }
+//        } else {
+//            System.out.println("Invalid Post ID");
+//        }
+//    }
+//
+//    // UI method to add a hashtag to a post
+//    private static void addHashtagToPost(ServerController serverController, Scanner scanner) {
+//        System.out.println("Enter Post ID:");
+//        Option<Integer> postIdOption = readInput(scanner);
+//
+//        if (postIdOption.isDefined()) {
+//            long postId = postIdOption.get();
+//            Post post = serverController.getPostById(postId);
+//
+//            if (post != null) {
+//                System.out.println("Enter hashtag:");
+//                scanner.nextLine();
+//                String hashtagText = scanner.nextLine().trim();
+//
+//                Hashtag hashtag = new Hashtag(hashtagText);
+//                serverController.addHashtagToPost(post, hashtag);
+//                System.out.println("Hashtag added to the post!");
+//            } else {
+//                System.out.println("Post not found.");
+//            }
+//        } else {
+//            System.out.println("Invalid Post ID");
+//        }
+//    }
+//
+//    // UI method to remove a hashtag from a post
+//    private static void removeHashtagFromPost(ServerController serverController, Scanner scanner) {
+//        System.out.println("Enter Post ID:");
+//        Option<Integer> postIdOption = readInput(scanner);
+//
+//        if (postIdOption.isDefined()) {
+//            long postId = postIdOption.get();
+//            Post post = serverController.getPostById(postId);
+//
+//            if (post != null) {
+//                System.out.println("Enter hashtag to remove:");
+//                scanner.nextLine();
+//                String hashtagText = scanner.nextLine().trim();
+//
+//                Hashtag hashtagToRemove = new Hashtag(hashtagText);
+//                serverController.removeHashtagFromPost(post, hashtagToRemove);
+//                System.out.println("Hashtag removed from the post!");
+//            } else {
+//                System.out.println("Post not found.");
+//            }
+//        } else {
+//            System.out.println("Invalid Post ID");
+//        }
+//    }
+//
     // UI method to display all posts
     private static void displayAllPosts(ServerController serverController) {
         List<Post> allPosts = serverController.getAllPosts();
@@ -779,84 +779,84 @@ public class UiSpring implements CommandLineRunner {
             serverController.clearNewPostNotification(); // Clear the notification
         }
     }
-
-
-    // UI method to display posts by a specific user
-    private static void displayUserPosts(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter User ID:");
-        Option<Integer> userIdOption = readInput(scanner);
-
-        if (userIdOption.isDefined()) {
-            long userId = userIdOption.get();
-            User user = serverController.getUserByID(userId);
-
-            if (user != null) {
-                List<Post> userPosts = serverController.getPostsByUser(user);
-
-                if (!userPosts.isEmpty()) {
-                    System.out.println("Posts by " + user.getUsername() + ":");
-                    userPosts.forEach(System.out::println);
-                } else {
-                    System.out.println("No posts found for " + user.getUsername());
-                }
-            } else {
-                System.out.println("User not found.");
-            }
-        } else {
-            System.out.println("Invalid User ID");
-        }
-    }
-
-
-    // UI method to add a comment to another user's post
-    private static void addCommentToAnotherUserPost(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter the Post ID of the user's post you want to comment on:");
-        Option<Integer> postIdOption = readInput(scanner);
-
-        if (postIdOption.isDefined()) {
-            long postId = postIdOption.get();
-            Post post = serverController.getPostById(postId);
-
-            if (post != null) {
-                System.out.println("Enter your comment:");
-                scanner.nextLine();
-                String commentText = scanner.nextLine().trim();
-
-                Comment comment = new Comment(postId, commentText, new Date(), 123); // Replace 123 with the actual user ID
-                serverController.addCommentToPost(post, comment);
-                System.out.println("Comment added to the post!");
-            } else {
-                System.out.println("Post not found.");
-            }
-        } else {
-            System.out.println("Invalid Post ID");
-        }
-    }
-
-    // UI method to react to another user's post
-    private static void reactToAnotherUserPost(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter the Post ID of the user's post you want to react to:");
-        Option<Integer> postIdOption = readInput(scanner);
-
-        if (postIdOption.isDefined()) {
-            long postId = postIdOption.get();
-            Post post = serverController.getPostById(postId);
-
-            if (post != null) {
-                System.out.println("Enter reaction (Like, Love, Haha, Wow, Sad, Angry):");
-                scanner.nextLine();
-                String reactionType = scanner.nextLine().trim();
-
-                Reaction reaction = new Reaction(123, reactionType); // Replace 123 with the actual user ID
-                serverController.reactToPost(post, reaction);
-                System.out.println("Reacted to the post!");
-            } else {
-                System.out.println("Post not found.");
-            }
-        } else {
-            System.out.println("Invalid Post ID");
-        }
-    }
+//
+//
+//    // UI method to display posts by a specific user
+//    private static void displayUserPosts(ServerController serverController, Scanner scanner) {
+//        System.out.println("Enter User ID:");
+//        Option<Integer> userIdOption = readInput(scanner);
+//
+//        if (userIdOption.isDefined()) {
+//            long userId = userIdOption.get();
+//            User user = serverController.getUserByID(userId);
+//
+//            if (user != null) {
+//                List<Post> userPosts = serverController.getPostsByUser(user);
+//
+//                if (!userPosts.isEmpty()) {
+//                    System.out.println("Posts by " + user.getUsername() + ":");
+//                    userPosts.forEach(System.out::println);
+//                } else {
+//                    System.out.println("No posts found for " + user.getUsername());
+//                }
+//            } else {
+//                System.out.println("User not found.");
+//            }
+//        } else {
+//            System.out.println("Invalid User ID");
+//        }
+//    }
+//
+//
+//    // UI method to add a comment to another user's post
+//    private static void addCommentToAnotherUserPost(ServerController serverController, Scanner scanner) {
+//        System.out.println("Enter the Post ID of the user's post you want to comment on:");
+//        Option<Integer> postIdOption = readInput(scanner);
+//
+//        if (postIdOption.isDefined()) {
+//            long postId = postIdOption.get();
+//            Post post = serverController.getPostById(postId);
+//
+//            if (post != null) {
+//                System.out.println("Enter your comment:");
+//                scanner.nextLine();
+//                String commentText = scanner.nextLine().trim();
+//
+//                Comment comment = new Comment(postId, commentText, new Date(), 123); // Replace 123 with the actual user ID
+//                serverController.addCommentToPost(post, comment);
+//                System.out.println("Comment added to the post!");
+//            } else {
+//                System.out.println("Post not found.");
+//            }
+//        } else {
+//            System.out.println("Invalid Post ID");
+//        }
+//    }
+//
+//    // UI method to react to another user's post
+//    private static void reactToAnotherUserPost(ServerController serverController, Scanner scanner) {
+//        System.out.println("Enter the Post ID of the user's post you want to react to:");
+//        Option<Integer> postIdOption = readInput(scanner);
+//
+//        if (postIdOption.isDefined()) {
+//            long postId = postIdOption.get();
+//            Post post = serverController.getPostById(postId);
+//
+//            if (post != null) {
+//                System.out.println("Enter reaction (Like, Love, Haha, Wow, Sad, Angry):");
+//                scanner.nextLine();
+//                String reactionType = scanner.nextLine().trim();
+//
+//                Reaction reaction = new Reaction(123, reactionType); // Replace 123 with the actual user ID
+//                serverController.reactToPost(post, reaction);
+//                System.out.println("Reacted to the post!");
+//            } else {
+//                System.out.println("Post not found.");
+//            }
+//        } else {
+//            System.out.println("Invalid Post ID");
+//        }
+//    }
 
 
 }

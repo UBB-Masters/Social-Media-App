@@ -3,12 +3,15 @@ package Entities.User;
 
 import jakarta.persistence.*;
 
+
 @Entity
 @Table(name = "profilepicture")
+@IdClass(ProfilePicturePK.class)
 public class ProfilePicture {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "pictureID")
     private long pictureID;
     @OneToOne
     @JoinColumn(name = "userID")
@@ -17,7 +20,7 @@ public class ProfilePicture {
     private String picture;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userID")
     private Long userID;
 
