@@ -35,18 +35,11 @@ public class ServerController {
 
     @Autowired
     public ServerController(
-//            InMemoryMessageRepository memoryInMemoryMessageRepository,
-//            InMemoryEventRepository eventRepository,
-//            InMemoryPostRepository inMemoryPostRepository,
             UserRepository userRepository,
             MessageRepository messageRepository,
             EventRepository eventRepository,
             PostRepository postRepository
     ) {
-//        this.userRepository = userRepository;
-//        this.memoryInMemoryMessageRepository = memoryInMemoryMessageRepository;
-//        this.eventRepository = eventRepository;
-//        this.inMemoryPostRepository = inMemoryPostRepository;
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
         this.eventRepository = eventRepository;
@@ -281,21 +274,27 @@ public class ServerController {
 //    }
 
     public void createPostProxy(User user, PostProxy postProxy) {
-        // Loading content if necessary
+        // Using PostProxy to get the content
         String content = postProxy.getContent();
 
+        // Creating a new Post entity
         Post newPost = new Post(user, content, new Date());
+
+        // Saving the new post to the repository
         postRepository.save(newPost);
 
+        // Adding observers to the new post
         List<User> users = getAllUsers();
         for (User u : users) {
             newPost.addObserver(u);
         }
 
-        newPost.notifyObservers(); // Notify all observers (users) about the new post
+        // Notifying observers about the new post
+        newPost.notifyObservers();
 
         this.newPostNotification = true;
     }
+
 //
 //
 //    public void addCommentToPost(Post post, Comment comment) {

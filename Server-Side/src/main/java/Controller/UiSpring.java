@@ -1,27 +1,23 @@
 package Controller;
 
+import Controller.Services.UserService;
 import Entities.Events.Events;
 import Entities.Message.MessageFactory;
-import Entities.Post.Comment;
-import Entities.Post.Hashtag;
 //import Entities.Post.Post;
 import Entities.Post.Post;
-import Entities.Reaction.Reaction;
-import Entities.Reaction.ReactionFactory;
 import Entities.User.User;
 //import Proxy.PostProxy;
 import Proxy.PostProxy;
-import Strategy.ReactionStrategy;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
-import jakarta.persistence.Entity;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 //import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 //import org.springframework.security.core.Authentication;
 //import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,15 +34,32 @@ import java.util.*;
 @EntityScan(basePackages = "Entities")
 public class UiSpring implements CommandLineRunner {
 
-    private final ServerController serverController;
-    private final UserRepository userRepository;
+    //    private final ServerController serverController;
+//    private final UserRepository userRepository;
+    private final RestServerController restServerController;
+    private final UserService userService;
 
     @Autowired
-    public UiSpring(ServerController serverController, UserRepository userRepository) {
-        this.serverController = serverController;
-        this.userRepository = userRepository;
+    private static RestTemplate restTemplate;
 
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        restTemplate = builder.build();
+        return restTemplate;
 
+    }
+
+//    @Autowired
+//    public UiSpring(ServerController serverController, UserRepository userRepository) {
+//        this.serverController = serverController;
+//        this.userRepository = userRepository;
+//
+//
+//    }
+    @Autowired
+    public UiSpring(RestServerController restServerController, UserService userService) {
+        this.restServerController = restServerController;
+        this.userService = userService;
     }
 
     public static void main(String[] args) {
@@ -64,8 +77,8 @@ public class UiSpring implements CommandLineRunner {
         User user1 = new User("user1", "password1", new Date(), "user1@gmail.com", User.Visibility.PUBLIC);
         User user2 = new User("user2", "password2", new Date(), "user2@gmail.com", User.Visibility.PUBLIC);
 
-        serverController.addUser(user1);
-        serverController.addUser(user2);
+        restServerController.addUser(user1);
+        restServerController.addUser(user2);
         int choice;
         do {
             displayMainMenu();
@@ -75,10 +88,10 @@ public class UiSpring implements CommandLineRunner {
 
             switch (choice) {
                 case 1:
-                    userOperations(serverController, scanner);
+                    userOperations(restServerController, scanner);
                     break;
                 case 2:
-                    eventOperations(serverController, scanner);
+                    eventOperations(restServerController, scanner);
                     break;
                 case 3:
                     System.out.println("Exiting...");
@@ -117,7 +130,7 @@ public class UiSpring implements CommandLineRunner {
 //        }
 //    }
 
-    private static void userOperations(ServerController serverController, Scanner scanner) {
+    private static void userOperations(RestServerController restServerController, Scanner scanner) {
         int choice;
         do {
             displayUserMenu();
@@ -127,29 +140,29 @@ public class UiSpring implements CommandLineRunner {
 
             switch (choice) {
                 case 1:
-                    addUser(serverController, scanner);
+                    addUser(restServerController, scanner);
                     break;
-                case 2:
-                    //TODO -> this acts weird
-                    removeUser(serverController, scanner);
-                    break;
-                case 3:
-                    updateUser(serverController, scanner);
-                    break;
-                case 4:
-                    displayAllUsers(serverController);
-                    break;
-                case 5:
-                    sendMessage(serverController, scanner);
-                    break;
-                case 6:
-                    displaySentMessages(serverController, scanner);
-                    break;
-                case 7:
-                    participateInEvent(serverController, scanner);
-                    break;
+//                case 2:
+//                    //TODO -> this acts weird
+//                    removeUser(restServerController, scanner);
+//                    break;
+//                case 3:
+//                    updateUser(restServerController, scanner);
+//                    break;
+//                case 4:
+//                    displayAllUsers(restServerController);
+//                    break;
+//                case 5:
+//                    sendMessage(restServerController, scanner);
+//                    break;
+//                case 6:
+//                    displaySentMessages(restServerController, scanner);
+//                    break;
+//                case 7:
+//                    participateInEvent(restServerController, scanner);
+//                    break;
                 case 8:
-                    postOperations(serverController, scanner);
+                    postOperations(restServerController, scanner);
                     break;
                 case 9:
                     System.out.println("Going back to the main menu...");
@@ -161,7 +174,7 @@ public class UiSpring implements CommandLineRunner {
         } while (choice != 8);
     }
 
-    private static void eventOperations(ServerController serverController, Scanner scanner) {
+    private static void eventOperations(RestServerController serverController, Scanner scanner) {
         int choice;
         do {
             displayEventMenu();
@@ -170,24 +183,24 @@ public class UiSpring implements CommandLineRunner {
             scanner.nextLine(); // Consume new line
 
             switch (choice) {
-                case 1:
-                    addEvent(serverController, scanner);
-                    break;
-                case 2:
-                    removeEvent(serverController, scanner);
-                    break;
-                case 3:
-                    updateEvent(serverController, scanner);
-                    break;
-                case 4:
-                    displayEvents(serverController);
-                    break;
-                case 5:
-                    displayEventParticipants(serverController, scanner);
-                    break;
-                case 6:
-                    displayUsersInterestedNotParticipating(serverController, scanner);
-                    break;
+//                case 1:
+//                    addEvent(serverController, scanner);
+//                    break;
+//                case 2:
+//                    removeEvent(serverController, scanner);
+//                    break;
+//                case 3:
+//                    updateEvent(serverController, scanner);
+//                    break;
+//                case 4:
+//                    displayEvents(serverController);
+//                    break;
+//                case 5:
+//                    displayEventParticipants(serverController, scanner);
+//                    break;
+//                case 6:
+//                    displayUsersInterestedNotParticipating(serverController, scanner);
+//                    break;
                 case 7:
                     System.out.println("Going back to the main menu...");
                     return; // Exit the method to go back
@@ -199,7 +212,7 @@ public class UiSpring implements CommandLineRunner {
     }
 
 
-    private static void postOperations(ServerController serverController, Scanner scanner) {
+    private static void postOperations(RestServerController serverController, Scanner scanner) {
         int choice;
         do {
             displayPostMenu();
@@ -209,8 +222,8 @@ public class UiSpring implements CommandLineRunner {
 
             switch (choice) {
                 case 1:
-                    createPost(serverController, scanner);
-                    break;
+//                    createPost(serverController, scanner);
+//                    break;
 //                case 2:
 //                    addCommentToPost(serverController, scanner);
 //                    break;
@@ -223,9 +236,9 @@ public class UiSpring implements CommandLineRunner {
 //                case 5:
 //                    removeHashtagFromPost(serverController, scanner);
 //                    break;
-                case 6:
-                    displayAllPosts(serverController);
-                    break;
+//                case 6:
+//                    displayAllPosts(serverController);
+//                    break;
 //                case 7:
 //                    displayUserPosts(serverController, scanner);
 //                    break;
@@ -297,13 +310,13 @@ public class UiSpring implements CommandLineRunner {
 
     }
 
-    private static void displayAllUsers(ServerController serverController) {
-        System.out.println("Printing all users:");
-        serverController.getAllUsers()
-                .forEach(System.out::println); // Assuming toString() in User class provides necessary information
-    }
+//    private static void displayAllUsers(RestServerController serverController) {
+//        System.out.println("Printing all users:");
+//        serverController.getAllUsers()
+//                .forEach(System.out::println); // Assuming toString() in User class provides necessary information
+//    }
 
-    private static void addUser(ServerController serverController, Scanner scanner) {
+    private static void addUser(RestServerController serverController, Scanner scanner) {
         System.out.println("Enter username:");
         String username = scanner.nextLine().trim();
 
@@ -329,331 +342,331 @@ public class UiSpring implements CommandLineRunner {
     }
 
 
-    private static void removeUser(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter ID of the user to remove:");
-        Option<Long> idOption = readInput(scanner).map(Integer::longValue);
-        idOption.peek(id -> {
-            Try.of(() -> {
-                User removedUser = serverController.removeUserById(id);
-                System.out.println("User removed successfully!");
-                return removedUser;
-            }).onFailure(error -> System.out.println("Failed to remove user: " + error.getMessage()));
-        }).onEmpty(() -> System.out.println("Invalid ID"));
-    }
-
-
-    private static void updateUser(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter ID of the user to update:");
-        Option<Long> idOption = readInput(scanner).map(Integer::longValue);
-
-        idOption.peek(id -> {
-            User existingUser = serverController.getUserByID(id);
-            if (existingUser == null) {
-                System.out.println("User not found");
-                return;
-            }
-
-            // Clear the input buffer
-            scanner.nextLine();
-
-            System.out.println("Enter new username:");
-            String newUsername = scanner.nextLine().trim();
-            existingUser.setUsername(newUsername);
-
-            System.out.println("Enter new password:");
-            String newPassword = scanner.nextLine().trim();
-            existingUser.setPassword(newPassword);
-
-            System.out.println("Enter new birthdate (YYYY-MM-DD):");
-            Date newBirthdate = Try.of(() -> new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine().trim()))
-                    .getOrElseThrow(() -> new RuntimeException("Invalid date format"));
-            existingUser.setBirthdate(newBirthdate);
-
-            System.out.println("Enter new email:");
-            String newEmail = scanner.nextLine().trim();
-            existingUser.setEmail(newEmail);
-
-            System.out.println("Enter new visibility (PRIVATE, FRIENDS, PUBLIC):");
-            User.Visibility newVisibility = Try.of(() -> User.Visibility.valueOf(scanner.nextLine().trim().toUpperCase()))
-                    .getOrElseThrow(() -> new RuntimeException("Invalid visibility"));
-            existingUser.setDefaultVisibility(newVisibility);
-
-            // Save the updated user
-            Try<Void> updateUserAttempt = Try.run(() -> serverController.updateUser(existingUser, existingUser));
-            updateUserAttempt.onSuccess(ignore -> System.out.println("User updated successfully!"))
-                    .onFailure(error -> System.out.println("Failed to update user: " + error.getMessage()));
-        }).onEmpty(() -> System.out.println("Invalid ID"));
-    }
-
-
-    private static void sendMessage(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter sender ID:");
-        Option<Integer> senderIdOption = readInput(scanner);
-        System.out.println("Enter receiver ID:");
-        Option<Integer> receiverIdOption = readInput(scanner);
-
-        String message = null;
-        User sender;
-        User receiver;
-
-        if (senderIdOption.isDefined() && receiverIdOption.isDefined()) {
-            sender = serverController.getUserByID(senderIdOption.get());
-            receiver = serverController.getUserByID(receiverIdOption.get());
-
-            if (sender != null && receiver != null) {
-                scanner.nextLine();
-                System.out.println("Enter the message:");
-                Option<String> messageOption = readMessageInput(scanner);
-                if (messageOption.isDefined()) {
-                    message = messageOption.get();
-                    serverController.sendMessage(sender, receiver, message);
-                    System.out.println("Message sent successfully!");
-                } else {
-                    System.out.println("Invalid message");
-                }
-            } else {
-                System.out.println("Invalid sender or receiver ID");
-            }
-        } else {
-            System.out.println("Invalid input for sender or receiver ID");
-        }
-    }
-
-    private static Option<String> readMessageInput(Scanner scanner) {
-        String message = scanner.nextLine().trim();
-        return Option.of(message);
-    }
-
-    private static void displaySentMessages(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter sender ID:");
-        Option<Integer> senderIdOption = readInput(scanner);
-
-        if (senderIdOption.isDefined()) {
-            User sender = serverController.getUserByID(senderIdOption.get());
-
-            if (sender != null) {
-                List<MessageFactory> sentMessages = serverController.getSentMessages(sender);
-
-                if (!sentMessages.isEmpty()) {
-                    System.out.println("Messages sent by " + sender.getUsername() + ":");
-
-                    // Iterate through the sentMessages and display sender, receiver, and description
-                    sentMessages.forEach(message ->
-                            System.out.println("Sender: " + message.getSenderName() +
-                                    ", Receiver: " + message.getReceiverName() +
-                                    ", Message: " + message.getDescription()));
-                } else {
-                    System.out.println("No messages found for " + sender.getUsername());
-                }
-            } else {
-                System.out.println("Invalid sender ID");
-            }
-        } else {
-            System.out.println("Invalid input for sender ID");
-        }
-    }
-
-    private static void addEvent(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter event title:");
-        String title = scanner.nextLine().trim();
-
-        System.out.println("Enter event description:");
-        String description = scanner.nextLine().trim();
-
-        System.out.println("Enter event date (YYYY-MM-DD HH:MM):");
-        Date eventDate;
-        try {
-            eventDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(scanner.nextLine().trim());
-        } catch (ParseException e) {
-            System.out.println("Invalid date format");
-            return;
-        }
-
-        System.out.println("Enter event location:");
-        String location = scanner.nextLine().trim();
-
-        Events newEvent = new Events(title, description, eventDate, location);
-
-        Try<Void> addEventAttempt = Try.run(() -> serverController.addEvent(newEvent));
-        addEventAttempt.onSuccess(ignore -> System.out.println("Event added successfully!"))
-                .onFailure(error -> System.out.println("Failed to add event: " + error.getMessage()));
-    }
-
-
-
-
-    private static void displayEvents(ServerController serverController) {
-        System.out.println("Showing all events:");
-        serverController.getAllEvents()
-                .forEach(System.out::println);
-    }
-
-
-
-
-    private static void removeEvent(ServerController serverController, Scanner scanner) {
-
-        System.out.println("Enter ID of the event to remove:");
-        Option<Integer> idOption = readInput(scanner);
-        idOption.peek(id -> {
-            Try.of(() -> serverController.removeEventByID(Long.valueOf(id)))
-                    .onSuccess(ignored -> System.out.println("Event removed successfully!"))
-                    .onFailure(error -> System.out.println("Failed to remove event: " + error.getMessage()));
-        }).onEmpty(() -> System.out.println("Invalid ID"));
-    }
-
-
-    private static void updateEvent(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter ID of the event to update:");
-        Option<Integer> idOption = readInput(scanner);
-        idOption.peek(id -> {
-            Events event = serverController.getEventById(Long.valueOf(id));
-            if (event == null) {
-                System.out.println("Event not found");
-                return;
-            }
-
-            // Clear the input buffer
-            scanner.nextLine();
-
-            System.out.println("Enter new title:");
-            String title = scanner.nextLine().trim();
-
-            System.out.println("Enter new description:");
-            String description = scanner.nextLine().trim();
-
-            System.out.println("Enter new date (YYYY-MM-DD HH:MM):");
-            Date eventDate;
-            try {
-                eventDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(scanner.nextLine().trim());
-            } catch (ParseException e) {
-                System.out.println("Invalid date format");
-                return;
-            }
-
-            System.out.println("Enter new location:");
-            String location = scanner.nextLine().trim();
-
-            Events newEvent = new Events(title, description, eventDate, location);
-
-            Try<Void> updateEventAttempt = Try.run(() -> serverController.updateEvent(event, newEvent));
-            updateEventAttempt.onSuccess(ignore -> System.out.println("Event updated successfully!"))
-                    .onFailure(error -> System.out.println("Failed to update event: " + error.getMessage()));
-        }).onEmpty(() -> System.out.println("Invalid ID"));
-    }
-
-
-    private static void displayEventParticipants(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter ID of the event:");
-        Option<Integer> idOption = readInput(scanner);
-        if (idOption.isDefined()) {
-            Events event = serverController.getEventById(Long.valueOf(idOption.get()));
-            if (event != null) {
-                Set<User> participants = serverController.getEventParticipants(event);
-                if (!participants.isEmpty()) {
-                    System.out.println("Participants of the event '" + event.getEventName() + "':");
-                    participants.forEach(System.out::println);
-                } else {
-                    System.out.println("No participants found for the event '" + event.getEventName() + "'");
-                }
-            } else {
-                System.out.println("Invalid event ID");
-            }
-        } else {
-            System.out.println("Invalid input for event ID");
-        }
-    }
-
-
-    //TODO: Make this method and the one in the controller work correctly... right now the user are not being added
-    private static void participateInEvent(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter event ID:");
-        Option<Integer> eventIdOption = readInput(scanner);
-
-        System.out.println("Enter your ID:");
-        Option<Integer> userIdOption = readInput(scanner);
-
-        if (eventIdOption.isDefined() && userIdOption.isDefined()) {
-            Events event = serverController.getEventById(Long.valueOf(eventIdOption.get()));
-            User user = serverController.getUserByID(userIdOption.get());
-
-            if (event != null && user != null) {
-                System.out.println("Do you want to:\n1. Participate in the event\n2. Show interest in the event");
-                Option<Integer> interestChoiceOption = readInput(scanner);
-
-                if (interestChoiceOption.isDefined()) {
-                    int choice = interestChoiceOption.get();
-
-                    if (choice == 1) {
-                        serverController.addParticipantToEvent(event, user);
-                        System.out.println("You have successfully participated in the event: " + event.getEventName());
-                    } else if (choice == 2) {
-                        serverController.addInterestedUserToEvent(event, user);
-                        System.out.println("You have shown interest in the event: " + event.getEventName());
-                    } else {
-                        System.out.println("Invalid choice");
-                    }
-                } else {
-                    System.out.println("Invalid choice");
-                }
-            } else {
-                System.out.println("Invalid event or user ID");
-            }
-        } else {
-            System.out.println("Invalid input for event or user ID");
-        }
-    }
-
-
-    private static void displayUsersInterestedNotParticipating(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter the ID of the event to display interested users not participating:");
-        Option<Integer> eventIdOption = readInput(scanner);
-
-        if (eventIdOption.isDefined()) {
-            Events event = serverController.getEventById(Long.valueOf(eventIdOption.get()));
-            if (event != null) {
-                Set<User> interestedButNotParticipating = serverController.getUsersInterestedInEvent(event);
-                if (!interestedButNotParticipating.isEmpty()) {
-                    System.out.println("Users interested but not participating in the event:");
-                    interestedButNotParticipating.forEach(System.out::println);
-                } else {
-                    System.out.println("No users interested in the event but not participating");
-                }
-            } else {
-                System.out.println("Invalid event ID");
-            }
-        } else {
-            System.out.println("Invalid input for event ID");
-        }
-    }
-
-
-
-
-    private static void createPost(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter your ID:");
-        Option<Integer> userIdOption = readInput(scanner);
-
-        if (userIdOption.isDefined()) {
-            long userId = userIdOption.get();
-            User user = serverController.getUserByID(userId);
-
-            if (user != null) {
-                System.out.println("Enter post content:");
-                scanner.nextLine();
-                String content = scanner.nextLine().trim();
-
-                // Using PostProxy instead of directly creating a Post
-                PostProxy postProxy = new PostProxy(userId, content, new Date());
-                serverController.createPostProxy(user, postProxy); // Passing the PostProxy instead of a Post
-                System.out.println("Post created successfully!");
-            } else {
-                System.out.println("Invalid user ID");
-            }
-        } else {
-            System.out.println("Invalid input for user ID");
-        }
-    }
+//    private static void removeUser(RestServerController serverController, Scanner scanner) {
+//        System.out.println("Enter ID of the user to remove:");
+//        Option<Long> idOption = readInput(scanner).map(Integer::longValue);
+//        idOption.peek(id -> {
+//            Try.of(() -> {
+//                User removedUser = serverController.removeUserById(id);
+//                System.out.println("User removed successfully!");
+//                return removedUser;
+//            }).onFailure(error -> System.out.println("Failed to remove user: " + error.getMessage()));
+//        }).onEmpty(() -> System.out.println("Invalid ID"));
+//    }
+//
+//
+//    private static void updateUser(RestServerController serverController, Scanner scanner) {
+//        System.out.println("Enter ID of the user to update:");
+//        Option<Long> idOption = readInput(scanner).map(Integer::longValue);
+//
+//        idOption.peek(id -> {
+//            User existingUser = serverController.getUserByID(id);
+//            if (existingUser == null) {
+//                System.out.println("User not found");
+//                return;
+//            }
+//
+//            // Clear the input buffer
+//            scanner.nextLine();
+//
+//            System.out.println("Enter new username:");
+//            String newUsername = scanner.nextLine().trim();
+//            existingUser.setUsername(newUsername);
+//
+//            System.out.println("Enter new password:");
+//            String newPassword = scanner.nextLine().trim();
+//            existingUser.setPassword(newPassword);
+//
+//            System.out.println("Enter new birthdate (YYYY-MM-DD):");
+//            Date newBirthdate = Try.of(() -> new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine().trim()))
+//                    .getOrElseThrow(() -> new RuntimeException("Invalid date format"));
+//            existingUser.setBirthdate(newBirthdate);
+//
+//            System.out.println("Enter new email:");
+//            String newEmail = scanner.nextLine().trim();
+//            existingUser.setEmail(newEmail);
+//
+//            System.out.println("Enter new visibility (PRIVATE, FRIENDS, PUBLIC):");
+//            User.Visibility newVisibility = Try.of(() -> User.Visibility.valueOf(scanner.nextLine().trim().toUpperCase()))
+//                    .getOrElseThrow(() -> new RuntimeException("Invalid visibility"));
+//            existingUser.setDefaultVisibility(newVisibility);
+//
+//            // Save the updated user
+//            Try<Void> updateUserAttempt = Try.run(() -> serverController.updateUser(existingUser, existingUser));
+//            updateUserAttempt.onSuccess(ignore -> System.out.println("User updated successfully!"))
+//                    .onFailure(error -> System.out.println("Failed to update user: " + error.getMessage()));
+//        }).onEmpty(() -> System.out.println("Invalid ID"));
+//    }
+
+
+//    private static void sendMessage(RestServerController serverController, Scanner scanner) {
+//        System.out.println("Enter sender ID:");
+//        Option<Integer> senderIdOption = readInput(scanner);
+//        System.out.println("Enter receiver ID:");
+//        Option<Integer> receiverIdOption = readInput(scanner);
+//
+//        String message = null;
+//        User sender;
+//        User receiver;
+//
+//        if (senderIdOption.isDefined() && receiverIdOption.isDefined()) {
+//            sender = serverController.getUserByID(senderIdOption.get());
+//            receiver = serverController.getUserByID(receiverIdOption.get());
+//
+//            if (sender != null && receiver != null) {
+//                scanner.nextLine();
+//                System.out.println("Enter the message:");
+//                Option<String> messageOption = readMessageInput(scanner);
+//                if (messageOption.isDefined()) {
+//                    message = messageOption.get();
+//                    serverController.sendMessage(sender, receiver, message);
+//                    System.out.println("Message sent successfully!");
+//                } else {
+//                    System.out.println("Invalid message");
+//                }
+//            } else {
+//                System.out.println("Invalid sender or receiver ID");
+//            }
+//        } else {
+//            System.out.println("Invalid input for sender or receiver ID");
+//        }
+//    }
+//
+//    private static Option<String> readMessageInput(Scanner scanner) {
+//        String message = scanner.nextLine().trim();
+//        return Option.of(message);
+//    }
+//
+//    private static void displaySentMessages(RestServerController serverController, Scanner scanner) {
+//        System.out.println("Enter sender ID:");
+//        Option<Integer> senderIdOption = readInput(scanner);
+//
+//        if (senderIdOption.isDefined()) {
+//            User sender = serverController.getUserByID(senderIdOption.get());
+//
+//            if (sender != null) {
+//                List<MessageFactory> sentMessages = serverController.getSentMessages(sender);
+//
+//                if (!sentMessages.isEmpty()) {
+//                    System.out.println("Messages sent by " + sender.getUsername() + ":");
+//
+//                    // Iterate through the sentMessages and display sender, receiver, and description
+//                    sentMessages.forEach(message ->
+//                            System.out.println("Sender: " + message.getSenderName() +
+//                                    ", Receiver: " + message.getReceiverName() +
+//                                    ", Message: " + message.getDescription()));
+//                } else {
+//                    System.out.println("No messages found for " + sender.getUsername());
+//                }
+//            } else {
+//                System.out.println("Invalid sender ID");
+//            }
+//        } else {
+//            System.out.println("Invalid input for sender ID");
+//        }
+//    }
+//
+//    private static void addEvent(RestServerController serverController, Scanner scanner) {
+//        System.out.println("Enter event title:");
+//        String title = scanner.nextLine().trim();
+//
+//        System.out.println("Enter event description:");
+//        String description = scanner.nextLine().trim();
+//
+//        System.out.println("Enter event date (YYYY-MM-DD HH:MM):");
+//        Date eventDate;
+//        try {
+//            eventDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(scanner.nextLine().trim());
+//        } catch (ParseException e) {
+//            System.out.println("Invalid date format");
+//            return;
+//        }
+//
+//        System.out.println("Enter event location:");
+//        String location = scanner.nextLine().trim();
+//
+//        Events newEvent = new Events(title, description, eventDate, location);
+//
+//        Try<Void> addEventAttempt = Try.run(() -> serverController.addEvent(newEvent));
+//        addEventAttempt.onSuccess(ignore -> System.out.println("Event added successfully!"))
+//                .onFailure(error -> System.out.println("Failed to add event: " + error.getMessage()));
+//    }
+//
+//
+//
+//
+//    private static void displayEvents(RestServerController serverController) {
+//        System.out.println("Showing all events:");
+//        serverController.getAllEvents()
+//                .forEach(System.out::println);
+//    }
+//
+//
+//
+//
+//    private static void removeEvent(RestServerController serverController, Scanner scanner) {
+//
+//        System.out.println("Enter ID of the event to remove:");
+//        Option<Integer> idOption = readInput(scanner);
+//        idOption.peek(id -> {
+//            Try.of(() -> serverController.removeEventByID(Long.valueOf(id)))
+//                    .onSuccess(ignored -> System.out.println("Event removed successfully!"))
+//                    .onFailure(error -> System.out.println("Failed to remove event: " + error.getMessage()));
+//        }).onEmpty(() -> System.out.println("Invalid ID"));
+//    }
+//
+//
+//    private static void updateEvent(RestServerController serverController, Scanner scanner) {
+//        System.out.println("Enter ID of the event to update:");
+//        Option<Integer> idOption = readInput(scanner);
+//        idOption.peek(id -> {
+//            Events event = serverController.getEventById(Long.valueOf(id));
+//            if (event == null) {
+//                System.out.println("Event not found");
+//                return;
+//            }
+//
+//            // Clear the input buffer
+//            scanner.nextLine();
+//
+//            System.out.println("Enter new title:");
+//            String title = scanner.nextLine().trim();
+//
+//            System.out.println("Enter new description:");
+//            String description = scanner.nextLine().trim();
+//
+//            System.out.println("Enter new date (YYYY-MM-DD HH:MM):");
+//            Date eventDate;
+//            try {
+//                eventDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(scanner.nextLine().trim());
+//            } catch (ParseException e) {
+//                System.out.println("Invalid date format");
+//                return;
+//            }
+//
+//            System.out.println("Enter new location:");
+//            String location = scanner.nextLine().trim();
+//
+//            Events newEvent = new Events(title, description, eventDate, location);
+//
+//            Try<Void> updateEventAttempt = Try.run(() -> serverController.updateEvent(event, newEvent));
+//            updateEventAttempt.onSuccess(ignore -> System.out.println("Event updated successfully!"))
+//                    .onFailure(error -> System.out.println("Failed to update event: " + error.getMessage()));
+//        }).onEmpty(() -> System.out.println("Invalid ID"));
+//    }
+//
+//
+//    private static void displayEventParticipants(RestServerController serverController, Scanner scanner) {
+//        System.out.println("Enter ID of the event:");
+//        Option<Integer> idOption = readInput(scanner);
+//        if (idOption.isDefined()) {
+//            Events event = serverController.getEventById(Long.valueOf(idOption.get()));
+//            if (event != null) {
+//                Set<User> participants = serverController.getEventParticipants(event);
+//                if (!participants.isEmpty()) {
+//                    System.out.println("Participants of the event '" + event.getEventName() + "':");
+//                    participants.forEach(System.out::println);
+//                } else {
+//                    System.out.println("No participants found for the event '" + event.getEventName() + "'");
+//                }
+//            } else {
+//                System.out.println("Invalid event ID");
+//            }
+//        } else {
+//            System.out.println("Invalid input for event ID");
+//        }
+//    }
+//
+//
+//    //TODO: Make this method and the one in the controller work correctly... right now the user are not being added
+//    private static void participateInEvent(RestServerController serverController, Scanner scanner) {
+//        System.out.println("Enter event ID:");
+//        Option<Integer> eventIdOption = readInput(scanner);
+//
+//        System.out.println("Enter your ID:");
+//        Option<Integer> userIdOption = readInput(scanner);
+//
+//        if (eventIdOption.isDefined() && userIdOption.isDefined()) {
+//            Events event = serverController.getEventById(Long.valueOf(eventIdOption.get()));
+//            User user = serverController.getUserByID(userIdOption.get());
+//
+//            if (event != null && user != null) {
+//                System.out.println("Do you want to:\n1. Participate in the event\n2. Show interest in the event");
+//                Option<Integer> interestChoiceOption = readInput(scanner);
+//
+//                if (interestChoiceOption.isDefined()) {
+//                    int choice = interestChoiceOption.get();
+//
+//                    if (choice == 1) {
+//                        serverController.addParticipantToEvent(event, user);
+//                        System.out.println("You have successfully participated in the event: " + event.getEventName());
+//                    } else if (choice == 2) {
+//                        serverController.addInterestedUserToEvent(event, user);
+//                        System.out.println("You have shown interest in the event: " + event.getEventName());
+//                    } else {
+//                        System.out.println("Invalid choice");
+//                    }
+//                } else {
+//                    System.out.println("Invalid choice");
+//                }
+//            } else {
+//                System.out.println("Invalid event or user ID");
+//            }
+//        } else {
+//            System.out.println("Invalid input for event or user ID");
+//        }
+//    }
+//
+//
+//    private static void displayUsersInterestedNotParticipating(RestServerController serverController, Scanner scanner) {
+//        System.out.println("Enter the ID of the event to display interested users not participating:");
+//        Option<Integer> eventIdOption = readInput(scanner);
+//
+//        if (eventIdOption.isDefined()) {
+//            Events event = serverController.getEventById(Long.valueOf(eventIdOption.get()));
+//            if (event != null) {
+//                Set<User> interestedButNotParticipating = serverController.getUsersInterestedInEvent(event);
+//                if (!interestedButNotParticipating.isEmpty()) {
+//                    System.out.println("Users interested but not participating in the event:");
+//                    interestedButNotParticipating.forEach(System.out::println);
+//                } else {
+//                    System.out.println("No users interested in the event but not participating");
+//                }
+//            } else {
+//                System.out.println("Invalid event ID");
+//            }
+//        } else {
+//            System.out.println("Invalid input for event ID");
+//        }
+//    }
+//
+//
+//
+//
+//    private static void createPost(RestServerController serverController, Scanner scanner) {
+//        System.out.println("Enter your ID:");
+//        Option<Integer> userIdOption = readInput(scanner);
+//
+//        if (userIdOption.isDefined()) {
+//            long userId = userIdOption.get();
+//            User user = serverController.getUserByID(userId);
+//
+//            if (user != null) {
+//                System.out.println("Enter post content:");
+//                scanner.nextLine();
+//                String content = scanner.nextLine().trim();
+//
+//                // Using PostProxy instead of directly creating a Post
+//                PostProxy postProxy = new PostProxy(userId, content, new Date());
+//                serverController.createPostProxy(user, postProxy); // Passing the PostProxy instead of a Post
+//                System.out.println("Post created successfully!");
+//            } else {
+//                System.out.println("Invalid user ID");
+//            }
+//        } else {
+//            System.out.println("Invalid input for user ID");
+//        }
+//    }
 //
 //    // UI method to add a comment to a post
 //    private static void addCommentToPost(ServerController serverController, Scanner scanner) {
@@ -763,22 +776,22 @@ public class UiSpring implements CommandLineRunner {
 //    }
 //
     // UI method to display all posts
-    private static void displayAllPosts(ServerController serverController) {
-        List<Post> allPosts = serverController.getAllPosts();
-
-        if (!allPosts.isEmpty()) {
-            System.out.println("All Posts:");
-            allPosts.forEach(System.out::println);
-        } else {
-            System.out.println("No posts found.");
-        }
-
-        // Check for any new post notifications
-        if (serverController.hasNewPostNotification()) {
-            System.out.println("You've been notified of a new post!");
-            serverController.clearNewPostNotification(); // Clear the notification
-        }
-    }
+//    private static void displayAllPosts(RestServerController serverController) {
+//        List<Post> allPosts = serverController.getAllPosts();
+//
+//        if (!allPosts.isEmpty()) {
+//            System.out.println("All Posts:");
+//            allPosts.forEach(System.out::println);
+//        } else {
+//            System.out.println("No posts found.");
+//        }
+//
+//        // Check for any new post notifications
+//        if (serverController.hasNewPostNotification()) {
+//            System.out.println("You've been notified of a new post!");
+//            serverController.clearNewPostNotification(); // Clear the notification
+//        }
+//    }
 //
 //
 //    // UI method to display posts by a specific user
