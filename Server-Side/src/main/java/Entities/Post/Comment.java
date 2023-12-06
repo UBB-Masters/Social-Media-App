@@ -1,10 +1,7 @@
 package Entities.Post;
 
 import Entities.Misc.IDGenerator;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
+import jakarta.persistence.*;
 
 import java.util.Date;
 
@@ -12,6 +9,7 @@ import java.util.Date;
 @Table(name = "comment")
 public class Comment {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private final long commentId;
     private long postId;
     private String content;

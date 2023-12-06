@@ -5,17 +5,17 @@ import Entities.Exceptions.DataBaseException;
 import Entities.Message.MessageDecorator.BasicMessageDecorator;
 import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
-import Entities.Post.Comment;
 import Entities.Post.Post;
-import Entities.Post.Hashtag;
 import Entities.User.User;
-import Entities.Reaction.Reaction;
 import Proxy.PostProxy;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -324,7 +324,7 @@ public class ServerController {
 //    }
 //
     public List<Post> getAllPosts() {
-        return postRepository.findAll();
+        return postRepository.findAllWithUser();
     }
 //
 //    public List<Post> getPostsByUser(User user) {

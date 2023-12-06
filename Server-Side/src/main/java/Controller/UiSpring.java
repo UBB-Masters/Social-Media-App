@@ -2,37 +2,23 @@ package Controller;
 
 import Entities.Events.Events;
 import Entities.Message.MessageFactory;
-import Entities.Post.Comment;
-import Entities.Post.Hashtag;
-//import Entities.Post.Post;
 import Entities.Post.Post;
-import Entities.Reaction.Reaction;
-import Entities.Reaction.ReactionFactory;
 import Entities.User.User;
-//import Proxy.PostProxy;
 import Proxy.PostProxy;
-import Strategy.ReactionStrategy;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
-import jakarta.persistence.Entity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.context.SecurityContextHolder;
-//import org.springframework.security.core.userdetails.UserDetails;
-
-
-
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
 
 @SpringBootApplication
 @EntityScan(basePackages = "Entities")
@@ -45,8 +31,6 @@ public class UiSpring implements CommandLineRunner {
     public UiSpring(ServerController serverController, UserRepository userRepository) {
         this.serverController = serverController;
         this.userRepository = userRepository;
-
-
     }
 
     public static void main(String[] args) {

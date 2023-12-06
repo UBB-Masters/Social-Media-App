@@ -1,11 +1,7 @@
 package Entities.Channel;
 
-import Entities.Message.MessageFactory;
 import Entities.Misc.IDGenerator;
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Entity
@@ -13,8 +9,8 @@ import java.util.List;
 public class GroupChat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long groupId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long groupId;
 
     @Column(name = "groupName")
     private String groupName;
