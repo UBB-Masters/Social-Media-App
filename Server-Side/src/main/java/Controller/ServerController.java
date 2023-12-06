@@ -5,17 +5,17 @@ import Entities.Exceptions.DataBaseException;
 import Entities.Message.MessageDecorator.BasicMessageDecorator;
 import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
+import Entities.Post.Comment;
+import Entities.Post.Hashtag;
 import Entities.Post.Post;
+import Entities.Reaction.Reaction;
 import Entities.User.User;
 import Proxy.PostProxy;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -115,7 +115,7 @@ public class ServerController {
     }
 
     //TODO -> implement a logging mechanism and encryption mechanism that uses the decorator for the messages
-//
+
 //
 //    public void removeMessage(MessageDecorator message) {
 //        memoryInMemoryMessageRepository.removeMessage(message);
@@ -125,9 +125,9 @@ public class ServerController {
 //        MessageDecorator messageDecorator = message.getDecoratedMessage();
 //        memoryInMemoryMessageRepository.removeMessage(messageDecorator);
 //    }
-//
-//
-//
+
+
+
 //    public ArrayList<MessageFactory> getUserMessages(User user) {
 //        ArrayList<MessageFactory> userMessages = new ArrayList<>();
 //
@@ -139,8 +139,8 @@ public class ServerController {
 //
 //        return userMessages;
 //    }
-//
-//
+
+
 //    public List<MessageFactory> getSentMessages(User sender) {
 //        List<MessageFactory> sentMessages = new ArrayList<>();
 //
@@ -301,40 +301,40 @@ public class ServerController {
 
         this.newPostNotification = true;
     }
-//
-//
-//    public void addCommentToPost(Post post, Comment comment) {
-//        post.addComment(comment);
-//        postRepository.save(post);
-//    }
-//
-//    public void reactToPost(Post post, Reaction reaction) {
-//        post.addReaction(reaction);
-//        postRepository.save(post);
-//    }
-//
-//    public void addHashtagToPost(Post post, Hashtag hashtag) {
-//        post.addHashtag(hashtag);
-//        postRepository.save(post);
-//    }
-//
-//    public void removeHashtagFromPost(Post post, Hashtag hashtag) {
-//        post.removeHashtag(hashtag);
-//        postRepository.save(post);
-//    }
-//
+
+
+    public void addCommentToPost(Post post, Comment comment) {
+        post.addComment(comment);
+        postRepository.save(post);
+    }
+
+    public void reactToPost(Post post, Reaction reaction) {
+        post.addReaction(reaction);
+        postRepository.save(post);
+    }
+
+    public void addHashtagToPost(Post post, Hashtag hashtag) {
+        post.addHashtag(hashtag);
+        postRepository.save(post);
+    }
+
+    public void removeHashtagFromPost(Post post, Hashtag hashtag) {
+        post.removeHashtag(hashtag);
+        postRepository.save(post);
+    }
+
     public List<Post> getAllPosts() {
         return postRepository.findAllWithUser();
     }
-//
-//    public List<Post> getPostsByUser(User user) {
-//        return postRepository.findByUserId(user.getUserID());
-//    }
-//
-//
-//    public Post getPostById(long postId) {
-//        return postRepository.findById(postId).orElse(null);
-//    }
+
+    public List<Post> getPostsByUser(User user) {
+        return postRepository.findByUser(user);
+    }
+
+
+    public Post getPostById(long postId) {
+        return postRepository.findById(postId).orElse(null);
+    }
 
     public boolean hasNewPostNotification() {
         return newPostNotification;
@@ -343,7 +343,4 @@ public class ServerController {
     public void clearNewPostNotification() {
         this.newPostNotification = false;
     }
-
-
-
 }
