@@ -1,15 +1,14 @@
 package Controller;
 
+import Controller.Services.MessageRequest;
+import Controller.Services.UserService;
 import Entities.Events.Events;
 import Entities.Message.MessageFactory;
 import Entities.Post.Comment;
 import Entities.Post.Hashtag;
 import Entities.Post.Post;
-import Entities.Reaction.Reaction;
-import Entities.Reaction.ReactionFactory;
 import Entities.User.User;
 import Proxy.PostProxy;
-import Strategy.ReactionStrategy;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.context.SecurityContextHolder;
+//import org.springframework.security.core.userdetails.UserDetails;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,13 +36,31 @@ import java.util.Set;
 @EntityScan(basePackages = "Entities")
 public class UiSpring implements CommandLineRunner {
 
-    private final ServerController serverController;
-    private final UserRepository userRepository;
+    //    private final ServerController serverController;
+//    private final UserRepository userRepository;
+    private final RestServerController restServerController;
+    private final UserService userService;
 
     @Autowired
-    public UiSpring(ServerController serverController, UserRepository userRepository) {
-        this.serverController = serverController;
-        this.userRepository = userRepository;
+    private static RestTemplate restTemplate;
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        restTemplate = builder.build();
+        return restTemplate;
+    }
+
+//    @Autowired
+//    public UiSpring(ServerController serverController, UserRepository userRepository) {
+//        this.serverController = serverController;
+//        this.userRepository = userRepository;
+//
+//
+//    }
+    @Autowired
+    public UiSpring(RestServerController restServerController, UserService userService) {
+        this.restServerController = restServerController;
+        this.userService = userService;
     }
 
     public static void main(String[] args) {
@@ -53,8 +78,8 @@ public class UiSpring implements CommandLineRunner {
         User user1 = new User("user1", "password1", new Date(), "user1@gmail.com", User.Visibility.PUBLIC);
         User user2 = new User("user2", "password2", new Date(), "user2@gmail.com", User.Visibility.PUBLIC);
 
-        serverController.addUser(user1);
-        serverController.addUser(user2);
+        restServerController.addUser(user1);
+        restServerController.addUser(user2);
         int choice;
         do {
             displayMainMenu();
@@ -64,10 +89,10 @@ public class UiSpring implements CommandLineRunner {
 
             switch (choice) {
                 case 1:
-                    userOperations(serverController, scanner);
+                    userOperations(restServerController, scanner);
                     break;
                 case 2:
-                    eventOperations(serverController, scanner);
+                    eventOperations(restServerController, scanner);
                     break;
                 case 3:
                     System.out.println("Exiting...");
@@ -106,7 +131,7 @@ public class UiSpring implements CommandLineRunner {
 //        }
 //    }
 
-    private static void userOperations(ServerController serverController, Scanner scanner) {
+    private static void userOperations(RestServerController restServerController, Scanner scanner) {
         int choice;
         do {
             displayUserMenu();
@@ -116,29 +141,29 @@ public class UiSpring implements CommandLineRunner {
 
             switch (choice) {
                 case 1:
-                    addUser(serverController, scanner);
+                    addUser(restServerController, scanner);
                     break;
                 case 2:
-                    //TODO -> this acts weird
-                    removeUser(serverController, scanner);
+//                    //TODO -> this acts weird
+                    removeUser(restServerController, scanner);
                     break;
                 case 3:
-                    updateUser(serverController, scanner);
+                    updateUser(restServerController, scanner);
                     break;
                 case 4:
-                    displayAllUsers(serverController);
+                    displayAllUsers(restServerController);
                     break;
                 case 5:
-                    sendMessage(serverController, scanner);
+                    sendMessage(restServerController, scanner);
                     break;
-                case 6:
-                    displaySentMessages(serverController, scanner);
-                    break;
-                case 7:
-                    participateInEvent(serverController, scanner);
-                    break;
+//                case 6:
+//                    displaySentMessages(restServerController, scanner);
+//                    break;
+//                case 7:
+//                    participateInEvent(restServerController, scanner);
+//                    break;
                 case 8:
-                    postOperations(serverController, scanner);
+                    postOperations(restServerController, scanner);
                     break;
                 case 9:
                     System.out.println("Going back to the main menu...");
@@ -150,7 +175,7 @@ public class UiSpring implements CommandLineRunner {
         } while (choice != 8);
     }
 
-    private static void eventOperations(ServerController serverController, Scanner scanner) {
+    private static void eventOperations(RestServerController serverController, Scanner scanner) {
         int choice;
         do {
             displayEventMenu();
@@ -159,24 +184,24 @@ public class UiSpring implements CommandLineRunner {
             scanner.nextLine(); // Consume new line
 
             switch (choice) {
-                case 1:
-                    addEvent(serverController, scanner);
-                    break;
-                case 2:
-                    removeEvent(serverController, scanner);
-                    break;
-                case 3:
-                    updateEvent(serverController, scanner);
-                    break;
-                case 4:
-                    displayEvents(serverController);
-                    break;
-                case 5:
-                    displayEventParticipants(serverController, scanner);
-                    break;
-                case 6:
-                    displayUsersInterestedNotParticipating(serverController, scanner);
-                    break;
+//                case 1:
+//                    addEvent(serverController, scanner);
+//                    break;
+//                case 2:
+//                    removeEvent(serverController, scanner);
+//                    break;
+//                case 3:
+//                    updateEvent(serverController, scanner);
+//                    break;
+//                case 4:
+//                    displayEvents(serverController);
+//                    break;
+//                case 5:
+//                    displayEventParticipants(serverController, scanner);
+//                    break;
+//                case 6:
+//                    displayUsersInterestedNotParticipating(serverController, scanner);
+//                    break;
                 case 7:
                     System.out.println("Going back to the main menu...");
                     return; // Exit the method to go back
@@ -188,7 +213,7 @@ public class UiSpring implements CommandLineRunner {
     }
 
 
-    private static void postOperations(ServerController serverController, Scanner scanner) {
+    private static void postOperations(RestServerController serverController, Scanner scanner) {
         int choice;
         do {
             displayPostMenu();
@@ -286,13 +311,25 @@ public class UiSpring implements CommandLineRunner {
 
     }
 
-    private static void displayAllUsers(ServerController serverController) {
-        System.out.println("Printing all users:");
-        serverController.getAllUsers()
-                .forEach(System.out::println); // Assuming toString() in User class provides necessary information
+//    private static void displayAllUsers(RestServerController serverController) {
+//        System.out.println("Printing all users:");
+//        serverController.getAllUsers()
+//                .forEach(System.out::println); // Assuming toString() in User class provides necessary information
+//    }
+
+    public static void displayAllUsers(RestServerController restServerController) {
+        ResponseEntity<List<User>> response = restServerController.getAllUsers();
+        List<User> users = response.getBody();
+        if (users != null) {
+            for (User user : users) {
+                System.out.println(user);
+            }
+        } else {
+            System.out.println("No users found");
+        }
     }
 
-    private static void addUser(ServerController serverController, Scanner scanner) {
+    private static void addUser(RestServerController serverController, Scanner scanner) {
         System.out.println("Enter username:");
         String username = scanner.nextLine().trim();
 
@@ -318,64 +355,72 @@ public class UiSpring implements CommandLineRunner {
     }
 
 
-    private static void removeUser(ServerController serverController, Scanner scanner) {
+    private static void removeUser(RestServerController serverController, Scanner scanner) {
         System.out.println("Enter ID of the user to remove:");
         Option<Long> idOption = readInput(scanner).map(Integer::longValue);
         idOption.peek(id -> {
             Try.of(() -> {
-                User removedUser = serverController.removeUserById(id);
-                System.out.println("User removed successfully!");
-                return removedUser;
+                ResponseEntity<String> response = serverController.removeUserById(id);
+                if (response.getStatusCode() == HttpStatus.OK) {
+                    System.out.println("User removed successfully!");
+                } else {
+                    System.out.println("Failed to remove user: " + response.getBody());
+                }
+                return response;
             }).onFailure(error -> System.out.println("Failed to remove user: " + error.getMessage()));
         }).onEmpty(() -> System.out.println("Invalid ID"));
     }
+//
+//
+private static void updateUser(RestServerController serverController, Scanner scanner) {
+    System.out.println("Enter ID of the user to update:");
+    Option<Long> idOption = readInput(scanner).map(Integer::longValue);
+
+    idOption.peek(id -> {
+        ResponseEntity<User> response = serverController.getUserById(id);
+        User existingUser = response.getBody();
+        if (existingUser == null) {
+            System.out.println("User not found");
+            return;
+        }
+
+        // Clear the input buffer
+        scanner.nextLine();
+
+        System.out.println("Enter new username:");
+        String newUsername = scanner.nextLine().trim();
+        existingUser.setUsername(newUsername);
+
+        System.out.println("Enter new password:");
+        String newPassword = scanner.nextLine().trim();
+        existingUser.setPassword(newPassword);
+
+        System.out.println("Enter new birthdate (YYYY-MM-DD):");
+        Date newBirthdate = Try.of(() -> new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine().trim()))
+                .getOrElseThrow(() -> new RuntimeException("Invalid date format"));
+        existingUser.setBirthdate(newBirthdate);
+
+        System.out.println("Enter new email:");
+        String newEmail = scanner.nextLine().trim();
+        existingUser.setEmail(newEmail);
+
+        System.out.println("Enter new visibility (PRIVATE, FRIENDS, PUBLIC):");
+        User.Visibility newVisibility = Try.of(() -> User.Visibility.valueOf(scanner.nextLine().trim().toUpperCase()))
+                .getOrElseThrow(() -> new RuntimeException("Invalid visibility"));
+        existingUser.setDefaultVisibility(newVisibility);
+
+        // Save the updated user
+        ResponseEntity<String> updateResponse = serverController.updateUser(existingUser.getUserID(), existingUser);
+        if (updateResponse.getStatusCode() == HttpStatus.OK) {
+            System.out.println("User updated successfully!");
+        } else {
+            System.out.println("Failed to update user: " + updateResponse.getBody());
+        }
+    }).onEmpty(() -> System.out.println("Invalid ID"));
+}
 
 
-    private static void updateUser(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter ID of the user to update:");
-        Option<Long> idOption = readInput(scanner).map(Integer::longValue);
-
-        idOption.peek(id -> {
-            User existingUser = serverController.getUserByID(id);
-            if (existingUser == null) {
-                System.out.println("User not found");
-                return;
-            }
-
-            // Clear the input buffer
-            scanner.nextLine();
-
-            System.out.println("Enter new username:");
-            String newUsername = scanner.nextLine().trim();
-            existingUser.setUsername(newUsername);
-
-            System.out.println("Enter new password:");
-            String newPassword = scanner.nextLine().trim();
-            existingUser.setPassword(newPassword);
-
-            System.out.println("Enter new birthdate (YYYY-MM-DD):");
-            Date newBirthdate = Try.of(() -> new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine().trim()))
-                    .getOrElseThrow(() -> new RuntimeException("Invalid date format"));
-            existingUser.setBirthdate(newBirthdate);
-
-            System.out.println("Enter new email:");
-            String newEmail = scanner.nextLine().trim();
-            existingUser.setEmail(newEmail);
-
-            System.out.println("Enter new visibility (PRIVATE, FRIENDS, PUBLIC):");
-            User.Visibility newVisibility = Try.of(() -> User.Visibility.valueOf(scanner.nextLine().trim().toUpperCase()))
-                    .getOrElseThrow(() -> new RuntimeException("Invalid visibility"));
-            existingUser.setDefaultVisibility(newVisibility);
-
-            // Save the updated user
-            Try<Void> updateUserAttempt = Try.run(() -> serverController.updateUser(existingUser, existingUser));
-            updateUserAttempt.onSuccess(ignore -> System.out.println("User updated successfully!"))
-                    .onFailure(error -> System.out.println("Failed to update user: " + error.getMessage()));
-        }).onEmpty(() -> System.out.println("Invalid ID"));
-    }
-
-
-    private static void sendMessage(ServerController serverController, Scanner scanner) {
+    private static void sendMessage(RestServerController serverController, Scanner scanner) {
         System.out.println("Enter sender ID:");
         Option<Integer> senderIdOption = readInput(scanner);
         System.out.println("Enter receiver ID:");
@@ -386,17 +431,31 @@ public class UiSpring implements CommandLineRunner {
         User receiver;
 
         if (senderIdOption.isDefined() && receiverIdOption.isDefined()) {
-            sender = serverController.getUserByID(senderIdOption.get());
-            receiver = serverController.getUserByID(receiverIdOption.get());
+            ResponseEntity<User> senderResponse = restTemplate.getForEntity("http://localhost:8080/api/users/" + senderIdOption.get(), User.class);
+            ResponseEntity<User> receiverResponse = restTemplate.getForEntity("http://localhost:8080/api/users/" + receiverIdOption.get(), User.class);
 
-            if (sender != null && receiver != null) {
+            if (senderResponse.getStatusCode() == HttpStatus.OK && receiverResponse.getStatusCode() == HttpStatus.OK) {
+                sender = senderResponse.getBody();
+                receiver = receiverResponse.getBody();
+
                 scanner.nextLine();
                 System.out.println("Enter the message:");
                 Option<String> messageOption = readMessageInput(scanner);
                 if (messageOption.isDefined()) {
                     message = messageOption.get();
-                    serverController.sendMessage(sender, receiver, message);
-                    System.out.println("Message sent successfully!");
+                    MessageRequest messageRequest = new MessageRequest();
+                    messageRequest.setSender(sender);
+                    messageRequest.setReceiver(receiver);
+                    messageRequest.setMessage(message);
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+                    HttpEntity<MessageRequest> request = new HttpEntity<>(messageRequest, headers);
+                    ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8080/api/messages", request, String.class);
+                    if (response.getStatusCode() == HttpStatus.OK) {
+                        System.out.println("Message sent successfully!");
+                    } else {
+                        System.out.println("Failed to send message: " + response.getBody());
+                    }
                 } else {
                     System.out.println("Invalid message");
                 }
@@ -615,9 +674,6 @@ public class UiSpring implements CommandLineRunner {
             System.out.println("Invalid input for event ID");
         }
     }
-
-
-
 
     private static void createPost(ServerController serverController, Scanner scanner) {
         System.out.println("Enter your ID:");

@@ -34,7 +34,7 @@ public class Post implements Observable {
 //    private long userId;
     private String content;
     private Date timestamp;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userID")
     private User user;
 
