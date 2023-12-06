@@ -60,7 +60,7 @@ public class MessageService {
 //        return userMessages;
 //    }
 //
-//
+
     public List<MessageFactory> getSentMessages(User sender) {
         List<MessageFactory> sentMessages = new ArrayList<>();
 
