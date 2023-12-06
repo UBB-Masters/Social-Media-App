@@ -45,8 +45,8 @@ public class TextMessage extends MessageFactory {
         return "TextMessage{" +
                 "ID=" + ID +
                 ", description='" + description + '\'' +
-                ", sender=" + sender +
-                ", receiver=" + receiver +
+                ", sender=" + senderID +
+                ", receiver=" + receiverID +
                 ", content='" + messageData + '\'' +
                 '}';
     }

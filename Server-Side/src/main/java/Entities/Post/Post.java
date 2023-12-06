@@ -1,12 +1,14 @@
 package Entities.Post;
 
 import Entities.Misc.IDGenerator;
+import Entities.Reaction.Reaction;
 import Entities.User.User;
 import Observer.Observable;
 import Observer.Observer;
-import Entities.Reaction.Reaction;
 import Strategy.ReactionStrategy;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,11 +21,13 @@ public class Post implements Observable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "postID")
     private Long postID;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Comment> comments;
-    @ManyToMany
+    @Fetch(FetchMode.JOIN)
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Reaction> reactions;
-    @ManyToMany
+    @Fetch(FetchMode.JOIN)
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Hashtag> hashtags;
     @Transient
     private final List<Observer> observers = new ArrayList<>();

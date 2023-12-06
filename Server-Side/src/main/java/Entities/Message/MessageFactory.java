@@ -1,6 +1,5 @@
 package Entities.Message;
 
-import Entities.Channel.GroupChat;
 import Entities.Message.MessageDecorator.BasicMessageDecorator;
 import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageTypes.AudioMessage;
@@ -22,32 +21,32 @@ public class MessageFactory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "messageID")
-    protected final long ID;
+    protected long ID;
     @Column(name = "description")
     protected String description;
     @ManyToOne
     @JoinColumn(name = "senderID", referencedColumnName = "userID")
-    protected User sender;
+    protected User senderID;
 
     @ManyToOne
     @JoinColumn(name = "receiverID", referencedColumnName = "userID")
-    protected User receiver;
+    protected User receiverID;
 
     @Column(name = "message_content")
     protected String messageData;
 
-    public MessageFactory(String description, User sender, User receiver) {
+    public MessageFactory(String description, User senderID, User receiverID) {
         this.ID = IDGenerator.generateID(MessageFactory.class);
         this.description = description;
-        this.sender = sender;
-        this.receiver = receiver;
+        this.senderID = senderID;
+        this.receiverID = receiverID;
     }
 
-    public MessageFactory(String description, User sender, ArrayList<User> receiver) {
+    public MessageFactory(String description, User senderID, ArrayList<User> receiverID) {
         this.ID = IDGenerator.generateID(MessageFactory.class);
         this.description = description;
-        this.sender = sender;
-        this.receiver = receiver.getFirst();
+        this.senderID = senderID;
+        this.receiverID = receiverID.getFirst();
     }
 
     public MessageFactory() {
@@ -118,28 +117,28 @@ public class MessageFactory {
         this.description = description;
     }
 
-    public User getSender() {
-        return sender;
+    public User getSenderID() {
+        return senderID;
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
+    public void setSenderID(User sender) {
+        this.senderID = sender;
     }
 
-    public User getReceiver() {
-        return this.receiver;
+    public User getReceiverID() {
+        return this.receiverID;
     }
 
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
+    public void setReceiverID(User receiver) {
+        this.receiverID = receiver;
     }
 
     public void setReceiver(ArrayList<User> receivers) {
-        this.receiver = receivers.getFirst();
+        this.receiverID = receivers.getFirst();
     }
 
     public ArrayList<User> getReceiverList() {
-        return new ArrayList<>((Collection) this.receiver);
+        return new ArrayList<>((Collection) this.receiverID);
     }
 
     public long getID() {
@@ -155,11 +154,11 @@ public class MessageFactory {
     }
 
     public String getSenderName() {
-        return sender.getUsername();
+        return senderID.getUsername();
     }
 
     public String getReceiverName() {
-        return receiver.getUsername();
+        return receiverID.getUsername();
     }
 
 

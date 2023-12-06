@@ -64,8 +64,8 @@ public class ImageMessage extends MessageFactory {
         return "ImageMessage{" +
                 "ID=" + ID +
                 ", description='" + description + '\'' +
-                ", sender=" + sender +
-                ", receiver=" + receiver +
+                ", sender=" + senderID +
+                ", receiver=" + receiverID +
                 ", pictureFileName='" + messageData + '\'' +
                 '}';
     }

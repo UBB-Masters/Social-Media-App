@@ -45,8 +45,8 @@ public class VideoMessage extends MessageFactory {
         return "VideoMessage{" +
                 "ID=" + ID +
                 ", description='" + description + '\'' +
-                ", sender=" + sender +
-                ", receiver=" + receiver +
+                ", sender=" + senderID +
+                ", receiver=" + receiverID +
                 ", videoFilePath='" + messageData + '\'' +
                 '}';
     }

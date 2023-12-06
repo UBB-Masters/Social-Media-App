@@ -6,7 +6,6 @@ import Observer.Observable;
 import Observer.Observer;
 import jakarta.persistence.*;
 
-
 import java.util.*;
 
 @Entity
