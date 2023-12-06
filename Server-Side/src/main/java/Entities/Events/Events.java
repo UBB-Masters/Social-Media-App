@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name = "events")
+@Table(name = "event")
 public class Events implements Observable {
     @Id
     private final long ID;
