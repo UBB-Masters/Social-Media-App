@@ -57,6 +57,7 @@ public class UiSpring implements CommandLineRunner {
 //
 //
 //    }
+    
     @Autowired
     public UiSpring(RestServerController restServerController, UserService userService) {
         this.restServerController = restServerController;
