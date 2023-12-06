@@ -67,12 +67,6 @@ import java.util.ArrayList;
 @Entity
 @Table
 public class AudioMessage extends MessageFactory {
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userid", insertable = false, updatable = false)
-    private User user;
-
-
     public AudioMessage(String description, User sender, ArrayList<User> receiver) {
         super(description, sender, receiver);
     }
@@ -100,8 +94,8 @@ public class AudioMessage extends MessageFactory {
         return "AudioMessage{" +
                 "ID=" + ID +
                 ", description='" + description + '\'' +
-                ", sender=" + sender +
-                ", receiver=" + receiver +
+                ", sender=" + senderID +
+                ", receiver=" + receiverID +
                 ", audioFilePath='" + messageData + '\'' +
                 '}';
     }

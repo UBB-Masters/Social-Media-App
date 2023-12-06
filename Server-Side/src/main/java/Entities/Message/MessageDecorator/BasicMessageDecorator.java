@@ -17,12 +17,12 @@ public class BasicMessageDecorator implements MessageDecorator {
 
     @Override
     public User getSender() {
-        return message.getSender();
+        return message.getSenderID();
     }
 
     @Override
     public User getReceiver() {
-        return message.getReceiver();
+        return message.getReceiverID();
     }
 
     // Method to get the wrapped MessageFactory

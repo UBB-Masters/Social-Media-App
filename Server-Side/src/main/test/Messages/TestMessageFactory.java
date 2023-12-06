@@ -29,8 +29,8 @@ public class TestMessageFactory {
     public void testCreateTextMessage() throws MessageException {
         MessageFactory message = MessageFactory.createMessage(MessageFactory.MessageType.TEXT, "Hello, World!", sender, receiver);
         assertEquals("Hello, World!", message.getDescription());
-        assertEquals(sender, message.getSender());
-        assertEquals(receiver, message.getReceiver());
+        assertEquals(sender, message.getSenderID());
+        assertEquals(receiver, message.getReceiverID());
         assertTrue(message instanceof TextMessage);
     }
 
@@ -38,8 +38,8 @@ public class TestMessageFactory {
     public void testCreateImageMessage() throws MessageException {
         MessageFactory message = MessageFactory.createMessage(MessageFactory.MessageType.IMAGE, "image.jpg", sender, receiver);
         assertEquals("image.jpg", message.getDescription());
-        assertEquals(sender, message.getSender());
-        assertEquals(receiver, message.getReceiver());
+        assertEquals(sender, message.getSenderID());
+        assertEquals(receiver, message.getReceiverID());
         assertTrue(message instanceof ImageMessage);
     }
 
@@ -47,8 +47,8 @@ public class TestMessageFactory {
     public void testCreateAudioMessage() throws MessageException {
         MessageFactory message = MessageFactory.createMessage(MessageFactory.MessageType.AUDIO, "audio.mp3", sender, receiver);
         assertEquals("audio.mp3", message.getDescription());
-        assertEquals(sender, message.getSender());
-        assertEquals(receiver, message.getReceiver());
+        assertEquals(sender, message.getSenderID());
+        assertEquals(receiver, message.getReceiverID());
         assertTrue(message instanceof AudioMessage);
     }
 
@@ -56,8 +56,8 @@ public class TestMessageFactory {
     public void testCreateVideoMessage() throws MessageException {
         MessageFactory message = MessageFactory.createMessage(MessageFactory.MessageType.VIDEO, "video.mp4", sender, receiver);
         assertEquals("video.mp4", message.getDescription());
-        assertEquals(sender, message.getSender());
-        assertEquals(receiver, message.getReceiver());
+        assertEquals(sender, message.getSenderID());
+        assertEquals(receiver, message.getReceiverID());
         assertTrue(message instanceof VideoMessage);
     }
 
@@ -69,11 +69,11 @@ public class TestMessageFactory {
         assertEquals("New content", message.getDescription());
 
         User newSender = new User("newSender", "newSenderPassword", new Date(), "newSender@example.com", User.Visibility.PUBLIC);
-        message.setSender(newSender);
-        assertEquals(newSender, message.getSender());
+        message.setSenderID(newSender);
+        assertEquals(newSender, message.getSenderID());
 
         User newReceiver = new User("newReceiver", "newReceiverPassword", new Date(), "newReceiver@example.com", User.Visibility.PUBLIC);
-        message.setReceiver(newReceiver);
-        assertEquals(newReceiver, message.getReceiver());
+        message.setReceiverID(newReceiver);
+        assertEquals(newReceiver, message.getReceiverID());
     }
 }

@@ -114,7 +114,7 @@ public class ServerController {
         messageRepository.save(baseMessage);
     }
 
-    //TODO -> implement a logging mechanism and encryption mechansim that uses the decorator for the messages
+    //TODO -> implement a logging mechanism and encryption mechanism that uses the decorator for the messages
 //
 //
 //    public void removeMessage(MessageDecorator message) {
@@ -141,17 +141,22 @@ public class ServerController {
 //    }
 //
 //
+//    public List<MessageFactory> getSentMessages(User sender) {
+//        List<MessageFactory> sentMessages = new ArrayList<>();
+//
+//        for (MessageFactory message : messageRepository.findAll()) {
+//            if (message.getSender().equals(sender)) {
+//                sentMessages.add(message);
+//            }
+//        }
+//
+//        return sentMessages;
+//    }
+
     public List<MessageFactory> getSentMessages(User sender) {
-        List<MessageFactory> sentMessages = new ArrayList<>();
-
-        for (MessageFactory message : messageRepository.findAll()) {
-            if (message.getSender().equals(sender)) {
-                sentMessages.add(message);
-            }
-        }
-
-        return sentMessages;
+        return messageRepository.findBySenderID_UserID(sender.getUserID());
     }
+
 
     public void addEvent(Events event) {
         try {
