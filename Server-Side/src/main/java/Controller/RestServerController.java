@@ -1,5 +1,6 @@
 package Controller;
 import Controller.Services.*;
+import oracle.jdbc.proxy.annotation.Post;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,6 @@ import Entities.Message.MessageDecorator.BasicMessageDecorator;
 import Entities.Message.MessageDecorator.MessageDecorator;
 import Entities.Message.MessageFactory;
 import Entities.Post.Comment;
-import Entities.Post.Post;
 import Entities.Post.Hashtag;
 import Entities.User.User;
 import Entities.Reaction.Reaction;
@@ -144,6 +144,143 @@ public class RestServerController {
         if(sender != null) {
             List<MessageFactory> sentMessages = messageService.getSentMessages(sender);
             return ResponseEntity.ok(sentMessages);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @PostMapping("/events")
+    public ResponseEntity<String> addEvent(@RequestBody Events event) {
+        eventService.addEvent(event);
+        return ResponseEntity.ok("Event added successfully");
+    }
+
+    @DeleteMapping("/events")
+    public ResponseEntity<String> removeEvent(@RequestBody Events event) {
+        eventService.removeEvent(event);
+        return ResponseEntity.ok("Event removed successfully");
+    }
+
+    @GetMapping("/events/{id}/participants")
+    public ResponseEntity<Set<User>> getEventParticipants(@PathVariable Long id) {
+        Events event = eventService.getEventById(id);
+        if(event != null) {
+            return ResponseEntity.ok(eventService.getEventParticipants(event));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @GetMapping("/events")
+    @CrossOrigin
+    public ResponseEntity<List<Events>> getAllEvents() {
+        return ResponseEntity.ok(eventService.getAllEvents());
+    }
+
+    @GetMapping("/events/{id}")
+    public ResponseEntity<Events> getEventById(@PathVariable Long id) {
+        Events event = eventService.getEventById(id);
+        if(event != null) {
+            return ResponseEntity.ok(event);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @PostMapping("/events/{id}/participants")
+    public ResponseEntity<String> addParticipantToEvent(@PathVariable Long id, @RequestBody User user) {
+        Events event = eventService.getEventById(id);
+        if(event != null) {
+            eventService.addParticipantToEvent(event, user);
+            return ResponseEntity.ok("Participant added to event");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found");
+        }
+    }
+
+    @DeleteMapping("/events/{id}/participants")
+    public ResponseEntity<String> removeParticipantFromEvent(@PathVariable Long id, @RequestBody User user) {
+        Events event = eventService.getEventById(id);
+        if(event != null) {
+            eventService.removeParticipantFromEvent(event, user);
+            return ResponseEntity.ok("Participant removed from event");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found");
+        }
+    }
+
+    @PostMapping("/events/{id}/interested")
+    public ResponseEntity<String> addInterestedUserToEvent(@PathVariable Long id, @RequestBody User user) {
+        Events event = eventService.getEventById(id);
+        if(event != null) {
+            eventService.addInterestedUserToEvent(event, user);
+            return ResponseEntity.ok("User added to interested list");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found");
+        }
+    }
+
+    @DeleteMapping("/events/{id}/interested")
+    public ResponseEntity<String> removeInterestedUserFromEvent(@PathVariable Long id, @RequestBody User user) {
+        Events event = eventService.getEventById(id);
+        if(event != null) {
+            eventService.removeInterestedUserFromEvent(event, user);
+            return ResponseEntity.ok("User removed from interested list");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found");
+        }
+    }
+
+    @DeleteMapping("/events/{id}")
+    public ResponseEntity<String> removeEventByID(@PathVariable Long id) {
+        Events event = eventService.removeEventByID(id);
+        if(event != null) {
+            return ResponseEntity.ok("Event removed successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found");
+        }
+    }
+
+    @PutMapping("/events/{id}")
+    public ResponseEntity<String> updateEvent(@PathVariable Long id, @RequestBody Events newEvent) {
+        Events oldEvent = eventService.getEventById(id);
+        if(oldEvent != null) {
+            eventService.updateEvent(oldEvent, newEvent);
+            return ResponseEntity.ok("Event updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found");
+        }
+    }
+
+    @PostMapping("/events/{id}/join")
+    public ResponseEntity<String> joinEvent(@PathVariable Long id, @RequestBody User user) {
+        Events event = eventService.getEventById(id);
+        if(event != null) {
+            eventService.joinEvent(user, event);
+            return ResponseEntity.ok("User joined event");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found");
+        }
+    }
+
+    @PostMapping("/events/{id}/interest")
+    public ResponseEntity<String> showInterest(@PathVariable Long id, @RequestBody User user) {
+        Events event = eventService.getEventById(id);
+        if(event != null) {
+            eventService.showInterest(user, event);
+            return ResponseEntity.ok("User showed interest in event");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found");
+        }
+    }
+
+    @GetMapping("/events/{id}/interested")
+    public ResponseEntity<Set<User>> getUsersInterestedInEvent(@PathVariable Long id) {
+        Events event = eventService.getEventById(id);
+        if (event != null) {
+            // Explicitly initialize the interestedUsers collection
+            Hibernate.initialize(event.getInterestedUsers());
+            return ResponseEntity.ok(eventService.getUsersInterestedInEvent(event));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }

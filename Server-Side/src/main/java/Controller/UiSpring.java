@@ -163,9 +163,9 @@ public class UiSpring implements CommandLineRunner {
                 case 6:
                     displaySentMessages(restServerController, scanner);
                     break;
-//                case 7:
-//                    participateInEvent(restServerController, scanner);
-//                    break;
+                case 7:
+                    participateInEvent(restServerController, scanner);
+                    break;
                 case 8:
                     postOperations(restServerController, scanner);
                     break;
@@ -179,7 +179,7 @@ public class UiSpring implements CommandLineRunner {
         } while (choice != 8);
     }
 
-    private static void eventOperations(RestServerController serverController, Scanner scanner) {
+    private static void eventOperations(RestServerController restServerController, Scanner scanner) {
         int choice;
         do {
             displayEventMenu();
@@ -188,24 +188,24 @@ public class UiSpring implements CommandLineRunner {
             scanner.nextLine(); // Consume new line
 
             switch (choice) {
-//                case 1:
-//                    addEvent(serverController, scanner);
-//                    break;
-//                case 2:
-//                    removeEvent(serverController, scanner);
-//                    break;
-//                case 3:
-//                    updateEvent(serverController, scanner);
-//                    break;
-//                case 4:
-//                    displayEvents(serverController);
-//                    break;
-//                case 5:
-//                    displayEventParticipants(serverController, scanner);
-//                    break;
-//                case 6:
-//                    displayUsersInterestedNotParticipating(serverController, scanner);
-//                    break;
+                case 1:
+                    addEvent(restServerController, scanner);
+                    break;
+                case 2:
+                    removeEvent(restServerController, scanner);
+                    break;
+                case 3:
+                    updateEvent(restServerController, scanner);
+                    break;
+                case 4:
+                    displayEvents(restServerController);
+                    break;
+                case 5:
+                    displayEventParticipants(restServerController, scanner);
+                    break;
+                case 6:
+                    displayUsersInterestedNotParticipating(restServerController, scanner);
+                    break;
                 case 7:
                     System.out.println("Going back to the main menu...");
                     return; // Exit the method to go back
@@ -308,18 +308,11 @@ public class UiSpring implements CommandLineRunner {
         System.out.println("10. Go back to User Operations");
     }
 
-
     private static Option<Integer> readInput(Scanner scanner) {
         System.out.println("Enter your choice:");
         return Try.of(scanner::nextInt).toOption();
 
     }
-
-//    private static void displayAllUsers(RestServerController serverController) {
-//        System.out.println("Printing all users:");
-//        serverController.getAllUsers()
-//                .forEach(System.out::println); // Assuming toString() in User class provides necessary information
-//    }
 
     public static void displayAllUsers(RestServerController restServerController) {
         ResponseEntity<List<User>> response = restServerController.getAllUsers();
@@ -521,7 +514,7 @@ private static void updateUser(RestServerController serverController, Scanner sc
         }
     }
 
-    private static void addEvent(ServerController serverController, Scanner scanner) {
+    private static void addEvent(RestServerController restServerController, Scanner scanner) {
         System.out.println("Enter event title:");
         String title = scanner.nextLine().trim();
 
@@ -542,7 +535,7 @@ private static void updateUser(RestServerController serverController, Scanner sc
 
         Events newEvent = new Events(title, description, eventDate, location);
 
-        Try<Void> addEventAttempt = Try.run(() -> serverController.addEvent(newEvent));
+        Try<Void> addEventAttempt = Try.run(() -> restServerController.addEvent(newEvent));
         addEventAttempt.onSuccess(ignore -> System.out.println("Event added successfully!"))
                 .onFailure(error -> System.out.println("Failed to add event: " + error.getMessage()));
     }
@@ -550,36 +543,48 @@ private static void updateUser(RestServerController serverController, Scanner sc
 
 
 
-    private static void displayEvents(ServerController serverController) {
+    private static void displayEvents(RestServerController restServerController) {
         System.out.println("Showing all events:");
-        serverController.getAllEvents()
-                .forEach(System.out::println);
+        ResponseEntity<List<Events>> response = restTemplate.exchange(
+                "http://localhost:8080/api/events",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Events>>() {});
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            List<Events> events = response.getBody();
+            assert events != null;
+            events.forEach(System.out::println);
+        } else {
+            System.out.println("Failed to get events: " + response.getStatusCode());
+        }
     }
 
 
 
-
-    private static void removeEvent(ServerController serverController, Scanner scanner) {
+    private static void removeEvent(RestServerController restServerController, Scanner scanner) {
 
         System.out.println("Enter ID of the event to remove:");
         Option<Integer> idOption = readInput(scanner);
         idOption.peek(id -> {
-            Try.of(() -> serverController.removeEventByID(Long.valueOf(id)))
+            Try.of(() -> restServerController.removeEventByID(Long.valueOf(id)))
                     .onSuccess(ignored -> System.out.println("Event removed successfully!"))
                     .onFailure(error -> System.out.println("Failed to remove event: " + error.getMessage()));
         }).onEmpty(() -> System.out.println("Invalid ID"));
     }
 
 
-    private static void updateEvent(ServerController serverController, Scanner scanner) {
+    private static void updateEvent(RestServerController restServerController, Scanner scanner) {
         System.out.println("Enter ID of the event to update:");
         Option<Integer> idOption = readInput(scanner);
         idOption.peek(id -> {
-            Events event = serverController.getEventById(Long.valueOf(id));
-            if (event == null) {
+            ResponseEntity<Events> response = restTemplate.getForEntity("http://localhost:8080/events/" + id, Events.class);
+            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
                 System.out.println("Event not found");
                 return;
             }
+
+            Events event = response.getBody();
 
             // Clear the input buffer
             scanner.nextLine();
@@ -604,20 +609,39 @@ private static void updateUser(RestServerController serverController, Scanner sc
 
             Events newEvent = new Events(title, description, eventDate, location);
 
-            Try<Void> updateEventAttempt = Try.run(() -> serverController.updateEvent(event, newEvent));
-            updateEventAttempt.onSuccess(ignore -> System.out.println("Event updated successfully!"))
-                    .onFailure(error -> System.out.println("Failed to update event: " + error.getMessage()));
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<Events> requestUpdate = new HttpEntity<>(newEvent, headers);
+            ResponseEntity<String> responseUpdate = restTemplate.exchange("http://localhost:8080/events/" + id, HttpMethod.PUT, requestUpdate, String.class);
+
+            if (responseUpdate.getStatusCode() == HttpStatus.OK) {
+                System.out.println("Event updated successfully!");
+            } else {
+                System.out.println("Failed to update event: " + responseUpdate.getBody());
+            }
         }).onEmpty(() -> System.out.println("Invalid ID"));
     }
 
-
-    private static void displayEventParticipants(ServerController serverController, Scanner scanner) {
+    private static void displayEventParticipants(RestServerController restServerController, Scanner scanner) {
         System.out.println("Enter ID of the event:");
         Option<Integer> idOption = readInput(scanner);
         if (idOption.isDefined()) {
-            Events event = serverController.getEventById(Long.valueOf(idOption.get()));
-            if (event != null) {
-                Set<User> participants = serverController.getEventParticipants(event);
+            ResponseEntity<Events> response = restTemplate.getForEntity("http://localhost:8080/api/events/" + idOption.get(), Events.class);
+            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
+                System.out.println("Invalid event ID");
+                return;
+            }
+
+            Events event = response.getBody();
+
+            ResponseEntity<Set<User>> responseParticipants = restTemplate.exchange(
+                    "http://localhost:8080/api/events/" + idOption.get() + "/participants",
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<Set<User>>() {});
+
+            if (responseParticipants.getStatusCode() == HttpStatus.OK) {
+                Set<User> participants = responseParticipants.getBody();
                 if (!participants.isEmpty()) {
                     System.out.println("Participants of the event '" + event.getEventName() + "':");
                     participants.forEach(System.out::println);
@@ -625,7 +649,7 @@ private static void updateUser(RestServerController serverController, Scanner sc
                     System.out.println("No participants found for the event '" + event.getEventName() + "'");
                 }
             } else {
-                System.out.println("Invalid event ID");
+                System.out.println("Failed to get participants: " + responseParticipants.getStatusCode());
             }
         } else {
             System.out.println("Invalid input for event ID");
@@ -634,7 +658,7 @@ private static void updateUser(RestServerController serverController, Scanner sc
 
 
     //TODO: Make this method and the one in the controller work correctly... right now the user are not being added
-    private static void participateInEvent(ServerController serverController, Scanner scanner) {
+    private static void participateInEvent(RestServerController restServerController, Scanner scanner) {
         System.out.println("Enter event ID:");
         Option<Integer> eventIdOption = readInput(scanner);
 
@@ -642,45 +666,77 @@ private static void updateUser(RestServerController serverController, Scanner sc
         Option<Integer> userIdOption = readInput(scanner);
 
         if (eventIdOption.isDefined() && userIdOption.isDefined()) {
-            Events event = serverController.getEventById(Long.valueOf(eventIdOption.get()));
-            User user = serverController.getUserByID(userIdOption.get());
+            ResponseEntity<Events> responseEvent = restTemplate.getForEntity("http://localhost:8080/api/events/" + eventIdOption.get(), Events.class);
+            ResponseEntity<User> responseUser = restTemplate.getForEntity("http://localhost:8080/api/users/" + userIdOption.get(), User.class);
 
-            if (event != null && user != null) {
-                System.out.println("Do you want to:\n1. Participate in the event\n2. Show interest in the event");
-                Option<Integer> interestChoiceOption = readInput(scanner);
+            if (responseEvent.getStatusCode() == HttpStatus.NOT_FOUND || responseUser.getStatusCode() == HttpStatus.NOT_FOUND) {
+                System.out.println("Invalid event or user ID");
+                return;
+            }
 
-                if (interestChoiceOption.isDefined()) {
-                    int choice = interestChoiceOption.get();
+            Events event = responseEvent.getBody();
+            User user = responseUser.getBody();
 
-                    if (choice == 1) {
-                        serverController.addParticipantToEvent(event, user);
+            System.out.println("Do you want to:\n1. Participate in the event\n2. Show interest in the event");
+            Option<Integer> interestChoiceOption = readInput(scanner);
+
+            if (interestChoiceOption.isDefined()) {
+                int choice = interestChoiceOption.get();
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                HttpEntity<User> requestUpdate = new HttpEntity<>(user, headers);
+
+                if (choice == 1) {
+                    ResponseEntity<String> responseParticipate = restTemplate.exchange("http://localhost:8080/api/events/" + eventIdOption.get() + "/participants", HttpMethod.POST, requestUpdate, String.class);
+                    if (responseParticipate.getStatusCode() == HttpStatus.OK) {
+                        assert event != null;
                         System.out.println("You have successfully participated in the event: " + event.getEventName());
-                    } else if (choice == 2) {
-                        serverController.addInterestedUserToEvent(event, user);
+                    } else {
+                        System.out.println("Failed to participate in the event: " + responseParticipate.getBody());
+                    }
+                } else if (choice == 2) {
+                    // Assuming there's a similar endpoint for showing interest in the event
+                    ResponseEntity<String> responseInterest = restTemplate.exchange("http://localhost:8080/api/events/" + eventIdOption.get() + "/interested", HttpMethod.POST, requestUpdate, String.class);
+                    if (responseInterest.getStatusCode() == HttpStatus.OK) {
+                        assert event != null;
                         System.out.println("You have shown interest in the event: " + event.getEventName());
                     } else {
-                        System.out.println("Invalid choice");
+                        System.out.println("Failed to show interest in the event: " + responseInterest.getBody());
                     }
                 } else {
                     System.out.println("Invalid choice");
                 }
             } else {
-                System.out.println("Invalid event or user ID");
+                System.out.println("Invalid choice");
             }
         } else {
             System.out.println("Invalid input for event or user ID");
         }
     }
 
-
-    private static void displayUsersInterestedNotParticipating(ServerController serverController, Scanner scanner) {
+    //TODO -> DISPLAYING ONLY INTERESTED USERS DOES NOT WORK CORRECTLY
+    private static void displayUsersInterestedNotParticipating(RestServerController restServerController, Scanner scanner) {
         System.out.println("Enter the ID of the event to display interested users not participating:");
         Option<Integer> eventIdOption = readInput(scanner);
 
         if (eventIdOption.isDefined()) {
-            Events event = serverController.getEventById(Long.valueOf(eventIdOption.get()));
-            if (event != null) {
-                Set<User> interestedButNotParticipating = serverController.getUsersInterestedInEvent(event);
+            ResponseEntity<Events> response = restTemplate.getForEntity("http://localhost:8080/api/events/" + eventIdOption.get(), Events.class);
+            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
+                System.out.println("Invalid event ID");
+                return;
+            }
+
+            Events event = response.getBody();
+
+            ResponseEntity<Set<User>> responseInterested = restTemplate.exchange(
+                    "http://localhost:8080/api/events/" + eventIdOption.get() + "/interested",
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<Set<User>>() {});
+
+            if (responseInterested.getStatusCode() == HttpStatus.OK) {
+                Set<User> interestedButNotParticipating = responseInterested.getBody();
                 if (!interestedButNotParticipating.isEmpty()) {
                     System.out.println("Users interested but not participating in the event:");
                     interestedButNotParticipating.forEach(System.out::println);
@@ -688,37 +744,36 @@ private static void updateUser(RestServerController serverController, Scanner sc
                     System.out.println("No users interested in the event but not participating");
                 }
             } else {
-                System.out.println("Invalid event ID");
+                System.out.println("Failed to get interested users: " + responseInterested.getStatusCode());
             }
         } else {
             System.out.println("Invalid input for event ID");
         }
     }
-
-    private static void createPost(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter your ID:");
-        Option<Integer> userIdOption = readInput(scanner);
-
-        if (userIdOption.isDefined()) {
-            long userId = userIdOption.get();
-            User user = serverController.getUserByID(userId);
-
-            if (user != null) {
-                System.out.println("Enter post content:");
-                scanner.nextLine();
-                String content = scanner.nextLine().trim();
-
-                // Using PostProxy instead of directly creating a Post
-                PostProxy postProxy = new PostProxy(userId, content, new Date());
-                serverController.createPostProxy(user, postProxy); // Passing the PostProxy instead of a Post
-                System.out.println("Post created successfully!");
-            } else {
-                System.out.println("Invalid user ID");
-            }
-        } else {
-            System.out.println("Invalid input for user ID");
-        }
-    }
+//    private static void createPost(RestServerController restServerController, Scanner scanner) {
+//        System.out.println("Enter your ID:");
+//        Option<Integer> userIdOption = readInput(scanner);
+//
+//        if (userIdOption.isDefined()) {
+//            long userId = userIdOption.get();
+//            User user = restServerController.getUserByID(userId);
+//
+//            if (user != null) {
+//                System.out.println("Enter post content:");
+//                scanner.nextLine();
+//                String content = scanner.nextLine().trim();
+//
+//                // Using PostProxy instead of directly creating a Post
+//                PostProxy postProxy = new PostProxy(userId, content, new Date());
+//                restServerController.createPostProxy(user, postProxy); // Passing the PostProxy instead of a Post
+//                System.out.println("Post created successfully!");
+//            } else {
+//                System.out.println("Invalid user ID");
+//            }
+//        } else {
+//            System.out.println("Invalid input for user ID");
+//        }
+//    }
 
     // UI method to add a comment to a post
     private static void addCommentToPost(ServerController serverController, Scanner scanner) {
