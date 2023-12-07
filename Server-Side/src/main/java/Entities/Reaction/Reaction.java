@@ -1,18 +1,26 @@
 package Entities.Reaction;
 
 import Entities.Misc.IDGenerator;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import Proxy.PostProxy;
+import jakarta.persistence.*;
 
 
 @Entity
 @Table(name = "reaction")
 public class Reaction {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "reactionID")
     private long reactionId;
+
+    @Column(name = "userID")
     private long userId;
+
+    @Column(name = "reaction_type")
     private String reactionType;
+
+
+
 
     public Reaction(long userId, String reactionType) {
         this.reactionId = IDGenerator.generateID(Reaction.class);

@@ -290,8 +290,8 @@ public class RestServerController {
         return ResponseEntity.ok(posts);
     }
     @PostMapping("/posts/proxy")
-    public ResponseEntity<String> createPostProxy(@RequestBody User user, @RequestBody PostProxy postProxy) {
-        postService.createPostProxy(user, postProxy);
+    public ResponseEntity<String> createPostProxy(@RequestBody UserPostProxy userPostProxy) {
+        postService.createPostProxy(userPostProxy.getUser(), userPostProxy.getPostProxy());
         return ResponseEntity.ok("Post created successfully using proxy");
     }
 

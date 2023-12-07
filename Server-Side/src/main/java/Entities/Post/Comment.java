@@ -9,12 +9,21 @@ import java.util.Date;
 @Table(name = "comment")
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "commentID")
     private final long commentId;
     private long postId;
+
+    @Column(name = "content")
     private String content;
+
+    @Column(name = "timestamp")
     private Date timestamp;
+
+    @Column(name = "userID")
     private long userId;
+
+
 
     public Comment(long postId, String content, Date timestamp, long userId) {
         this.commentId = IDGenerator.generateID(Comment.class);

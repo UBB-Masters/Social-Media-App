@@ -1,10 +1,14 @@
 package Proxy;
 
 import Entities.Post.Post;
+import Entities.Reaction.Reaction;
 import Entities.User.User;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -12,6 +16,10 @@ public class PostProxy {
     private Post post;
     private boolean contentLoaded;
     private String cachedContent;
+
+    @OneToMany(mappedBy = "postProxy")
+    private List<Reaction> reactions;
+
     private Map<Long, String> accessControlMap; // Mapping of userId to access rights
 
     public PostProxy(long userId, String content, Date timestamp) {

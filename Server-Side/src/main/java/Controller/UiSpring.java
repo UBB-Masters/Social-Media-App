@@ -1,6 +1,7 @@
 package Controller;
 
 import Controller.Services.MessageRequest;
+import Controller.Services.UserPostProxy;
 import Controller.Services.UserService;
 import Entities.Events.Events;
 import Entities.Message.MessageFactory;
@@ -217,7 +218,7 @@ public class UiSpring implements CommandLineRunner {
     }
 
 
-    private static void postOperations(RestServerController serverController, Scanner scanner) {
+    private static void postOperations(RestServerController restServerController, Scanner scanner) {
         int choice;
         do {
             displayPostMenu();
@@ -226,9 +227,9 @@ public class UiSpring implements CommandLineRunner {
             scanner.nextLine(); // Consume new line
 
             switch (choice) {
-//                case 1:
-//                    createPost(serverController, scanner);
-//                    break;
+                case 1:
+                    createPost(restServerController, scanner);
+                    break;
 //                case 2:
 //                    addCommentToPost(serverController, scanner);
 //                    break;
@@ -241,9 +242,9 @@ public class UiSpring implements CommandLineRunner {
 //                case 5:
 //                    removeHashtagFromPost(serverController, scanner);
 //                    break;
-//                case 6:
-//                    displayAllPosts(serverController);
-//                    break;
+                case 6:
+                    displayAllPosts(restServerController);
+                    break;
 //                case 7:
 //                    displayUserPosts(serverController, scanner);
 //                    break;
@@ -750,30 +751,44 @@ private static void updateUser(RestServerController serverController, Scanner sc
             System.out.println("Invalid input for event ID");
         }
     }
-//    private static void createPost(RestServerController restServerController, Scanner scanner) {
-//        System.out.println("Enter your ID:");
-//        Option<Integer> userIdOption = readInput(scanner);
-//
-//        if (userIdOption.isDefined()) {
-//            long userId = userIdOption.get();
-//            User user = restServerController.getUserByID(userId);
-//
-//            if (user != null) {
-//                System.out.println("Enter post content:");
-//                scanner.nextLine();
-//                String content = scanner.nextLine().trim();
-//
-//                // Using PostProxy instead of directly creating a Post
-//                PostProxy postProxy = new PostProxy(userId, content, new Date());
-//                restServerController.createPostProxy(user, postProxy); // Passing the PostProxy instead of a Post
-//                System.out.println("Post created successfully!");
-//            } else {
-//                System.out.println("Invalid user ID");
-//            }
-//        } else {
-//            System.out.println("Invalid input for user ID");
-//        }
-//    }
+    private static void createPost(RestServerController restServerController, Scanner scanner) {
+        System.out.println("Enter your ID:");
+        Option<Integer> userIdOption = readInput(scanner);
+
+        if (userIdOption.isDefined()) {
+            long userId = userIdOption.get();
+            ResponseEntity<User> response = restServerController.getUserById(userId);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                User user = response.getBody();
+
+                if (user != null) {
+                    System.out.println("Enter post content:");
+                    scanner.nextLine();
+                    String content = scanner.nextLine().trim();
+
+                    PostProxy postProxy = new PostProxy(userId, content, new Date());
+                    UserPostProxy userPostProxy = new UserPostProxy();
+                    userPostProxy.setUser(user);
+                    userPostProxy.setPostProxy(postProxy);
+
+                    ResponseEntity<String> postResponse = restServerController.createPostProxy(userPostProxy);
+
+                    if (postResponse.getStatusCode() == HttpStatus.OK) {
+                        System.out.println("Post created successfully!");
+                    } else {
+                        System.out.println("Failed to create post");
+                    }
+                } else {
+                    System.out.println("Invalid user ID");
+                }
+            } else {
+                System.out.println("Failed to get user");
+            }
+        } else {
+            System.out.println("Invalid input for user ID");
+        }
+    }
 
     // UI method to add a comment to a post
     private static void addCommentToPost(ServerController serverController, Scanner scanner) {
@@ -882,21 +897,32 @@ private static void updateUser(RestServerController serverController, Scanner sc
         }
     }
 
-    // UI method to display all posts
-    private static void displayAllPosts(ServerController serverController) {
-        List<Post> allPosts = serverController.getAllPosts();
+//     UI method to display all posts
+    private static void displayAllPosts(RestServerController restServerController) {
+        // Create a new instance of ParameterizedTypeReference for List<Post>
+        ParameterizedTypeReference<List<Post>> typeRef = new ParameterizedTypeReference<List<Post>>() {};
 
-        if (!allPosts.isEmpty()) {
-            System.out.println("All Posts:");
-            allPosts.forEach(System.out::println);
+        // Send a GET request to the "/posts" endpoint
+        ResponseEntity<List<Post>> response = restTemplate.exchange("http://localhost:8080/api/posts", HttpMethod.GET, null, typeRef);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            List<Post> allPosts = response.getBody();
+
+            if (!allPosts.isEmpty()) {
+                System.out.println("All Posts:");
+                allPosts.forEach(System.out::println);
+            } else {
+                System.out.println("No posts found.");
+            }
+
+            // Check for any new post notifications
+            ResponseEntity<Boolean> notificationResponse = restServerController.hasNewPostNotification();
+            if (notificationResponse.getStatusCode() == HttpStatus.OK && Boolean.TRUE.equals(notificationResponse.getBody())) {
+                System.out.println("You've been notified of a new post!");
+                restServerController.clearNewPostNotification(); // Clear the notification
+            }
         } else {
-            System.out.println("No posts found.");
-        }
-
-        // Check for any new post notifications
-        if (serverController.hasNewPostNotification()) {
-            System.out.println("You've been notified of a new post!");
-            serverController.clearNewPostNotification(); // Clear the notification
+            System.out.println("Failed to get posts");
         }
     }
 
