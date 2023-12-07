@@ -48,13 +48,6 @@ public class PostService {
     }
 
 
-//
-//        newPost.notifyObservers(); // Notify all observers (users) about the new post
-//
-//        this.newPostNotification = true;
-//
-//
-//    }
 
     public void createPostProxy(User user, PostProxy postProxy) {
         // Using PostProxy to get the content

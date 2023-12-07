@@ -118,10 +118,6 @@ public class User implements Observer {
         return other.getClass() == this.getClass() && this.getUserID() == ((User) other).getUserID();
     }
 
-
-//    public String getHashedPassword() {
-//        return PasswordHasher.hashPassword(this.password);
-//    }
     public String getHashedPassword() {
         return hashedPassword;
     }

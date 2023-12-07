@@ -41,8 +41,6 @@ import java.util.Set;
 @EntityScan(basePackages = "Entities")
 public class UiSpring implements CommandLineRunner {
 
-    //    private final ServerController serverController;
-//    private final UserRepository userRepository;
     private final RestServerController restServerController;
     private final UserService userService;
 
@@ -55,13 +53,6 @@ public class UiSpring implements CommandLineRunner {
         return restTemplate;
     }
 
-//    @Autowired
-//    public UiSpring(ServerController serverController, UserRepository userRepository) {
-//        this.serverController = serverController;
-//        this.userRepository = userRepository;
-//
-//
-//    }
     
     @Autowired
     public UiSpring(RestServerController restServerController, UserService userService) {

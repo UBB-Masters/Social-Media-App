@@ -21,8 +21,7 @@ public class Post implements Observable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "postID")
     private Long postID;
-//    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    private List<Comment> comments;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "post_comments",
@@ -31,8 +30,7 @@ public class Post implements Observable {
     )
     private List<Comment> comments;
 
-//    @Fetch(FetchMode.JOIN)
-//    @ManyToMany(fetch = FetchType.LAZY)
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "post_reactions",
@@ -46,7 +44,6 @@ public class Post implements Observable {
     private List<Hashtag> hashtags;
     @Transient
     private final List<Observer> observers = new ArrayList<>();
-//    private long userId;
     private String content;
     private Date timestamp;
     @ManyToOne(fetch = FetchType.EAGER)
@@ -77,9 +74,6 @@ public class Post implements Observable {
             throw new IllegalStateException("User object is null");
         }
     }
-    // If you still need to get the user ID, you can do it through the User object
-
-
 
     public Post(User user, String content, Date timestamp) {
         this.postID = IDGenerator.generateID(Post.class);

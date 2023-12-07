@@ -107,45 +107,6 @@ public class ServerController {
         messageRepository.save(baseMessage);
     }
 
-    //TODO -> implement a logging mechanism and encryption mechanism that uses the decorator for the messages
-
-//
-//    public void removeMessage(MessageDecorator message) {
-//        memoryInMemoryMessageRepository.removeMessage(message);
-//    }
-//
-//    public void removeMessageFactory(MessageFactory message) {
-//        MessageDecorator messageDecorator = message.getDecoratedMessage();
-//        memoryInMemoryMessageRepository.removeMessage(messageDecorator);
-//    }
-
-
-
-//    public ArrayList<MessageFactory> getUserMessages(User user) {
-//        ArrayList<MessageFactory> userMessages = new ArrayList<>();
-//
-//        for (MessageDecorator message : memoryInMemoryMessageRepository.getMessages()) {
-//            if (message.getReceiver().equals(user) && message instanceof BasicMessageDecorator decorator) {
-//                userMessages.add(decorator.getDecoratedMessage());
-//            }
-//        }
-//
-//        return userMessages;
-//    }
-
-
-//    public List<MessageFactory> getSentMessages(User sender) {
-//        List<MessageFactory> sentMessages = new ArrayList<>();
-//
-//        for (MessageFactory message : messageRepository.findAll()) {
-//            if (message.getSender().equals(sender)) {
-//                sentMessages.add(message);
-//            }
-//        }
-//
-//        return sentMessages;
-//    }
-
     public List<MessageFactory> getSentMessages(User sender) {
         return messageRepository.findBySenderID_UserID(sender.getUserID());
     }
@@ -237,12 +198,6 @@ public class ServerController {
     }
 
 
-//    public Events getEventByID(int eventId) {
-//        // Logic to retrieve the event by ID
-//        return eventRepository.findEventByID(eventId); // Example method call to retrieve the event from the repository
-//    }
-
-
     public void joinEvent(User user, Events event) {
         event.addParticipant(user);
     }
@@ -270,13 +225,6 @@ public class ServerController {
             newPost.addObserver(u);
         }
     }
-//
-//        newPost.notifyObservers(); // Notify all observers (users) about the new post
-//
-//        this.newPostNotification = true;
-//
-//
-//    }
 
     public void createPostProxy(User user, PostProxy postProxy) {
         // Using PostProxy to get the content
