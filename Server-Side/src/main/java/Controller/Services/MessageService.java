@@ -65,7 +65,7 @@ public class MessageService {
         List<MessageFactory> sentMessages = new ArrayList<>();
 
         for (MessageFactory message : messageRepository.findAll()) {
-            if (message.getSender().equals(sender)) {
+            if (message.getSenderID().equals(sender)) {
                 sentMessages.add(message);
             }
         }

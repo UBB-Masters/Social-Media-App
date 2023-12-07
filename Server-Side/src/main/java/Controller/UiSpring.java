@@ -7,8 +7,11 @@ import Entities.Message.MessageFactory;
 import Entities.Post.Comment;
 import Entities.Post.Hashtag;
 import Entities.Post.Post;
+import Entities.Reaction.Reaction;
+import Entities.Reaction.ReactionFactory;
 import Entities.User.User;
 import Proxy.PostProxy;
+import Strategy.ReactionStrategy;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -145,7 +149,6 @@ public class UiSpring implements CommandLineRunner {
                     addUser(restServerController, scanner);
                     break;
                 case 2:
-//                    //TODO -> this acts weird
                     removeUser(restServerController, scanner);
                     break;
                 case 3:
@@ -157,9 +160,9 @@ public class UiSpring implements CommandLineRunner {
                 case 5:
                     sendMessage(restServerController, scanner);
                     break;
-//                case 6:
-//                    displaySentMessages(restServerController, scanner);
-//                    break;
+                case 6:
+                    displaySentMessages(restServerController, scanner);
+                    break;
 //                case 7:
 //                    participateInEvent(restServerController, scanner);
 //                    break;
@@ -223,33 +226,33 @@ public class UiSpring implements CommandLineRunner {
             scanner.nextLine(); // Consume new line
 
             switch (choice) {
-                case 1:
-                    createPost(serverController, scanner);
-                    break;
-                case 2:
-                    addCommentToPost(serverController, scanner);
-                    break;
-                case 3:
-                    reactToPost(serverController, scanner);
-                    break;
-                case 4:
-                    addHashtagToPost(serverController, scanner);
-                    break;
-                case 5:
-                    removeHashtagFromPost(serverController, scanner);
-                    break;
-                case 6:
-                    displayAllPosts(serverController);
-                    break;
-                case 7:
-                    displayUserPosts(serverController, scanner);
-                    break;
-                case 8:
-                    addCommentToAnotherUserPost(serverController, scanner);
-                    break;
-                case 9:
-                    reactToAnotherUserPost(serverController, scanner);
-                    break;
+//                case 1:
+//                    createPost(serverController, scanner);
+//                    break;
+//                case 2:
+//                    addCommentToPost(serverController, scanner);
+//                    break;
+//                case 3:
+//                    reactToPost(serverController, scanner);
+//                    break;
+//                case 4:
+//                    addHashtagToPost(serverController, scanner);
+//                    break;
+//                case 5:
+//                    removeHashtagFromPost(serverController, scanner);
+//                    break;
+//                case 6:
+//                    displayAllPosts(serverController);
+//                    break;
+//                case 7:
+//                    displayUserPosts(serverController, scanner);
+//                    break;
+//                case 8:
+//                    addCommentToAnotherUserPost(serverController, scanner);
+//                    break;
+//                case 9:
+//                    reactToAnotherUserPost(serverController, scanner);
+//                    break;
                 case 10:
                     System.out.println("Going back to the main menu...");
                     return; // Exit the method to go back
@@ -473,25 +476,41 @@ private static void updateUser(RestServerController serverController, Scanner sc
         return Option.of(message);
     }
 
-    private static void displaySentMessages(ServerController serverController, Scanner scanner) {
+    //TODO -> THIS IS NOT WORKING WELL
+    private static void displaySentMessages(RestServerController restServerController, Scanner scanner) {
         System.out.println("Enter sender ID:");
         Option<Integer> senderIdOption = readInput(scanner);
 
         if (senderIdOption.isDefined()) {
-            User sender = serverController.getUserByID(senderIdOption.get());
+            ResponseEntity<User> senderResponse = restTemplate.getForEntity("http://localhost:8080/api/users/" + senderIdOption.get(), User.class);
 
-            if (sender != null) {
-                List<MessageFactory> sentMessages = serverController.getSentMessages(sender);
+            if (senderResponse.getStatusCode() == HttpStatus.OK) {
+                User sender = senderResponse.getBody();
+                ResponseEntity<List<MessageFactory>> messagesResponse = restTemplate.exchange(
+                        "http://localhost:8080/api/messages/" + senderIdOption.get(),
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<List<MessageFactory>>() {});
 
-                if (!sentMessages.isEmpty()) {
-                    System.out.println("Messages sent by " + sender.getUsername() + ":");
+                if (messagesResponse.getStatusCode() == HttpStatus.OK) {
+                    List<MessageFactory> sentMessages = messagesResponse.getBody();
 
-                    // Iterate through the sentMessages and display sender, receiver, and description
-                    sentMessages.forEach(message ->
-                            System.out.println("Sender: " + message.getSenderName() +
-                                    ", Receiver: " + message.getReceiverName() +
-                                    ", Message: " + message.getDescription()));
+                    assert sentMessages != null;
+                    if (!sentMessages.isEmpty()) {
+                        assert sender != null;
+                        System.out.println("Messages sent by " + sender.getUsername() + ":");
+
+                        // Iterate through the sentMessages and display sender, receiver, and description
+                        sentMessages.forEach(message ->
+                                System.out.println("Sender: " + message.getSenderName() +
+                                        ", Receiver: " + message.getReceiverName() +
+                                        ", Message: " + message.getDescription()));
+                    } else {
+                        assert sender != null;
+                        System.out.println("No messages found for " + sender.getUsername());
+                    }
                 } else {
+                    assert sender != null;
                     System.out.println("No messages found for " + sender.getUsername());
                 }
             } else {

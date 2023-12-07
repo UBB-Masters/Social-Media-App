@@ -154,11 +154,11 @@ public class MessageFactory {
     }
 
     public String getSenderName() {
-        return senderID.getUsername();
+        return (senderID != null) ? senderID.getUsername() : "Unknown";
     }
 
     public String getReceiverName() {
-        return receiverID.getUsername();
+        return (receiverID != null) ? receiverID.getUsername() : "Unknown";
     }
 
 
