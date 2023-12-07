@@ -1,28 +1,20 @@
 package Controller;
+
 import Controller.Services.*;
-import oracle.jdbc.proxy.annotation.Post;
+import Entities.Events.Events;
+import Entities.Message.MessageFactory;
+import Entities.User.User;
+import Proxy.PostProxy;
+import Entities.Post.Post;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Date;
 import java.util.List;
-import Entities.Events.Events;
-import Entities.Exceptions.DataBaseException;
-import Entities.Message.MessageDecorator.BasicMessageDecorator;
-import Entities.Message.MessageDecorator.MessageDecorator;
-import Entities.Message.MessageFactory;
-import Entities.Post.Comment;
-import Entities.Post.Hashtag;
-import Entities.User.User;
-import Entities.Reaction.Reaction;
-import Proxy.PostProxy;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -284,6 +276,35 @@ public class RestServerController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+
+    @PostMapping("/posts")
+    public ResponseEntity<String> createPost(@RequestBody User user, @RequestBody String content) {
+        postService.createPost(user, content);
+        return ResponseEntity.ok("Post created successfully");
+    }
+
+    @GetMapping("/posts")
+    public ResponseEntity<List<Post>> getAllPosts() {
+        List<Post> posts = postService.getAllPosts();
+        return ResponseEntity.ok(posts);
+    }
+    @PostMapping("/posts/proxy")
+    public ResponseEntity<String> createPostProxy(@RequestBody User user, @RequestBody PostProxy postProxy) {
+        postService.createPostProxy(user, postProxy);
+        return ResponseEntity.ok("Post created successfully using proxy");
+    }
+
+    @GetMapping("/posts/notifications")
+    public ResponseEntity<Boolean> hasNewPostNotification() {
+        boolean hasNotification = postService.hasNewPostNotification();
+        return ResponseEntity.ok(hasNotification);
+    }
+
+    @DeleteMapping("/posts/notifications")
+    public ResponseEntity<String> clearNewPostNotification() {
+        postService.clearNewPostNotification();
+        return ResponseEntity.ok("Post notification cleared");
     }
 
 
