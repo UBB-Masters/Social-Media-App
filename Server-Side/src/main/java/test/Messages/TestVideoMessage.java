@@ -1,4 +1,4 @@
-package main.test.Messages;
+package test.Messages;
 
 import Entities.Message.MessageTypes.VideoMessage;
 import Entities.User.User;

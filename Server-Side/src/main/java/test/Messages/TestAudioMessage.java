@@ -1,4 +1,4 @@
-package main.test.Messages;
+package test.Messages;
 
 import Entities.Message.MessageTypes.AudioMessage;
 import Entities.User.User;

@@ -1,4 +1,4 @@
-package main.test.testEntities;
+package test.testEntities;
 
 import Entities.User.ProfilePicture;
 import org.junit.jupiter.api.Assertions;

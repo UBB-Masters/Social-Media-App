@@ -33,7 +33,7 @@ public class Post implements Observable {
 
 //    @Fetch(FetchMode.JOIN)
 //    @ManyToMany(fetch = FetchType.LAZY)
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "post_reactions",
             joinColumns = @JoinColumn(name = "post_postid"),

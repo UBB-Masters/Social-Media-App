@@ -233,11 +233,11 @@ public class UiSpring implements CommandLineRunner {
                 case 2:
                     addCommentToPost(restServerController, scanner);
                     break;
-//                case 3:
-//                    reactToPost(serverController, scanner);
-//                    break;
+                case 3:
+                    reactToPost(restServerController, scanner);
+                    break;
 //                case 4:
-//                    addHashtagToPost(serverController, scanner);
+//                    addHashtagToPost(restServerController, scanner);
 //                    break;
 //                case 5:
 //                    removeHashtagFromPost(serverController, scanner);
@@ -819,13 +819,15 @@ private static void updateUser(RestServerController serverController, Scanner sc
         }
     }
 
-    private static void reactToPost(ServerController serverController, Scanner scanner) {
+    //TODO -> NOT WORKING
+    private static void reactToPost(RestServerController restServerController, Scanner scanner) {
         System.out.println("Enter Post ID:");
         Option<Integer> postIdOption = readInput(scanner);
 
         if (postIdOption.isDefined()) {
             long postId = postIdOption.get();
-            Post post = serverController.getPostById(postId);
+            ResponseEntity<Post> response = restServerController.getPostById(postId);
+            Post post = response.getBody();
 
             if (post != null) {
                 System.out.println("Enter reaction (Like, Love, Haha, Wow, Sad, Angry):");
@@ -835,8 +837,8 @@ private static void updateUser(RestServerController serverController, Scanner sc
                 ReactionStrategy reactionStrategy = ReactionFactory.createReactionStrategy(reactionType);
 
                 if (reactionStrategy != null) {
-
-                    long userId = 123;
+                    System.out.println("Enter your user ID:");
+                    long userId = scanner.nextLong(); // read the user ID from the scanner
 
                     reactionStrategy.react(post, userId);
                     System.out.println("Reacted to the post with " + reactionType + "!");
@@ -852,29 +854,29 @@ private static void updateUser(RestServerController serverController, Scanner sc
     }
 
     // UI method to add a hashtag to a post
-    private static void addHashtagToPost(ServerController serverController, Scanner scanner) {
-        System.out.println("Enter Post ID:");
-        Option<Integer> postIdOption = readInput(scanner);
-
-        if (postIdOption.isDefined()) {
-            long postId = postIdOption.get();
-            Post post = serverController.getPostById(postId);
-
-            if (post != null) {
-                System.out.println("Enter hashtag:");
-                scanner.nextLine();
-                String hashtagText = scanner.nextLine().trim();
-
-                Hashtag hashtag = new Hashtag(hashtagText);
-                serverController.addHashtagToPost(post, hashtag);
-                System.out.println("Hashtag added to the post!");
-            } else {
-                System.out.println("Post not found.");
-            }
-        } else {
-            System.out.println("Invalid Post ID");
-        }
-    }
+//    private static void addHashtagToPost(RestServerController restServerController, Scanner scanner) {
+//        System.out.println("Enter Post ID:");
+//        Option<Integer> postIdOption = readInput(scanner);
+//
+//        if (postIdOption.isDefined()) {
+//            long postId = postIdOption.get();
+//            Post post = restServerController.getPostById(postId);
+//
+//            if (post != null) {
+//                System.out.println("Enter hashtag:");
+//                scanner.nextLine();
+//                String hashtagText = scanner.nextLine().trim();
+//
+//                Hashtag hashtag = new Hashtag(hashtagText);
+//                restServerController.addHashtagToPost(post, hashtag);
+//                System.out.println("Hashtag added to the post!");
+//            } else {
+//                System.out.println("Post not found.");
+//            }
+//        } else {
+//            System.out.println("Invalid Post ID");
+//        }
+//    }
 
     // UI method to remove a hashtag from a post
     private static void removeHashtagFromPost(ServerController serverController, Scanner scanner) {

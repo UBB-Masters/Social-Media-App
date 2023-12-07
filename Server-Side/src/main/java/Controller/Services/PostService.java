@@ -6,6 +6,7 @@ import Entities.Post.Comment;
 import Entities.Post.Hashtag;
 import Entities.Post.Post;
 import Entities.Reaction.Reaction;
+import Entities.Reaction.ReactionFactory;
 import Entities.User.User;
 import Proxy.PostProxy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,17 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
+    private final ReactionService reactionService;
 
     private boolean newPostNotification;
 
 
     @Autowired
 
-    public PostService(PostRepository postRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, UserRepository userRepository, ReactionService reactionService) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.reactionService = reactionService;
     }
 
     public void createPost(User user, String content) {
@@ -87,6 +90,9 @@ public class PostService {
     public void reactToPost(Post post, Reaction reaction) {
         post.addReaction(reaction);
         postRepository.save(post);
+
+        // Save the reaction using the ReactionService
+        reactionService.addReaction(reaction);
     }
 
     public void addHashtagToPost(Post post, Hashtag hashtag) {

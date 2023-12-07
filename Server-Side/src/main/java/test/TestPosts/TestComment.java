@@ -1,4 +1,4 @@
-package main.test.TestPosts;
+package test.TestPosts;
 
 import Entities.Misc.IDGenerator;
 import Entities.Post.Comment;

@@ -1,4 +1,4 @@
-package main.test.testEntities;
+package test.testEntities;
 
 import Entities.User.Administrator;
 import Entities.User.User;

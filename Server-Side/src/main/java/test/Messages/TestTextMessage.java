@@ -1,4 +1,4 @@
-package main.test.Messages;
+package test.Messages;
 
 import Entities.Message.MessageTypes.TextMessage;
 import Entities.User.User;
