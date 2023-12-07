@@ -2,7 +2,10 @@ package Controller.Services;
 
 import Controller.PostRepository;
 import Controller.UserRepository;
+import Entities.Post.Comment;
+import Entities.Post.Hashtag;
 import Entities.Post.Post;
+import Entities.Reaction.Reaction;
 import Entities.User.User;
 import Proxy.PostProxy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,40 +75,42 @@ public class PostService {
         this.newPostNotification = true;
     }
 
-    //
-//
-//    public void addCommentToPost(Post post, Comment comment) {
-//        post.addComment(comment);
-//        postRepository.save(post);
-//    }
-//
-//    public void reactToPost(Post post, Reaction reaction) {
-//        post.addReaction(reaction);
-//        postRepository.save(post);
-//    }
-//
-//    public void addHashtagToPost(Post post, Hashtag hashtag) {
-//        post.addHashtag(hashtag);
-//        postRepository.save(post);
-//    }
-//
-//    public void removeHashtagFromPost(Post post, Hashtag hashtag) {
-//        post.removeHashtag(hashtag);
-//        postRepository.save(post);
-//    }
-//
+
+
+
+
+    public void addCommentToPost(Post post, Comment comment) {
+        post.addComment(comment);
+        postRepository.save(post);
+    }
+
+    public void reactToPost(Post post, Reaction reaction) {
+        post.addReaction(reaction);
+        postRepository.save(post);
+    }
+
+    public void addHashtagToPost(Post post, Hashtag hashtag) {
+        post.addHashtag(hashtag);
+        postRepository.save(post);
+    }
+
+    public void removeHashtagFromPost(Post post, Hashtag hashtag) {
+        post.removeHashtag(hashtag);
+        postRepository.save(post);
+    }
+
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
 
-//    public List<Post> getPostsByUser(User user) {
-//        return postRepository.findByUserId(user.getUserID());
-//    }
-//
-//
-//    public Post getPostById(long postId) {
-//        return postRepository.findById(postId).orElse(null);
-//    }
+    public List<Post> getPostsByUser(User user) {
+        return postRepository.findByUser(user);
+    }
+
+
+    public Post getPostById(long postId) {
+        return postRepository.findById(postId).orElse(null);
+    }
 
     public boolean hasNewPostNotification() {
         return newPostNotification;

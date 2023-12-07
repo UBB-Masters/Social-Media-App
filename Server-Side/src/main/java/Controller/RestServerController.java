@@ -3,6 +3,7 @@ package Controller;
 import Controller.Services.*;
 import Entities.Events.Events;
 import Entities.Message.MessageFactory;
+import Entities.Post.Comment;
 import Entities.User.User;
 import Proxy.PostProxy;
 import Entities.Post.Post;
@@ -305,6 +306,39 @@ public class RestServerController {
     public ResponseEntity<String> clearNewPostNotification() {
         postService.clearNewPostNotification();
         return ResponseEntity.ok("Post notification cleared");
+    }
+
+    @GetMapping("/users/{id}/posts")
+    public ResponseEntity<List<Post>> getPostsByUser(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+        if(user != null) {
+            List<Post> posts = postService.getPostsByUser(user);
+            return ResponseEntity.ok(posts);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+
+    @GetMapping("/posts/{id}")
+    public ResponseEntity<Post> getPostById(@PathVariable Long id) {
+        Post post = postService.getPostById(id);
+        if(post != null) {
+            return ResponseEntity.ok(post);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @PostMapping("/posts/{postId}/comments")
+    public ResponseEntity<String> addCommentToPost(@PathVariable Long postId, @RequestBody Comment comment) {
+        Post post = postService.getPostById(postId);
+        if(post != null) {
+            postService.addCommentToPost(post, comment);
+            return ResponseEntity.ok("Comment added to the post");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
+        }
     }
 
 

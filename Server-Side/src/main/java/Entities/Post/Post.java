@@ -23,7 +23,7 @@ public class Post implements Observable {
     private Long postID;
 //    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //    private List<Comment> comments;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "post_comments",
             joinColumns = @JoinColumn(name = "post_postid"),
@@ -33,12 +33,13 @@ public class Post implements Observable {
 
 //    @Fetch(FetchMode.JOIN)
 //    @ManyToMany(fetch = FetchType.LAZY)
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "post_reactions",
             joinColumns = @JoinColumn(name = "post_postid"),
             inverseJoinColumns = @JoinColumn(name = "reactions_reaction_id")
     )
+
     private List<Reaction> reactions;
     @Fetch(FetchMode.JOIN)
     @ManyToMany(fetch = FetchType.LAZY)

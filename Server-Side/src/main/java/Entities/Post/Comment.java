@@ -12,6 +12,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "commentID")
     private final long commentId;
+    @Column(name = "post_id")
     private long postId;
 
     @Column(name = "content")

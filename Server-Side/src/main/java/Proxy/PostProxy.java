@@ -17,7 +17,7 @@ public class PostProxy {
     private boolean contentLoaded;
     private String cachedContent;
 
-    @OneToMany(mappedBy = "postProxy")
+    @OneToMany(mappedBy = "postProxy", cascade = CascadeType.PERSIST)
     private List<Reaction> reactions;
 
     private Map<Long, String> accessControlMap; // Mapping of userId to access rights

@@ -230,9 +230,9 @@ public class UiSpring implements CommandLineRunner {
                 case 1:
                     createPost(restServerController, scanner);
                     break;
-//                case 2:
-//                    addCommentToPost(serverController, scanner);
-//                    break;
+                case 2:
+                    addCommentToPost(restServerController, scanner);
+                    break;
 //                case 3:
 //                    reactToPost(serverController, scanner);
 //                    break;
@@ -245,9 +245,9 @@ public class UiSpring implements CommandLineRunner {
                 case 6:
                     displayAllPosts(restServerController);
                     break;
-//                case 7:
-//                    displayUserPosts(serverController, scanner);
-//                    break;
+                case 7:
+                    displayUserPosts(restServerController, scanner);
+                    break;
 //                case 8:
 //                    addCommentToAnotherUserPost(serverController, scanner);
 //                    break;
@@ -791,21 +791,25 @@ private static void updateUser(RestServerController serverController, Scanner sc
     }
 
     // UI method to add a comment to a post
-    private static void addCommentToPost(ServerController serverController, Scanner scanner) {
+    private static void addCommentToPost(RestServerController restServerController, Scanner scanner) {
         System.out.println("Enter Post ID:");
         Option<Integer> postIdOption = readInput(scanner);
 
         if (postIdOption.isDefined()) {
             long postId = postIdOption.get();
-            Post post = serverController.getPostById(postId);
+            ResponseEntity<Post> response = restServerController.getPostById(postId);
+            Post post = response.getBody();
 
             if (post != null) {
                 System.out.println("Enter your comment:");
                 scanner.nextLine();
                 String commentText = scanner.nextLine().trim();
 
-                Comment comment = new Comment(postId, commentText, new Date(), 123); // replace 123 with actual user ID
-                serverController.addCommentToPost(post, comment);
+                System.out.println("Enter your user ID:");
+                long userId = scanner.nextLong(); // read the user ID from the scanner
+
+                Comment comment = new Comment(postId, commentText, new Date(), userId); // use the actual user ID
+                restServerController.addCommentToPost(postId, comment);
                 System.out.println("Comment added to the post!");
             } else {
                 System.out.println("Post not found.");
@@ -928,22 +932,32 @@ private static void updateUser(RestServerController serverController, Scanner sc
 
 
     // UI method to display posts by a specific user
-    private static void displayUserPosts(ServerController serverController, Scanner scanner) {
+    private static void displayUserPosts(RestServerController restServerController, Scanner scanner) {
         System.out.println("Enter User ID:");
         Option<Integer> userIdOption = readInput(scanner);
 
         if (userIdOption.isDefined()) {
             long userId = userIdOption.get();
-            User user = serverController.getUserByID(userId);
+            ResponseEntity<User> userResponse = restServerController.getUserById(userId);
 
-            if (user != null) {
-                List<Post> userPosts = serverController.getPostsByUser(user);
+            if (userResponse.getStatusCode() == HttpStatus.OK) {
+                User user = userResponse.getBody();
+                ResponseEntity<List<Post>> postsResponse = restServerController.getPostsByUser(userId);
 
-                if (!userPosts.isEmpty()) {
-                    System.out.println("Posts by " + user.getUsername() + ":");
-                    userPosts.forEach(System.out::println);
+                if (postsResponse.getStatusCode() == HttpStatus.OK) {
+                    List<Post> userPosts = postsResponse.getBody();
+
+                    assert userPosts != null;
+                    if (!userPosts.isEmpty()) {
+                        assert user != null;
+                        System.out.println("Posts by " + user.getUsername() + ":");
+                        userPosts.forEach(System.out::println);
+                    } else {
+                        assert user != null;
+                        System.out.println("No posts found for " + user.getUsername());
+                    }
                 } else {
-                    System.out.println("No posts found for " + user.getUsername());
+                    System.out.println("No posts found for this user.");
                 }
             } else {
                 System.out.println("User not found.");
